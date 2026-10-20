@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import clsx from 'clsx';
 import { DISCLAIMER } from '../components/Disclaimer';
@@ -15,6 +15,7 @@ import {
   chanceBoosters,
   teamModel,
   stationLabel,
+  soloStationTime,
   fmtMmss,
   todayISO,
   addDays,
@@ -23,6 +24,7 @@ import {
   type Profile,
   type RaceBreakdown,
   type Sex,
+  type Station,
 } from '../engine';
 import { useI18n, type Lang } from '../lib/i18n';
 import { useAppSettings } from '../data/hooks';
@@ -228,74 +230,223 @@ const MARK = ath({ name: 'Mark', lthr: 178, maxHr: 186, thresholdPaceSec: 235, a
 const RICK = ath({ name: 'Rick', lthr: 176, thresholdPaceSec: 245, archetype: 'fast_runner', stationStars: stars({ sledPush: 2, burpees: 4, farmers: 4 }) });
 const TOM = ath({ name: 'Tom', lthr: 168, maxHr: 188, thresholdPaceSec: 265, archetype: 'diesel', stationStars: stars({ skierg: 4, sledPush: 5, sledPull: 4, row: 4, farmers: 5, lunges: 4, wallballs: 4 }) });
 
-/** The three example athletes as a results table – every number is computed live by the engine. */
+/** Rick's own result: 1:19 → 1:14 in Pro, next goal 1:09. The only real-world numbers on the page. */
+function Proof({ l }: { l: (k: LKey) => string }) {
+  const tick = 'absolute top-0.5 h-3.5 w-0.5';
+  return (
+    <div className="mt-10 flex flex-wrap items-center gap-x-16 gap-y-8 rounded-paper bg-ink p-[clamp(24px,4vw,44px)] text-ground">
+      <div className="min-w-0 flex-[1_1_360px]">
+        <p className="font-mono text-xs uppercase tracking-[0.06em] text-[#b5b2a8]">{l('proof.label')}</p>
+        <p className="mt-3.5 max-w-[26ch] text-[clamp(22px,2.4vw,30px)] font-semibold leading-tight">{l('proof.text')}</p>
+        <p className="mt-3.5 max-w-[46ch] text-[#b5b2a8]">{l('proof.next')}</p>
+      </div>
+      <div className="min-w-0 flex-[1_1_420px]">
+        <div className="flex flex-wrap items-baseline gap-x-[18px] gap-y-2 font-mono">
+          <s className="text-[clamp(28px,3vw,40px)] text-[#8a877f] decoration-2">1:19</s>
+          <span className="text-[clamp(56px,7vw,96px)] font-semibold leading-none tracking-[-0.03em]">1:14</span>
+          <span className="bg-accent px-2.5 py-1 text-[15px] font-semibold text-ink">−5 min</span>
+        </div>
+        <div className="relative mt-[22px] h-[34px] font-mono text-xs" role="img" aria-label={l('proof.aria')}>
+          <div className="absolute inset-x-0 top-2 h-0.5 bg-ink-3" />
+          <div className="absolute left-0 top-[7px] h-1 w-1/2 bg-accent" />
+          <div className={clsx(tick, 'left-0 bg-[#8a877f]')} />
+          <div className="absolute left-1/2 top-0 -ml-[7px] h-[18px] w-3.5 bg-accent" />
+          <div className={clsx(tick, 'right-0 bg-ground')} />
+          <span className="absolute left-0 top-[22px] text-[#8a877f]" aria-hidden>
+            1:19
+          </span>
+          <span className="absolute left-1/2 top-[22px] -translate-x-1/2 whitespace-nowrap" aria-hidden>
+            {l('proof.now')} 1:14
+          </span>
+          <span className="absolute right-0 top-[22px] whitespace-nowrap" aria-hidden>
+            {l('proof.goal')} 1:09
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+type Leak = { station: Station; sec: number; loss: number };
+type Analysis = {
+  k: 'a' | 'b' | 'c';
+  name: string;
+  div: string;
+  goal: number;
+  thr: string;
+  weeks: number;
+  proj: number;
+  chance: number;
+  leaks: Leak[];
+  team?: { pacer: string; pace: number; splits: { station: Station; a: number; b: number }[]; names: [string, string] };
+};
+
+/** Stations ordered by time lost against the engine's reference (mid-pack, 3 stars); only real losses. */
+function leaksOf(stations: Record<Station, number>, mid: (s: Station) => number): Leak[] {
+  return STATIONS.map((st) => ({ station: st, sec: stations[st], loss: stations[st] - mid(st) }))
+    .filter((x) => x.loss > 0)
+    .sort((x, y) => y.loss - x.loss)
+    .slice(0, 3);
+}
+
+/** Pick an example athlete and see where the minutes leak – every number is computed live by the engine. */
 function Examples({ l }: { l: (k: LKey) => string }) {
   const { lang, pace } = useI18n();
-  const rows = useMemo(() => {
+  const [sel, setSel] = useState(0);
+  const tabs = useRef<(HTMLButtonElement | null)[]>([]);
+  const rows = useMemo<Analysis[]>(() => {
     const today = todayISO();
     const split = (k: LKey) => {
       const [name, ...div] = l(k).split(' · ');
       return { name, div: div.join(' · ') };
     };
-    const solo = (k: 'a' | 'b', p: Profile) => {
+    const solo = (k: 'a' | 'b', p: Profile): Analysis => {
       const m = raceModel(p, today);
-      const st = m.weakestStations[0];
+      const mid: Athlete = { ...p.athlete, stationStars: stars(), stationTimes: {} };
       return {
-        k, ...split(`ex.${k}.name` as LKey), thr: pace(p.athlete.thresholdPaceSec), goal: p.goalSec, proj: m.projected.finishSec, chance: m.chance,
-        loss: st ? `${stationLabel(lang, st)} ${fmtMmss(m.current.stations[st])}` : '–',
+        k, ...split(`ex.${k}.name` as LKey), goal: p.goalSec, thr: pace(p.athlete.thresholdPaceSec), weeks: m.weeksLeft,
+        proj: m.projected.finishSec, chance: m.chance, leaks: leaksOf(m.current.stations, (st) => soloStationTime(mid, p.category, st)),
       };
     };
-    const tm = teamModel(RICK, TOM, 'doubles_open', 3900, addDays(today, 105), today);
+    const race = addDays(today, 105);
+    const tm = teamModel(RICK, TOM, 'doubles_open', 3900, race, today);
+    // reference: the same pair at mid-pack station level
+    const ref = teamModel({ ...RICK, stationStars: stars() }, { ...TOM, stationStars: stars() }, 'doubles_open', 3900, race, today);
+    const teamSec = Object.fromEntries(tm.splits.map((x) => [x.station, x.teamSec])) as Record<Station, number>;
     return [
       solo('a', prof(LISA, 'solo_open', 5100, 18)),
       solo('b', prof(MARK, 'solo_pro', 4500, 12)),
       {
-        k: 'c' as const, ...split('ex.c.name'), thr: `${pace(RICK.thresholdPaceSec)} / ${pace(TOM.thresholdPaceSec)}`, goal: 3900,
-        proj: tm.projectedFinishSec, chance: tm.chance, loss: `${l('ex.pacer')} ${tm.pacer === 'A' ? 'Rick' : 'Tom'} ${pace(tm.runPaceSec)}`,
+        k: 'c', ...split('ex.c.name'), goal: 3900, thr: `${pace(RICK.thresholdPaceSec)} / ${pace(TOM.thresholdPaceSec)}`, weeks: Math.floor(105 / 7),
+        proj: tm.projectedFinishSec, chance: tm.chance, leaks: leaksOf(teamSec, (st) => ref.splits.find((x) => x.station === st)!.teamSec),
+        team: {
+          pacer: tm.pacer === 'A' ? RICK.name : TOM.name, pace: tm.runPaceSec, names: [RICK.name, TOM.name],
+          splits: tm.splits.filter((x) => x.lead !== 'even').map((x) => ({ station: x.station, a: x.aSegments, b: x.bSegments })),
+        },
       },
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lang, pace]);
-  const heads: LKey[] = ['ex.th.athlete', 'ex.th.division', 'ex.th.threshold', 'ex.th.goal', 'ex.th.projected', 'ex.th.chance', 'ex.th.loss'];
+  const r = rows[sel];
+  const maxLoss = Math.max(1, ...r.leaks.map((x) => x.loss));
+  const onKey = (e: React.KeyboardEvent) => {
+    const step = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[e.key];
+    const next = step ? (sel + step + rows.length) % rows.length : e.key === 'Home' ? 0 : e.key === 'End' ? rows.length - 1 : null;
+    if (next === null) return;
+    e.preventDefault();
+    setSel(next);
+    tabs.current[next]?.focus();
+  };
+  const big = 'font-mono text-[28px] tracking-[-0.02em] sm:text-[34px]';
   return (
     <>
-      <div className="mt-12 overflow-x-auto" tabIndex={0} role="region" aria-label={l('ex.title')}>
-        <table className="bm-table min-w-[760px]">
-          <thead>
-            <tr>
-              {heads.map((h) => (
-                <th key={h} scope="col">
-                  {l(h)}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className="font-mono">
-            {rows.map((r) => (
-              <tr key={r.k}>
-                <th scope="row" className="py-[18px] font-sans font-bold">
-                  {r.name}
-                </th>
-                <td className="py-[18px]">{r.div}</td>
-                <td className="py-[18px]">{r.thr}</td>
-                <td className="py-[18px]">{fmtHms(r.goal)}</td>
-                <td className="py-[18px] font-semibold">{fmtHms(r.proj)}</td>
-                <td className="py-[18px]">{r.chance}%</td>
-                <td className="py-[18px]">{r.loss}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="mt-14 flex flex-wrap items-end justify-between gap-x-8 gap-y-3">
+        <h3 className="text-[clamp(26px,2.8vw,34px)] font-extrabold uppercase leading-[1.05] [font-stretch:80%]">{l('pick.title')}</h3>
+        <p className="max-w-[380px] text-sm text-muted">{l('pick.sub')}</p>
       </div>
-      <div className="mt-6 max-w-[720px] space-y-3 text-ink-2">
-        {rows.map((r) => (
-          <p key={r.k}>
-            <span className="bm-mark">
-              {l('ex.focus')} · {r.name}:
-            </span>{' '}
-            {l(`ex.${r.k}.focus` as LKey)}
-          </p>
-        ))}
+      <div className="mt-6 flex flex-wrap items-stretch gap-6">
+        <div className="flex w-full min-w-0 flex-col gap-2 md:w-auto md:max-w-[340px] md:flex-[1_1_260px]">
+          <div role="tablist" aria-label={l('pick.tabs')} aria-orientation="vertical" className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 md:mx-0 md:flex-col md:overflow-visible md:px-0 md:pb-0" onKeyDown={onKey}>
+            {rows.map((x, i) => (
+              <button
+                key={x.k}
+                ref={(el) => (tabs.current[i] = el)}
+                type="button"
+                role="tab"
+                id={`ex-tab-${x.k}`}
+                aria-controls="ex-panel"
+                aria-selected={i === sel}
+                tabIndex={i === sel ? 0 : -1}
+                onClick={() => setSel(i)}
+                className={clsx(
+                  'flex min-h-16 w-[230px] shrink-0 flex-col items-start rounded-paper border-[1.5px] px-4 py-3.5 text-left md:w-full',
+                  i === sel ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink hover:border-ink',
+                )}
+              >
+                <span className="flex w-full items-baseline justify-between gap-3">
+                  <span className="text-lg font-bold">{x.name}</span>
+                  <span className="font-mono text-xs">{x.div}</span>
+                </span>
+                <span className="mt-1.5 font-mono text-[13px]">
+                  {l('pick.goal')} {fmtHms(x.goal)} · {l('pick.thr')} {x.thr}
+                </span>
+              </button>
+            ))}
+          </div>
+          <a href="#check" className="mt-2 flex min-h-[48px] items-center justify-between rounded-[3px] border-[1.5px] border-ink px-4 py-3 font-bold text-ink no-underline hover:bg-surface">
+            {l('pick.own')}
+            <span aria-hidden>↑</span>
+          </a>
+        </div>
+
+        <div id="ex-panel" role="tabpanel" aria-labelledby={`ex-tab-${r.k}`} tabIndex={0} className="min-w-0 flex-[3_1_560px] rounded-paper border border-line bg-surface shadow-paper">
+          <div className={clsx(DASHED, 'flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 border-b px-[18px] py-[18px] sm:px-6')}>
+            <h4 className="text-lg font-extrabold uppercase tracking-[0.02em] [font-stretch:80%]">
+              {l('an.title')} · {r.name}
+            </h4>
+            <span className="font-mono text-xs text-muted">
+              {r.div} · {l('an.weeks').replace('{n}', String(r.weeks))}
+            </span>
+          </div>
+          <dl className={clsx(DASHED, 'flex flex-wrap gap-x-12 gap-y-5 border-b px-[18px] py-[22px] sm:px-6')}>
+            <div>
+              <dt className="text-[13px] text-muted">{l('an.now')}</dt>
+              <dd className={clsx(big, 'font-semibold')}>{fmtHms(r.proj)}</dd>
+            </div>
+            <div>
+              <dt className="text-[13px] text-muted">{l('an.goal')}</dt>
+              <dd className={big}>{fmtHms(r.goal)}</dd>
+            </div>
+            <div>
+              <dt className="text-[13px] text-muted">{l('an.chance')}</dt>
+              <dd className={clsx(big, 'font-semibold')}>
+                <span className="bg-accent px-1.5 text-ink">{r.chance}%</span>
+              </dd>
+            </div>
+          </dl>
+          <div className="px-[18px] pb-1.5 pt-5 sm:px-6">
+            <h5 className="text-[13px] font-bold uppercase tracking-[0.06em]">{l('an.leak')}</h5>
+            {r.leaks.length ? (
+              <ul className="m-0 list-none p-0">
+                {r.leaks.map((x) => (
+                  <li key={x.station} className="grid grid-cols-[110px_minmax(0,1fr)_auto] items-center gap-3.5 border-b border-[#e4e2dc] py-2.5 font-mono text-sm sm:grid-cols-[150px_minmax(0,1fr)_auto]">
+                    <span>{stationLabel(lang, x.station)}</span>
+                    <span className="relative h-2.5 bg-[#e4e2dc]" aria-hidden>
+                      <span className="absolute inset-y-0 left-0 bg-ink" style={{ width: `${(x.loss / maxLoss) * 100}%` }} />
+                    </span>
+                    <span className="whitespace-nowrap text-right">
+                      {fmtMmss(x.sec)} · +{fmtMmss(x.loss)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="mt-2 border-b border-[#e4e2dc] pb-3 text-ink-2">{l('an.noleak')}</p>
+            )}
+          </div>
+          <div className="flex items-start gap-3.5 px-[18px] pb-[22px] pt-4 sm:px-6">
+            <span className="mt-0.5 flex-none bg-accent px-2 py-0.5 text-[13px] font-bold uppercase text-ink">{l('an.plan')}</span>
+            {r.team ? (
+              <div className="text-ink-2">
+                <p>
+                  {l('an.pacer').replace('{name}', r.team.pacer).replace('{pace}', pace(r.team.pace))} {l('an.split')}
+                </p>
+                <ul className="m-0 mt-2 flex list-none flex-wrap gap-x-5 gap-y-1 p-0 font-mono text-[13px] text-ink">
+                  {r.team.splits.map((x) => (
+                    <li key={x.station}>
+                      {stationLabel(lang, x.station)}:{' '}
+                      <span className="whitespace-nowrap">
+                        {r.team!.names[0]} {x.a} · {r.team!.names[1]} {x.b}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : (
+              <p className="text-ink-2">{l(`ex.${r.k}.focus` as LKey)}</p>
+            )}
+          </div>
+        </div>
       </div>
     </>
   );
@@ -445,7 +596,7 @@ export default function Landing() {
             </div>
             <p className="mt-7 text-sm text-muted">{[l('tick1'), l('tick2'), l('tick3')].join(' · ')}</p>
           </div>
-          <div className="flex min-w-0 flex-[1_1_420px] justify-end">
+          <div id="check" className="flex min-w-0 flex-[1_1_420px] scroll-mt-4 justify-end">
             <QuickCheck l={l} />
           </div>
         </section>
@@ -503,12 +654,10 @@ export default function Landing() {
 
         {/* example athletes */}
         <section id="examples" className="bm-wrap scroll-mt-4 pb-10 pt-16 sm:pt-[100px]" aria-labelledby="ex-title">
-          <div className="flex flex-wrap items-end justify-between gap-6">
-            <h2 id="ex-title" className="bm-h2 max-w-[680px]">
-              {l('ex.title')}
-            </h2>
-            <p className="max-w-[380px] text-[15px] text-muted">{l('ex.sub')}</p>
-          </div>
+          <h2 id="ex-title" className="bm-h2 max-w-[760px]">
+            {l('proof.title')}
+          </h2>
+          <Proof l={l} />
           <Examples l={l} />
         </section>
 
