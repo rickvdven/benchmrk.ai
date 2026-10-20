@@ -2,7 +2,6 @@
   "badge": "Gebouwd op HYROX-racedata, Friel %LTHR-zones en WOD-Science-principes",
   "h1a": "Verpletter je HYROX PR.",
   "h1b": "Weet precies waar je minuten zitten.",
-  "sub": "Benchmrk bouwt je plan op je eigen drempel, voorspelt je eindtijd uit runs + stations + Roxzone en kalibreert opnieuw na elke Benchmark — solo of Doubles, Open of Pro, vrouwen en mannen.",
   "cta": "Start gratis",
   "how": "Zo werkt het",
   "tick1": "Plan klaar in 5 minuten",
@@ -184,5 +183,11 @@
   "an.pacer": "{name} bepaalt het looptempo ({pace}).",
   "an.split": "Verdeling van de beurten per station:",
   "an.focus": "Elke week stationkracht op de twee zwakste stations: {stations}.",
-  "an.and": " en "
+  "an.and": " en ",
+  "land.sub": "Een 16-wekenplan op je eigen drempel, gebouwd rond compromised running: hardlopen met vermoeide benen. Met een eerlijke eindtijdvoorspelling inclusief je stations, en vijf benchmarks die alles herkalibreren — solo of doubles.",
+  "land.f5": "Train waar je traint",
+  "land.f5d": "Koppel je gym en volg hun HYROX-programma. Plan WOD's mee waar je zelf geen invloed op hebt, of train thuis met wat je hebt. Je plan rekent met de plek en het materiaal van elke dag.",
+  "land.f6": "Gebouwd rond compromised running",
+  "land.f6d": "In onderzoek onder recreatieve atleten ging meer dan 60 % van de racetijd op aan hardlopen. Bijna elke kilometer begin je met vermoeide benen. Daarom draait je plan om lopen na de stations.",
+  "land.f6link": "Bekijk het onderzoek"
 }

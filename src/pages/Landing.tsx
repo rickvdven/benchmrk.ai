@@ -596,7 +596,7 @@ export default function Landing() {
           <div className="min-w-0 flex-[1_1_480px] sm:pt-3">
             <p className="bm-kicker mb-[18px] sm:mb-7">{l('hero.kicker')}</p>
             <h1 className="bm-display max-w-[14ch] text-[clamp(44px,5.2vw,76px)] !leading-[0.94] [overflow-wrap:anywhere] [text-wrap:balance]">{l('h1b')}</h1>
-            <p className="mt-6 max-w-[520px] text-[17px] text-ink-2 sm:mt-8 sm:text-[19px]">{l('sub')}</p>
+            <p className="mt-6 max-w-[520px] text-[17px] text-ink-2 sm:mt-8 sm:text-[19px]">{l('land.sub')}</p>
             <div className="mt-7 flex flex-wrap items-center gap-5 sm:mt-10">
               <Link to="/auth?mode=signup" className="bm-btn-accent w-full sm:w-auto">
                 {l('cta')}
@@ -686,6 +686,21 @@ export default function Landing() {
               </li>
             ))}
           </ol>
+          {/* the two core messages: where you train, and running on tired legs */}
+          <div className="flex w-full flex-wrap gap-x-12 gap-y-6">
+            <div className="flex-[1_1_280px] border-t-[1.5px] border-ink pb-2 pt-5">
+              <h3 className="text-[20px] font-bold leading-tight [font-stretch:80%] sm:text-[22px] sm:[font-stretch:100%]">{l('land.f5')}</h3>
+              <p className="mt-2.5 text-ink-2">{l('land.f5d')}</p>
+            </div>
+            <div className="flex-[1_1_280px] border-t-[1.5px] border-ink pb-2 pt-5">
+              <h3 className="text-[20px] font-bold leading-tight [font-stretch:80%] sm:text-[22px] sm:[font-stretch:100%]">{l('land.f6')}</h3>
+              <p className="mt-2.5 text-ink-2">{l('land.f6d')}</p>
+              <Link to="/science" className="mt-3 inline-flex min-h-[44px] items-center gap-1.5 text-ink underline underline-offset-[5px]">
+                {l('land.f6link')}
+                <span aria-hidden>→</span>
+              </Link>
+            </div>
+          </div>
         </section>
 
         {/* compare */}

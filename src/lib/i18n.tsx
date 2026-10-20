@@ -41,7 +41,7 @@ const en = {
   // landing
   'land.eyebrow': 'Adaptive HYROX coaching',
   'land.title': 'Train for your HYROX, not someone else’s.',
-  'land.sub': 'A 16-week plan built on your own threshold, an honest finish-time prediction that includes your stations, five benchmarks that recalibrate everything — solo or doubles.',
+  'land.sub': 'A 16-week plan built on your own threshold and centred on compromised running: running on tired legs. With an honest finish-time prediction that includes your stations, and five benchmarks that recalibrate everything — solo or doubles.',
   'land.cta': 'Start free',
   'land.f1': 'Station-aware prediction',
   'land.f1d': 'Runs + stations + Roxzone, from your ratings, PRs and benchmark splits. See exactly where the minutes are.',
@@ -471,7 +471,7 @@ const nl: Partial<Record<Key, string>> = {
   'common.today': 'Vandaag',
   'land.eyebrow': 'Adaptieve HYROX-coaching',
   'land.title': 'Train voor jóuw HYROX, niet die van een ander.',
-  'land.sub': 'Een 16-wekenplan op je eigen drempel, een eerlijke eindtijdvoorspelling inclusief je stations, en vijf benchmarks die alles herkalibreren — solo of doubles.',
+  'land.sub': 'Een 16-wekenplan op je eigen drempel, gebouwd rond compromised running: hardlopen met vermoeide benen. Met een eerlijke eindtijdvoorspelling inclusief je stations, en vijf benchmarks die alles herkalibreren — solo of doubles.',
   'land.cta': 'Gratis starten',
   'land.f1': 'Voorspelling met stations',
   'land.f1d': 'Runs + stations + Roxzone, uit je sterren, PR’s en benchmarksplits. Zie precies waar de minuten zitten.',
