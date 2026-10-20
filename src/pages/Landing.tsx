@@ -35,6 +35,12 @@ import ko from '../locales/landing.ko.json';
 type LKey = keyof typeof en;
 const L: Record<Lang, Record<string, string>> = { en, nl, de, es, ko };
 
+/** A euro amount as each language writes it: €30 and €2,50 (nl), but 30 € and 2,50 € (de, es). */
+function fmtEur(n: number, lang: Lang) {
+  const num = n.toLocaleString(lang === 'ko' ? 'en' : lang, { minimumFractionDigits: Number.isInteger(n) ? 0 : 2, maximumFractionDigits: 2 });
+  return lang === 'de' || lang === 'es' ? `${num}\u00a0€` : `€${num}`;
+}
+
 const DIVISIONS: { id: string; cat: Category; sex: Sex; label: string }[] = [
   { id: 'ow', cat: 'solo_open', sex: 'woman', label: 'Open · Women' },
   { id: 'om', cat: 'solo_open', sex: 'man', label: 'Open · Men' },
@@ -307,7 +313,6 @@ function Compare({ l }: { l: (k: LKey) => string }) {
     ['cmp.r1', 'n', 'p', 'y', 'y'],
     ['cmp.r2', 'n', 'p', 'p', 'y'],
     ['cmp.r3', 'n', 'n', 'y', 'y'],
-    ['cmp.r4', 'n', 'n', 'p', 'y'],
     ['cmp.r5', 'n', 'n', 'p', 'y'],
   ];
   const cell = (c: C) =>
@@ -375,7 +380,9 @@ function Compare({ l }: { l: (k: LKey) => string }) {
 export default function Landing() {
   const { lang, t } = useI18n();
   const settings = useAppSettings();
-  const l = (k: LKey) => L[lang]?.[k] ?? en[k];
+  // the yearly price is set in Admin → Settings (app_settings.price_year_cents), the same value commissions use
+  const year = (Number(settings.data?.price_year_cents) || 3000) / 100;
+  const l = (k: LKey) => (L[lang]?.[k] ?? en[k]).replace('{price}', fmtEur(year, lang)).replace('{month}', fmtEur(year / 12, lang));
   const beta = settings.data?.paywall_enabled !== true;
   const disclaimer = DISCLAIMER[lang] ?? DISCLAIMER.en;
   const navLink = 'text-[15px] text-ink-3 hover:text-ink';
@@ -549,7 +556,7 @@ export default function Landing() {
                   ] as [LKey | null, LKey][]
                 ).map(([tag, k], i) => (
                   <li key={k} className={clsx('flex gap-[18px] border-t border-line py-3.5', i === 2 && 'border-b')}>
-                    <span className={clsx('min-w-[64px] font-mono', tag ? 'text-muted' : 'font-semibold text-ink')}>{tag ? l(tag) : l('price.year.big')}</span>
+                    <span className={clsx('min-w-[64px] font-mono', tag ? 'text-muted' : 'font-semibold text-ink')}>{tag ? l(tag) : fmtEur(year, lang)}</span>
                     <span>{l(k)}</span>
                   </li>
                 ))}
@@ -576,7 +583,7 @@ export default function Landing() {
               </ul>
               <div className="mx-[18px] flex items-baseline justify-between gap-3 border-t-[1.5px] border-ink pb-1 pt-4 sm:mx-[26px]">
                 <span className="font-mono font-semibold">{l('price.total')}</span>
-                <span className="text-[72px] font-extrabold leading-[0.9] [font-stretch:72%]">{l('price.year.big')}</span>
+                <span className="text-[72px] font-extrabold leading-[0.9] [font-stretch:72%]">{fmtEur(year, lang)}</span>
               </div>
               <p className={clsx(PAD, 'pb-[18px] text-right font-mono text-[13px] text-muted')}>{l('price.month')}</p>
               <div className={clsx(PAD, 'pb-6')}>
