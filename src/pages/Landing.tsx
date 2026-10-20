@@ -117,14 +117,14 @@ function QuickCheck({ l }: { l: (k: LKey) => string }) {
     return { m: model, b: chanceBoosters(p, today, undefined, model) };
   }, [tpSec, goalSec, weeks, d]);
   const m = mb?.m ?? null;
-  const row = 'flex justify-between gap-3 py-[7px]';
+  const row = 'flex justify-between gap-3 py-[5px]';
   return (
     <div className="w-full min-w-0 rounded-paper border border-line bg-surface text-ink shadow-paper lg:max-w-[500px] lg:rotate-[0.6deg]">
-      <div className={clsx(PAD, DASHED, 'flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 border-b pb-[18px] pt-[22px]')}>
+      <div className={clsx(PAD, DASHED, 'flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 border-b pb-3.5 pt-[18px]')}>
         <h2 className="text-lg font-extrabold uppercase tracking-[0.02em] [font-stretch:80%]">{l('qc.label')}</h2>
         <span className="font-mono text-xs text-[#5e5b53]">{l('qc.sub')}</span>
       </div>
-      <div className={clsx(PAD, DASHED, 'flex flex-wrap gap-4 border-b py-[18px]')}>
+      <div className={clsx(PAD, DASHED, 'flex flex-wrap gap-x-4 gap-y-3 border-b py-3.5')}>
         <label className="bm-field flex-[1_1_100%]">
           {l('qc.division')}
           <select className="bm-input" value={div} onChange={(e) => setDiv(e.target.value)}>
@@ -150,7 +150,7 @@ function QuickCheck({ l }: { l: (k: LKey) => string }) {
       </div>
       {m ? (
         <>
-          <div className={clsx(PAD, 'pb-2 pt-5 font-mono text-[15px]')}>
+          <div className={clsx(PAD, 'pb-1.5 pt-3.5 font-mono text-[15px]')}>
             <div className={row}>
               <span>{t('ck.runs')}</span>
               <span>{fmtHms(m.projected.runTotalSec)}</span>
@@ -175,7 +175,7 @@ function QuickCheck({ l }: { l: (k: LKey) => string }) {
             </div>
           </div>
           <ReceiptBar b={m.projected} goalSec={goalSec!} />
-          <dl className={clsx(PAD, 'flex flex-wrap gap-3 py-[18px] font-mono text-[13px] text-ink-2')}>
+          <dl className={clsx(PAD, 'flex flex-wrap gap-3 py-3.5 font-mono text-[13px] text-ink-2')}>
             <div className="flex-[1_1_120px]">
               <dt className="inline">{l('qc.needed')}: </dt>
               <dd className="inline font-semibold text-ink">{pace(m.requiredRunPaceSec)}</dd>
@@ -295,6 +295,12 @@ function Examples({ l }: { l: (k: LKey) => string }) {
   );
 }
 
+const Check = ({ label }: { label: string }) => (
+  <svg width="18" height="18" viewBox="0 0 18 18" role="img" aria-label={label} className="block">
+    <path d="M3 9.5 L7.5 14 L15 4.5" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="square" />
+  </svg>
+);
+
 function Compare({ l }: { l: (k: LKey) => string }) {
   type C = 'y' | 'n' | 'p';
   const rows: [LKey, C, C, C, C][] = [
@@ -304,20 +310,34 @@ function Compare({ l }: { l: (k: LKey) => string }) {
     ['cmp.r4', 'n', 'n', 'p', 'y'],
     ['cmp.r5', 'n', 'n', 'p', 'y'],
   ];
-  const word = (c: C) => l(c === 'y' ? 'cmp.yes' : c === 'n' ? 'cmp.no' : 'cmp.part');
-  const td = 'py-3.5';
+  const cell = (c: C) =>
+    c === 'y' ? (
+      <Check label={l('cmp.yes')} />
+    ) : c === 'n' ? (
+      <span className="text-[#8a877f]" role="img" aria-label={l('cmp.no')}>
+        —
+      </span>
+    ) : (
+      <span className="text-ink-3">{l('cmp.part')}</span>
+    );
+  // the Benchmrk column reads as one block: lime-tinted cells with a 2px ink frame
+  const ours = 'border-x-2 border-x-ink bg-[#f6fadf] px-5';
+  const th = 'border-b-[1.5px] border-ink px-3 py-[18px] text-left text-xs font-medium uppercase tracking-[0.06em] text-muted';
+  const td = 'border-b border-[#e4e2dc] px-3 py-4';
   return (
-    <div className="mt-10 overflow-x-auto" tabIndex={0} role="region" aria-label={l('cmp.title')}>
-      <table className="bm-table min-w-[760px]">
+    <div className="mt-9 overflow-x-auto rounded-paper border border-line bg-surface shadow-paper" tabIndex={0} role="region" aria-label={l('cmp.title')}>
+      <table className="w-full min-w-[780px] border-collapse text-[15px]">
         <thead>
           <tr>
-            <td />
+            <th scope="col" className={clsx(th, 'w-[34%] !pl-5')}>
+              {l('cmp.what')}
+            </th>
             {(['cmp.col1', 'cmp.col2', 'cmp.col3'] as LKey[]).map((k) => (
-              <th key={k} scope="col">
+              <th key={k} scope="col" className={th}>
                 {l(k)}
               </th>
             ))}
-            <th scope="col" className="!font-bold !text-ink">
+            <th scope="col" className="w-[18%] border-2 border-b-[1.5px] border-ink bg-accent px-5 py-3.5 text-left text-sm font-extrabold uppercase tracking-[0.02em] text-ink">
               {l('cmp.col4')}
             </th>
           </tr>
@@ -325,25 +345,26 @@ function Compare({ l }: { l: (k: LKey) => string }) {
         <tbody>
           {rows.map(([k, ...cells]) => (
             <tr key={k}>
-              <th scope="row" className={clsx(td, 'font-normal')}>
+              <th scope="row" className={clsx(td, '!pl-5 text-left font-medium')}>
                 {l(k)}
               </th>
               {cells.map((c, i) => (
-                <td key={i} className={clsx(td, i === 3 ? 'font-bold' : c !== 'y' && 'text-muted')}>
-                  {word(c)}
+                <td key={i} className={clsx(td, i === 3 && clsx(ours, '!border-b-[#e2e8c2]'))}>
+                  {cell(c)}
                 </td>
               ))}
             </tr>
           ))}
-          <tr>
-            <th scope="row" className={clsx(td, 'border-b-0 font-normal')}>
+          <tr className="font-mono">
+            <th scope="row" className="py-[18px] pl-5 pr-3 text-left font-sans font-bold">
               {l('cmp.r6')}
             </th>
-            {(['cmp.p1', 'cmp.p2', 'cmp.p3', 'cmp.p4'] as LKey[]).map((k, i) => (
-              <td key={k} className={clsx(td, 'border-b-0 font-mono', i === 3 && 'font-semibold')}>
+            {(['cmp.p1', 'cmp.p2', 'cmp.p3'] as LKey[]).map((k) => (
+              <td key={k} className="px-3 py-[18px]">
                 {l(k)}
               </td>
             ))}
+            <td className={clsx(ours, 'border-b-2 border-b-ink py-[18px] text-[17px] font-semibold')}>{l('cmp.p4')}</td>
           </tr>
         </tbody>
       </table>
@@ -356,7 +377,6 @@ export default function Landing() {
   const settings = useAppSettings();
   const l = (k: LKey) => L[lang]?.[k] ?? en[k];
   const beta = settings.data?.paywall_enabled !== true;
-  const price = String(settings.data?.price_text ?? '€2,50 / month · €30 / year');
   const disclaimer = DISCLAIMER[lang] ?? DISCLAIMER.en;
   const navLink = 'text-[15px] text-ink-3 hover:text-ink';
 
@@ -403,10 +423,10 @@ export default function Landing() {
 
       <main>
         {/* hero */}
-        <section className="bm-wrap flex flex-wrap items-start gap-x-16 gap-y-10 pb-16 pt-9 sm:pb-[88px] sm:pt-[72px]">
+        <section className="bm-wrap flex flex-wrap items-start gap-x-16 gap-y-10 pb-16 pt-9 sm:pb-20 sm:pt-12">
           <div className="min-w-0 flex-[1_1_480px] sm:pt-3">
             <p className="bm-kicker mb-[18px] sm:mb-7">{l('hero.kicker')}</p>
-            <h1 className="bm-display text-[clamp(52px,8vw,104px)] [overflow-wrap:anywhere]">{l('h1b')}</h1>
+            <h1 className="bm-display max-w-[14ch] text-[clamp(44px,5.2vw,76px)] !leading-[0.94] [overflow-wrap:anywhere] [text-wrap:balance]">{l('h1b')}</h1>
             <p className="mt-6 max-w-[520px] text-[17px] text-ink-2 sm:mt-8 sm:text-[19px]">{l('sub')}</p>
             <div className="mt-7 flex flex-wrap items-center gap-5 sm:mt-10">
               <Link to="/auth?mode=signup" className="bm-btn-accent w-full sm:w-auto">
@@ -423,13 +443,40 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* photo: placeholder until real race photos are delivered */}
-        <div className="bm-wrap" aria-hidden>
-          <div
-            className="h-[220px] border border-line sm:h-[440px]"
-            style={{ background: 'repeating-linear-gradient(135deg, #e4e2dc 0 14px, #dcdad3 14px 28px)' }}
-          />
-        </div>
+        {/* the app in action: an illustration with example values, not live data */}
+        <section className="bm-wrap pt-6" aria-labelledby="app-title">
+          <div className="flex flex-wrap items-center gap-x-[72px] gap-y-8 border-t-[1.5px] border-ink pt-12">
+            <div className="min-w-0 flex-[1_1_420px]">
+              <h2 id="app-title" className="bm-h2 max-w-[14ch] !text-[clamp(36px,4.4vw,56px)]">
+                {l('app.title')}
+              </h2>
+              <p className="mt-[22px] max-w-[46ch] text-ink-2">{l('app.d')}</p>
+              <dl className="mt-7 max-w-[420px] font-mono text-sm">
+                {(
+                  [
+                    ['app.r1', '1:18:41', '1:17:55'],
+                    ['app.r2', '96%', '98%'],
+                    ['app.r3', '4:45', '4:43/km'],
+                  ] as [LKey, string, string][]
+                ).map(([k, from, to], i) => (
+                  <div key={k} className={clsx('flex justify-between gap-4 border-t border-line py-2.5', i === 2 && 'border-b')}>
+                    <dt className="text-muted">{l(k)}</dt>
+                    <dd>
+                      {from} → <strong>{to}</strong>
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+              <p className="mt-3 text-xs text-muted">{l('app.note')}</p>
+            </div>
+            <div className="flex flex-[0_1_400px] justify-center">
+              <picture>
+                <source srcSet="/benchmrk-app-benchmark-log.webp" type="image/webp" />
+                <img src="/benchmrk-app-benchmark-log.png" alt={l('app.alt')} width={1000} height={1800} loading="lazy" className="block h-auto w-[400px] max-w-full" />
+              </picture>
+            </div>
+          </div>
+        </section>
 
         {/* problem */}
         <section className="bm-wrap pb-10 pt-16 sm:pt-[120px]" aria-labelledby="prob-title">
@@ -476,38 +523,68 @@ export default function Landing() {
 
         {/* compare */}
         <section className="bm-wrap pb-10 pt-16 sm:pt-[100px]" aria-labelledby="cmp-title">
-          <h2 id="cmp-title" className="bm-h2">
-            {l('cmp.title')}
-          </h2>
+          <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-4">
+            <h2 id="cmp-title" className="bm-h2">
+              {l('cmp.title')}
+            </h2>
+            <p className="max-w-[380px] text-[15px] text-muted">{l('cmp.sub')}</p>
+          </div>
           <Compare l={l} />
         </section>
 
-        {/* price */}
-        <section id="price" className="bm-wrap scroll-mt-4 py-16 sm:py-[120px]" aria-labelledby="price-title">
-          <div className="flex flex-wrap items-start gap-12 border-t-[1.5px] border-ink pt-10">
-            <div className="flex-[1_1_360px]">
-              <h2 id="price-title" className="bm-kicker">
-                {l('price.eyebrow')}
+        {/* price: same receipt form as the quick check */}
+        <section id="price" className="bm-wrap scroll-mt-4 pb-16 pt-16 sm:pb-[120px] sm:pt-[110px]" aria-labelledby="price-title">
+          <div className="flex flex-wrap items-start gap-x-20 gap-y-12 border-t-[1.5px] border-ink pt-12">
+            <div className="min-w-0 flex-[1_1_380px]">
+              <h2 id="price-title" className="bm-h2 max-w-[14ch]">
+                {l('price.title')}
               </h2>
-              <div className="mt-3 text-[clamp(88px,12vw,160px)] font-extrabold leading-[0.9] [font-stretch:72%]">{l('price.year.big')}</div>
-              <p className="mt-3 text-ink-2">
-                {l('price.year.per')} · {l('price.sub')}
-              </p>
-              <p className="mt-2 font-mono text-[13px] text-muted">{price}</p>
-              {beta && <p className="mt-4 inline-block bm-mark">{l('price.beta')}</p>}
+              <p className="mt-5 max-w-[44ch] text-ink-2">{l('price.lead')}</p>
+              <ol className="m-0 mt-8 max-w-[440px] list-none p-0">
+                {(
+                  [
+                    ['price.free', 'price.s1'],
+                    ['price.free', 'price.s2'],
+                    [null, 'price.s3'],
+                  ] as [LKey | null, LKey][]
+                ).map(([tag, k], i) => (
+                  <li key={k} className={clsx('flex gap-[18px] border-t border-line py-3.5', i === 2 && 'border-b')}>
+                    <span className={clsx('min-w-[64px] font-mono', tag ? 'text-muted' : 'font-semibold text-ink')}>{tag ? l(tag) : l('price.year.big')}</span>
+                    <span>{l(k)}</span>
+                  </li>
+                ))}
+              </ol>
             </div>
-            <div className="flex-[1_1_420px]">
-              <ul className="m-0 list-none p-0">
-                {[l('price.f1'), l('price.f2'), l('price.f3'), l('price.f4')].map((x) => (
-                  <li key={x} className="border-b border-line py-3.5">
-                    {x}
+
+            <div className="relative w-full min-w-0 flex-[0_1_440px] rounded-paper border border-line bg-surface shadow-paper sm:-rotate-[0.5deg]">
+              {beta && (
+                <div className="absolute -top-4 right-[22px] -rotate-[8deg] border-2 border-ink bg-surface px-2.5 py-1 font-mono text-[11px] font-semibold uppercase tracking-[0.08em] opacity-[0.85]" aria-hidden>
+                  {l('price.stamp')}
+                </div>
+              )}
+              <div className={clsx(PAD, DASHED, 'flex flex-wrap items-baseline justify-between gap-x-3 border-b pb-4 pt-[22px]')}>
+                <h3 className="text-lg font-extrabold uppercase tracking-[0.02em] [font-stretch:80%]">{l('price.rc.title')}</h3>
+                <span className="font-mono text-xs text-muted">{l('price.rc.season')}</span>
+              </div>
+              <ul className={clsx(PAD, 'm-0 list-none pb-1.5 pt-2.5 font-mono text-sm')}>
+                {(['price.i1', 'price.i2', 'price.i3', 'price.i4', 'price.i5'] as LKey[]).map((k, i) => (
+                  <li key={k} className={clsx('flex justify-between gap-4 py-[9px]', i < 4 && 'border-b border-dashed border-[#c9c5ba]')}>
+                    <span>{l(k)}</span>
+                    <span className="shrink-0">{l('price.incl')}</span>
                   </li>
                 ))}
               </ul>
-              <div className="mt-8">
-                <Link to="/auth?mode=signup" className="bm-btn-accent w-full sm:w-auto">
+              <div className="mx-[18px] flex items-baseline justify-between gap-3 border-t-[1.5px] border-ink pb-1 pt-4 sm:mx-[26px]">
+                <span className="font-mono font-semibold">{l('price.total')}</span>
+                <span className="text-[72px] font-extrabold leading-[0.9] [font-stretch:72%]">{l('price.year.big')}</span>
+              </div>
+              <p className={clsx(PAD, 'pb-[18px] text-right font-mono text-[13px] text-muted')}>{l('price.month')}</p>
+              <div className={clsx(PAD, 'pb-6')}>
+                <Link to="/auth?mode=signup" className="bm-btn-accent w-full !justify-between px-[18px]">
                   {l('cta')}
+                  <span aria-hidden>→</span>
                 </Link>
+                <p className="mt-3 text-xs leading-normal text-muted">{l('price.f4')}</p>
               </div>
             </div>
           </div>
