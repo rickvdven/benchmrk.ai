@@ -23,7 +23,7 @@ npx vitest run         # engine-tests (51)
 npm run build:api      # na elke wijziging in server/ – api/*.mjs wordt gecommit
 npm run build          # productie-build van de frontend
 ```
-Deploy: `npx vercel@latest deploy --prod` (Vercel CLI, ingelogd op team NM). Nog geen automatische deploy vanuit GitHub.
+Deploy: Push/merge naar main = automatisch live via Vercel; elke andere branch krijgt een preview-URL.
 
 ## Structuur
 - `src/engine/` – pure trainingslogica, volledig getest (`engine.test.ts`):

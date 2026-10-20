@@ -44,6 +44,7 @@
     "auth.haveAccount": "¿Ya tienes cuenta?",
     "auth.forgot": "¿Olvidaste tu contraseña?",
     "auth.resetSent": "Si la dirección existe, te llegará un enlace para restablecerla.",
+    "auth.confirmSent": "Revisa tu bandeja de entrada para confirmar tu correo electrónico.",
     "auth.newPassword": "Nueva contraseña",
     "auth.setPassword": "Guardar contraseña",
     "auth.ref": "Código de invitación (opcional)",

@@ -44,6 +44,7 @@
     "auth.haveAccount": "Schon ein Konto?",
     "auth.forgot": "Passwort vergessen?",
     "auth.resetSent": "Falls die Adresse existiert, ist ein Link zum Zurücksetzen unterwegs.",
+    "auth.confirmSent": "Schau in dein Postfach, um deine E-Mail-Adresse zu bestätigen.",
     "auth.newPassword": "Neues Passwort",
     "auth.setPassword": "Passwort festlegen",
     "auth.ref": "Einladungscode (optional)",
