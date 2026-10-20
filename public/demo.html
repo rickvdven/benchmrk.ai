@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>RoxEngine · Demo voor gyms en trainers</title>
+<meta name="description" content="Train je leden naar hun HYROX-doeltijd. Bekijk in 2 minuten hoe RoxEngine werkt voor gyms en personal trainers." />
+<meta name="theme-color" content="#0b0c0e" />
+<link rel="icon" href="/favicon.svg" />
+<meta property="og:type" content="video.other" />
+<meta property="og:title" content="RoxEngine · Train je leden naar hun HYROX-doeltijd" />
+<meta property="og:description" content="2 minuten demo voor gym-eigenaren en personal trainers." />
+<meta property="og:url" content="https://roxengine-beta.vercel.app/demo" />
+<meta property="og:image" content="https://roxengine-beta.vercel.app/demo/poster.jpg" />
+<meta property="og:image:width" content="1280" /><meta property="og:image:height" content="720" />
+<meta property="og:video" content="https://roxengine-beta.vercel.app/demo/roxengine-demo-nl.mp4" />
+<meta property="og:video:type" content="video/mp4" />
+<meta property="og:video:width" content="1920" /><meta property="og:video:height" content="1080" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://roxengine-beta.vercel.app/demo/poster.jpg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;800&display=swap" rel="stylesheet" />
+<style>
+:root{--bg:#0b0c0e;--panel:#14161a;--line:#262a31;--fg:#f2f3f5;--mute:#9aa1ab;--lime:#d4ff3a}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--fg);font-family:Geist,system-ui,sans-serif}
+.wrap{max-width:1040px;margin:0 auto;padding:24px 16px 56px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:40px}
+.logo{font-weight:800;letter-spacing:-.02em;font-size:20px;text-decoration:none;color:var(--fg)}.logo b{color:var(--lime)}
+.btn{display:inline-block;background:var(--lime);color:#0b0c0e;font-weight:600;padding:12px 20px;border-radius:12px;text-decoration:none}
+.btn.ghost{background:transparent;color:var(--fg);border:1px solid var(--line)}
+h1{font-size:clamp(30px,5vw,52px);line-height:1.05;letter-spacing:-.03em;margin:0 0 12px;font-weight:800}
+p.lead{color:var(--mute);font-size:18px;margin:0 0 28px;max-width:640px}
+video{width:100%;aspect-ratio:16/9;border-radius:16px;border:1px solid var(--line);background:#000;display:block}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin:32px 0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px}
+.card h3{margin:0 0 6px;font-size:17px}.card p{margin:0;color:var(--mute);line-height:1.5}
+.cta{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.share{margin-top:28px;color:var(--mute);font-size:14px}
+.share input{width:100%;max-width:420px;background:var(--panel);border:1px solid var(--line);color:var(--fg);border-radius:10px;padding:10px 12px;font:inherit}
+footer{margin-top:48px;color:var(--mute);font-size:13px;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><a class="logo" href="/">ROX<b>ENGINE</b></a><a class="btn ghost" href="/">Naar de app</a></header>
+  <h1>Train je leden naar hun HYROX-doeltijd</h1>
+  <p class="lead">In twee minuten: hoe RoxEngine voor elk lid een plan bouwt richting de doeltijd, en hoe jouw gym of PT-praktijk daaraan verdient.</p>
+  <video controls playsinline preload="metadata" poster="/demo/poster.jpg">
+    <source src="/demo/roxengine-demo-nl.mp4" type="video/mp4" />
+    <track kind="subtitles" srclang="nl" label="Nederlands" src="/demo/roxengine-demo-nl.vtt" />
+  </video>
+  <div class="grid">
+    <div class="card"><h3>Jouw opbouw, jouw sims</h3><p>Stel één keer je eigen sim-opbouw in; al je leden trainen ernaar.</p></div>
+    <div class="card"><h3>Gratis voor jou en je coaches</h3><p>Leden koppelen zich via jouw gymlink of gymcode.</p></div>
+    <div class="card"><h3>20% per betalend lid</h3><p>Op elk abonnement, elk jaar opnieuw.</p></div>
+  </div>
+  <div class="cta"><a class="btn" href="/invite">Word partner</a><a class="btn ghost" href="/">Probeer RoxEngine</a></div>
+  <div class="share">Deel deze pagina:<br><input readonly value="https://roxengine-beta.vercel.app/demo" onclick="this.select()" /></div>
+  <footer>RoxEngine geeft algemene trainingsinformatie op basis van publieke sportwetenschap. Het is geen medisch advies en vervangt geen gecertificeerde trainer, fysiotherapeut of arts.</footer>
+</div>
+</body>
+</html>

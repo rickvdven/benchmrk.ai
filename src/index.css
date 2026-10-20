@@ -1,0 +1,34 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: 11 12 14;
+  --panel: 20 22 26;
+  --panel2: 28 31 36;
+  --line: 44 48 55;
+  --fg: 236 238 240;
+  --muted: 160 166 175;
+  --volt: 212 255 58;
+  --warn: 255 184 77;
+  --bad: 255 99 99;
+  --good: 94 222 148;
+  --sky: 110 190 255;
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --series-3: #199e70;
+  color-scheme: dark;
+}
+html, body { background: rgb(var(--bg)); color: rgb(var(--fg)); }
+body { font-family: Geist, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.stat { font-family: "Geist Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+.panel { @apply rounded-xl border border-line bg-panel; }
+.label { @apply text-xs font-medium text-muted; }
+.input { @apply h-10 w-full rounded-lg border border-line bg-panel2 px-3 text-sm text-fg outline-none placeholder:text-muted/60 focus:border-volt/70; }
+.btn { @apply inline-flex h-10 items-center justify-center gap-2 rounded-lg px-4 text-sm font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed; }
+.btn-primary { @apply btn bg-volt text-black hover:bg-volt/90; }
+.btn-ghost { @apply btn border border-line bg-transparent text-fg hover:bg-panel2; }
+.btn-sm { @apply h-8 px-3 text-xs; }
+.chip { @apply inline-flex items-center gap-1 rounded-md bg-panel2 px-1.5 py-0.5 text-[11px] text-muted; }
+.eyebrow { @apply text-xs font-semibold uppercase tracking-widest text-volt; }
+input[type=number].no-spin::-webkit-inner-spin-button { -webkit-appearance: none; }
