@@ -7,6 +7,10 @@ import App from './App';
 import { AuthProvider } from './data/hooks';
 import { I18nProvider } from './lib/i18n';
 import { flush } from './lib/queue';
+import '@fontsource-variable/archivo/wdth.css';
+import '@fontsource/ibm-plex-mono/400.css';
+import '@fontsource/ibm-plex-mono/500.css';
+import '@fontsource/ibm-plex-mono/600.css';
 import './index.css';
 
 const qc = new QueryClient({ defaultOptions: { queries: { staleTime: 30_000, refetchOnWindowFocus: true, retry: 1 } } });
@@ -40,7 +44,7 @@ createRoot(document.getElementById('root')!).render(
         <BrowserRouter>
           <AuthProvider>
             <App />
-            <Toaster theme="dark" position="top-center" richColors />
+            <Toaster theme="light" position="top-center" richColors />
           </AuthProvider>
         </BrowserRouter>
       </I18nProvider>
