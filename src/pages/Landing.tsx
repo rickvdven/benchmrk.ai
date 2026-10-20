@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import clsx from 'clsx';
 import { DISCLAIMER } from '../components/Disclaimer';
@@ -548,6 +548,11 @@ export default function Landing() {
   const beta = settings.data?.paywall_enabled !== true;
   const disclaimer = DISCLAIMER[lang] ?? DISCLAIMER.en;
   const navLink = 'text-[15px] text-ink-3 hover:text-ink';
+  // links from the static guides land on /#check: the page renders after the hash jump, so scroll once it exists
+  useEffect(() => {
+    const id = window.location.hash.slice(1);
+    if (id) requestAnimationFrame(() => document.getElementById(id)?.scrollIntoView());
+  }, []);
 
   const problems = [
     { h: l('p1.h'), d: l('p1.d') },
@@ -776,9 +781,14 @@ export default function Landing() {
       <footer className="border-t border-line">
         <div className="bm-wrap flex flex-wrap justify-between gap-6 pb-12 pt-8 text-[13px] text-muted">
           <p className="max-w-3xl">{disclaimer.short}</p>
-          <Link to="/science" className="text-ink-3 underline">
-            {disclaimer.sources}
-          </Link>
+          <div className="flex gap-5">
+            <a href="/nl/gids" className="text-ink-3 underline">
+              {l('foot.guides')}
+            </a>
+            <Link to="/science" className="text-ink-3 underline">
+              {disclaimer.sources}
+            </Link>
+          </div>
         </div>
       </footer>
     </div>
