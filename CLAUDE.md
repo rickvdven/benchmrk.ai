@@ -23,7 +23,7 @@ npx vitest run         # engine-tests (51)
 npm run build:api      # na elke wijziging in server/ – api/*.mjs wordt gecommit
 npm run build          # productie-build van de frontend
 ```
-Deploy: Push/merge naar main = automatisch live via Vercel; elke andere branch krijgt een preview-URL.
+Deploy: Merge naar main = automatisch live via Vercel; elke andere branch krijgt een preview-URL. Database-wijzigingen: zet SQL klaar, Rick voert die uit in Supabase.
 
 ## Structuur
 - `src/engine/` – pure trainingslogica, volledig getest (`engine.test.ts`):
