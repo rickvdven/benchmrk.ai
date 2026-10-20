@@ -2,7 +2,6 @@
   "badge": "Basado en datos reales de carreras HYROX, zonas Friel %LTHR y principios de WOD-Science",
   "h1a": "Destroza tu PR en HYROX.",
   "h1b": "Sabe exactamente dónde están tus minutos.",
-  "sub": "Benchmrk construye tu plan sobre tu propio umbral, predice tu tiempo final a partir de carreras + estaciones + Roxzone y se recalibra tras cada Benchmark — individual o Doubles, Open o Pro, mujeres y hombres.",
   "cta": "Empieza gratis",
   "how": "Mira cómo funciona",
   "tick1": "Plan listo en 5 minutos",
@@ -184,5 +183,11 @@
   "an.pacer": "{name} marca el ritmo de carrera ({pace}).",
   "an.split": "Reparto por estación:",
   "an.focus": "Fuerza específica cada semana en las dos estaciones más débiles: {stations}.",
-  "an.and": " y "
+  "an.and": " y ",
+  "land.sub": "Un plan de 16 semanas basado en tu propio umbral y construido en torno al compromised running: correr con las piernas cansadas. Con una predicción honesta de tu tiempo final que incluye las estaciones y cinco benchmarks que lo recalibran todo — en solitario o en doubles.",
+  "land.f5": "Entrena donde entrenas",
+  "land.f5d": "Vincula tu gimnasio y sigue su programa de HYROX. Planifica en torno a los WODs que no decides tú, o entrena en casa con lo que tengas. Tu plan cuenta con el lugar y el material de cada día.",
+  "land.f6": "Construido en torno al compromised running",
+  "land.f6d": "En un estudio con atletas populares, más del 60 % del tiempo de carrera se dedicó a correr. Casi cada kilómetro empieza con las piernas cansadas. Por eso tu plan gira en torno a correr después de las estaciones.",
+  "land.f6link": "Ver la investigación"
 }

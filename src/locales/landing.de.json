@@ -2,7 +2,6 @@
   "badge": "Basierend auf HYROX-Renndaten, Friel-%LTHR-Zonen und WOD-Science-Prinzipien",
   "h1a": "Knack deinen HYROX PR.",
   "h1b": "Wisse genau, wo deine Minuten liegen.",
-  "sub": "Benchmrk baut deinen Plan auf deiner eigenen Schwelle auf, prognostiziert deine Zielzeit aus Runs + Stations + Roxzone und kalibriert nach jedem Benchmark neu — solo oder Doubles, Open oder Pro, Frauen und Männer.",
   "cta": "Kostenlos starten",
   "how": "So funktioniert's",
   "tick1": "Plan in 5 Minuten fertig",
@@ -184,5 +183,11 @@
   "an.pacer": "{name} bestimmt das Lauftempo ({pace}).",
   "an.split": "Aufteilung pro Station:",
   "an.focus": "Jede Woche Stationskraft für die zwei schwächsten Stationen: {stations}.",
-  "an.and": " und "
+  "an.and": " und ",
+  "land.sub": "Ein 16-Wochen-Plan auf Basis deiner eigenen Schwelle, aufgebaut rund um Compromised Running: Laufen mit müden Beinen. Mit einer ehrlichen Zielzeit-Prognose inklusive deiner Stationen und fünf Benchmarks, die alles neu kalibrieren — solo oder Doubles.",
+  "land.f5": "Trainiere, wo du trainierst",
+  "land.f5d": "Verknüpfe dein Gym und folge seinem HYROX-Programm. Plane WODs ein, auf die du keinen Einfluss hast, oder trainiere zu Hause mit dem, was du hast. Dein Plan rechnet mit dem Ort und dem Material jedes Tages.",
+  "land.f6": "Aufgebaut rund um Compromised Running",
+  "land.f6d": "In einer Studie mit Freizeitathleten entfielen mehr als 60 % der Wettkampfzeit aufs Laufen. Fast jeder Kilometer beginnt mit müden Beinen. Deshalb dreht sich dein Plan ums Laufen nach den Stationen.",
+  "land.f6link": "Zur Forschung"
 }
