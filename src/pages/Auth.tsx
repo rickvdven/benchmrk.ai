@@ -66,7 +66,7 @@ export default function AuthPage() {
             /* ignore */
           }
         }
-        if (!data.session) setMsg('Check your inbox to confirm your email.');
+        if (!data.session) setMsg(t('auth.confirmSent'));
       } else if (mode === 'forgot') {
         await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/auth?mode=reset' });
         setMsg(t('auth.resetSent'));

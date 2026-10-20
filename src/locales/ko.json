@@ -44,6 +44,7 @@
     "auth.haveAccount": "이미 계정이 있나요?",
     "auth.forgot": "비밀번호를 잊으셨나요?",
     "auth.resetSent": "등록된 주소라면 재설정 링크가 발송돼요.",
+    "auth.confirmSent": "받은편지함에서 이메일 주소를 인증해 주세요.",
     "auth.newPassword": "새 비밀번호",
     "auth.setPassword": "비밀번호 설정",
     "auth.ref": "초대 코드 (선택)",
