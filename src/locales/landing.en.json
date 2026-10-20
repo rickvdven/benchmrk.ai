@@ -182,5 +182,7 @@
   "an.noleak": "No station is slower than mid-pack. Their time is in the running pace.",
   "an.plan": "Plan",
   "an.pacer": "{name} sets the running pace ({pace}).",
-  "an.split": "Turns per station:"
+  "an.split": "Turns per station:",
+  "an.focus": "Station strength every week on the two weakest stations: {stations}.",
+  "an.and": " and "
 }

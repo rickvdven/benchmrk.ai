@@ -182,5 +182,7 @@
   "an.noleak": "Geen enkel station zit boven de middenmoot. Hun tijd zit in het looptempo.",
   "an.plan": "Plan",
   "an.pacer": "{name} bepaalt het looptempo ({pace}).",
-  "an.split": "Verdeling van de beurten per station:"
+  "an.split": "Verdeling van de beurten per station:",
+  "an.focus": "Elke week stationkracht op de twee zwakste stations: {stations}.",
+  "an.and": " en "
 }

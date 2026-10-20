@@ -182,5 +182,7 @@
   "an.noleak": "Ninguna estación es más lenta que el nivel medio. Su tiempo está en el ritmo de carrera.",
   "an.plan": "Plan",
   "an.pacer": "{name} marca el ritmo de carrera ({pace}).",
-  "an.split": "Reparto por estación:"
+  "an.split": "Reparto por estación:",
+  "an.focus": "Fuerza específica cada semana en las dos estaciones más débiles: {stations}.",
+  "an.and": " y "
 }

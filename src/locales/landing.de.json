@@ -182,5 +182,7 @@
   "an.noleak": "Keine Station liegt über dem Mittelfeld. Ihre Zeit steckt im Lauftempo.",
   "an.plan": "Plan",
   "an.pacer": "{name} bestimmt das Lauftempo ({pace}).",
-  "an.split": "Aufteilung pro Station:"
+  "an.split": "Aufteilung pro Station:",
+  "an.focus": "Jede Woche Stationskraft für die zwei schwächsten Stationen: {stations}.",
+  "an.and": " und "
 }

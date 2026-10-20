@@ -16,6 +16,8 @@ import {
   teamModel,
   stationLabel,
   soloStationTime,
+  weakestStations,
+  DEFAULT_BASELINES,
   fmtMmss,
   todayISO,
   addDays,
@@ -267,7 +269,7 @@ function Proof({ l }: { l: (k: LKey) => string }) {
   );
 }
 
-type Leak = { station: Station; sec: number; loss: number };
+type Leak = { station: Station; sec: number; loss: number; excess: number };
 type Analysis = {
   k: 'a' | 'b' | 'c';
   name: string;
@@ -278,12 +280,13 @@ type Analysis = {
   proj: number;
   chance: number;
   leaks: Leak[];
+  focus: Station[];
   team?: { pacer: string; pace: number; splits: { station: Station; a: number; b: number }[]; names: [string, string] };
 };
 
-/** Stations ordered by time lost against the engine's reference (mid-pack, 3 stars); only real losses. */
+/** Doubles: stations where the team loses time against the same pair at mid-pack level; only real losses. */
 function leaksOf(stations: Record<Station, number>, mid: (s: Station) => number): Leak[] {
-  return STATIONS.map((st) => ({ station: st, sec: stations[st], loss: stations[st] - mid(st) }))
+  return STATIONS.map((st) => ({ station: st, sec: stations[st], loss: stations[st] - mid(st), excess: stations[st] - mid(st) }))
     .filter((x) => x.loss > 0)
     .sort((x, y) => y.loss - x.loss)
     .slice(0, 3);
@@ -303,9 +306,17 @@ function Examples({ l }: { l: (k: LKey) => string }) {
     const solo = (k: 'a' | 'b', p: Profile): Analysis => {
       const m = raceModel(p, today);
       const mid: Athlete = { ...p.athlete, stationStars: stars(), stationTimes: {} };
+      // same ranking the plan uses for its strength focus (time / mid-pack), so page and plan agree
+      const leaks = weakestStations(p.athlete, p.category, DEFAULT_BASELINES, 3)
+        .map((st) => {
+          const ref = soloStationTime(mid, p.category, st);
+          const sec = soloStationTime(p.athlete, p.category, st);
+          return { station: st, sec, loss: sec - ref, excess: sec / ref - 1 };
+        })
+        .filter((x) => x.loss > 0);
       return {
         k, ...split(`ex.${k}.name` as LKey), goal: p.goalSec, thr: pace(p.athlete.thresholdPaceSec), weeks: m.weeksLeft,
-        proj: m.projected.finishSec, chance: m.chance, leaks: leaksOf(m.current.stations, (st) => soloStationTime(mid, p.category, st)),
+        proj: m.projected.finishSec, chance: m.chance, leaks, focus: m.weakestStations,
       };
     };
     const race = addDays(today, 105);
@@ -318,7 +329,7 @@ function Examples({ l }: { l: (k: LKey) => string }) {
       solo('b', prof(MARK, 'solo_pro', 4500, 12)),
       {
         k: 'c', ...split('ex.c.name'), goal: 3900, thr: `${pace(RICK.thresholdPaceSec)} / ${pace(TOM.thresholdPaceSec)}`, weeks: Math.floor(105 / 7),
-        proj: tm.projectedFinishSec, chance: tm.chance, leaks: leaksOf(teamSec, (st) => ref.splits.find((x) => x.station === st)!.teamSec),
+        proj: tm.projectedFinishSec, chance: tm.chance, focus: [], leaks: leaksOf(teamSec, (st) => ref.splits.find((x) => x.station === st)!.teamSec),
         team: {
           pacer: tm.pacer === 'A' ? RICK.name : TOM.name, pace: tm.runPaceSec, names: [RICK.name, TOM.name],
           splits: tm.splits.filter((x) => x.lead !== 'even').map((x) => ({ station: x.station, a: x.aSegments, b: x.bSegments })),
@@ -328,7 +339,7 @@ function Examples({ l }: { l: (k: LKey) => string }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lang, pace]);
   const r = rows[sel];
-  const maxLoss = Math.max(1, ...r.leaks.map((x) => x.loss));
+  const maxExcess = Math.max(...r.leaks.map((x) => x.excess), 1e-9);
   const onKey = (e: React.KeyboardEvent) => {
     const step = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[e.key];
     const next = step ? (sel + step + rows.length) % rows.length : e.key === 'Home' ? 0 : e.key === 'End' ? rows.length - 1 : null;
@@ -412,7 +423,7 @@ function Examples({ l }: { l: (k: LKey) => string }) {
                   <li key={x.station} className="grid grid-cols-[110px_minmax(0,1fr)_auto] items-center gap-3.5 border-b border-[#e4e2dc] py-2.5 font-mono text-sm sm:grid-cols-[150px_minmax(0,1fr)_auto]">
                     <span>{stationLabel(lang, x.station)}</span>
                     <span className="relative h-2.5 bg-[#e4e2dc]" aria-hidden>
-                      <span className="absolute inset-y-0 left-0 bg-ink" style={{ width: `${(x.loss / maxLoss) * 100}%` }} />
+                      <span className="absolute inset-y-0 left-0 bg-ink" style={{ width: `${(x.excess / maxExcess) * 100}%` }} />
                     </span>
                     <span className="whitespace-nowrap text-right">
                       {fmtMmss(x.sec)} · +{fmtMmss(x.loss)}
@@ -443,7 +454,7 @@ function Examples({ l }: { l: (k: LKey) => string }) {
                 </ul>
               </div>
             ) : (
-              <p className="text-ink-2">{l(`ex.${r.k}.focus` as LKey)}</p>
+              <p className="text-ink-2">{l('an.focus').replace('{stations}', r.focus.map((st) => stationLabel(lang, st)).join(l('an.and')))}</p>
             )}
           </div>
         </div>
