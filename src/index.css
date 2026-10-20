@@ -54,3 +54,19 @@ body { font-family: 'Archivo Variable', Archivo, system-ui, sans-serif; font-siz
 .chip { @apply inline-flex items-center gap-1 rounded-md bg-panel2 px-1.5 py-0.5 text-[11px] text-ink-3; }
 .eyebrow { @apply font-mono text-xs font-medium uppercase tracking-widest text-ink-3; }
 input[type=number].no-spin::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+/* Design A "Uitslagenlijst" – bouwstenen voor de landingspagina */
+.bm-wrap { @apply mx-auto w-full max-w-[1200px] px-4 sm:px-6; }
+.bm-display { font-weight: 800; font-stretch: var(--bm-display-stretch); text-transform: uppercase; line-height: 0.92; letter-spacing: -0.01em; }
+.bm-h2 { @apply m-0 font-extrabold uppercase leading-none; font-stretch: 75%; font-size: clamp(38px, 5vw, 60px); overflow-wrap: break-word; hyphens: auto; }
+.bm-kicker { @apply font-mono text-[13px] uppercase tracking-[0.06em] text-muted; }
+.bm-btn-accent { @apply inline-flex min-h-[48px] items-center justify-center rounded-[3px] bg-accent px-[26px] py-3 text-[17px] font-bold text-ink hover:bg-[#c8e43a]; }
+.bm-btn-ink { @apply flex min-h-[48px] items-center justify-between gap-3 rounded-paper bg-ink px-[18px] py-3 font-bold text-white hover:bg-black; }
+.bm-btn-outline { @apply inline-flex min-h-[44px] items-center rounded-[3px] border border-[#8a877f] px-4 py-2 text-[15px] text-ink hover:border-ink; }
+.bm-field { @apply flex flex-col gap-1 text-xs text-[#5e5b53]; }
+.bm-input { @apply min-h-[40px] w-full rounded-none border-0 border-b-[1.5px] border-ink bg-transparent px-0 py-2 font-mono text-[15px] text-ink outline-none; }
+.bm-input:focus-visible { outline: 2px solid var(--bm-ink); outline-offset: 2px; }
+.bm-table { @apply w-full border-collapse text-[15px]; }
+.bm-table thead th, .bm-table thead td { @apply border-b-[1.5px] border-ink px-3 py-3 text-left text-xs font-medium uppercase tracking-[0.06em] text-muted first:pl-0 last:pr-0; }
+.bm-table tbody th, .bm-table tbody td { @apply border-b border-line px-3 text-left first:pl-0 last:pr-0; }
+.bm-mark { @apply bg-accent px-1 font-bold text-ink; box-decoration-break: clone; -webkit-box-decoration-break: clone; }

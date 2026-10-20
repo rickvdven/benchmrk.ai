@@ -2,7 +2,7 @@ import { useEffect, useState, type ReactNode } from 'react';
 import { toast } from 'sonner';
 import { useQueryClient } from '@tanstack/react-query';
 import { DisclaimerFooter } from './Disclaimer';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
 import { Activity, CalendarDays, Gauge, HeartPulse, Gift, LogOut, NotebookPen, Settings, Shield, Users } from 'lucide-react';
 import { supabase } from '../lib/supabase';
@@ -19,7 +19,16 @@ const NAV = [
   { to: '/invite', key: 'nav.invite', icon: Gift },
 ] as const;
 
-function LangSwitch() {
+/** Wordmark: BENCH + MRK on a lime block (lime only as a surface, never as text). */
+export function Wordmark({ className }: { className?: string }) {
+  return (
+    <span className={clsx('font-extrabold uppercase tracking-[0.02em] text-ink [font-stretch:80%]', className)}>
+      BENCH<span className="ml-px bg-accent px-[3px]">MRK</span>
+    </span>
+  );
+}
+
+export function LangSwitch({ className }: { className?: string }) {
   const { lang, setLang } = useI18n();
   const { user } = useAuth();
   return (
@@ -31,7 +40,7 @@ function LangSwitch() {
         setLang(next);
         if (user) supabase.from('profiles').update({ lang: next }).eq('id', user.id).then(() => undefined);
       }}
-      className="h-8 rounded-lg border-0 bg-transparent px-1 text-xs font-semibold uppercase text-muted hover:bg-panel2 hover:text-fg focus:outline-none"
+      className={clsx('rounded border-0 bg-transparent px-1 font-semibold uppercase text-ink-3 hover:bg-panel2 hover:text-fg', className ?? 'h-8 text-xs')}
     >
       {LANGS.map((l) => (
         <option key={l.value} value={l.value} className="bg-panel text-fg">
@@ -58,6 +67,7 @@ export function Layout({ children }: { children: ReactNode }) {
   useRealtime();
   useEffect(() => onQueueChange(setPending) as unknown as () => void, []);
   const qc = useQueryClient();
+  const loc = useLocation();
   // apply a remembered invite / gym code once the visitor is signed in (password or Google)
   useEffect(() => {
     if (!user) return;
@@ -104,13 +114,15 @@ export function Layout({ children }: { children: ReactNode }) {
     });
   }, [user]);
 
+  // the public landing page brings its own header and footer (design A)
+  if (!user && loc.pathname === '/') return <>{children}</>;
   return (
     <div className="min-h-screen">
       <header className="sticky top-0 z-40 border-b border-line bg-bg/85 backdrop-blur">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
-          <Link to={user ? '/cockpit' : '/'} className="text-lg font-extrabold tracking-tight">
-            BENCH<span className="text-volt">MRK</span>
-            <span className="ml-2 rounded bg-volt/15 px-1.5 py-0.5 align-middle text-[10px] font-bold uppercase tracking-wider text-volt">{t('common.beta')}</span>
+          <Link to={user ? '/cockpit' : '/'} className="text-xl">
+            <Wordmark />
+            <span className="ml-2 rounded-sm border border-line px-1.5 py-0.5 align-middle font-mono text-[10px] font-medium uppercase tracking-wider text-ink-3">{t('common.beta')}</span>
           </Link>
           <div className="flex items-center gap-1">
             {user && (
@@ -150,7 +162,7 @@ export function Layout({ children }: { children: ReactNode }) {
                 </button>
               </>
             ) : (
-              <Link to="/auth" className="btn-primary btn-sm">
+              <Link to="/auth" className="btn-ghost btn-sm border-[#8a877f]">
                 {t('nav.signin')}
               </Link>
             )}
