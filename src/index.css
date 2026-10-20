@@ -3,32 +3,70 @@
 @tailwind utilities;
 
 :root {
-  --bg: 11 12 14;
-  --panel: 20 22 26;
-  --panel2: 28 31 36;
-  --line: 44 48 55;
-  --fg: 236 238 240;
-  --muted: 160 166 175;
-  --volt: 212 255 58;
-  --warn: 255 184 77;
-  --bad: 255 99 99;
-  --good: 94 222 148;
-  --sky: 110 190 255;
+  /* Design A "Uitslagenlijst" (licht) – bron: benchmrk-a-licht/tokens.css */
+  --bm-ground: #efeeea;
+  --bm-surface: #ffffff;
+  --bm-surface-2: #e4e2dc;
+  --bm-line: #d6d3cb;
+  --bm-ink: #141413;
+  --bm-ink-2: #3a3833;
+  --bm-ink-3: #4a4843;
+  --bm-muted: #6a675f;
+  --bm-accent: #d4f046; /* alleen als vlak, nooit als tekstkleur op licht */
+  --bm-on-accent: #141413;
+  --bm-seg-runs: #141413;
+  --bm-seg-stations: #77736a;
+  --bm-seg-roxzone: #c3bfb3;
+  --bm-display-stretch: 72%;
+  --bm-shadow-paper: 0 1px 0 #d6d3cb, 0 18px 40px rgba(20, 20, 19, 0.12);
+  --bm-max: 1200px;
+
+  /* bestaande namen, gekoppeld aan het lichte palet (RGB-triplets voor Tailwind-alpha) */
+  --bg: 239 238 234;
+  --panel: 255 255 255;
+  --panel2: 228 226 220;
+  --line: 214 211 203;
+  --fg: 20 20 19;
+  --muted: 106 103 95;
+  --volt: 212 240 70;
+  --volt-text: 20 20 19; /* text-volt: lime is op licht onleesbaar, dus inkt */
+  --warn: 143 86 0;
+  --bad: 180 35 24;
+  --good: 23 106 63;
+  --sky: 31 92 158;
   --series-1: #3987e5;
   --series-2: #d95926;
   --series-3: #199e70;
-  color-scheme: dark;
+  color-scheme: light;
 }
-html, body { background: rgb(var(--bg)); color: rgb(var(--fg)); }
-body { font-family: Geist, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
-.stat { font-family: "Geist Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+html, body { background: var(--bm-ground); color: var(--bm-ink); }
+body { font-family: 'Archivo Variable', Archivo, system-ui, sans-serif; font-size: 17px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+::selection { background: var(--bm-accent); color: var(--bm-on-accent); }
+:focus-visible { outline: 2px solid var(--bm-ink); outline-offset: 3px; }
+.stat, .tabular { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
 .panel { @apply rounded-xl border border-line bg-panel; }
 .label { @apply text-xs font-medium text-muted; }
-.input { @apply h-10 w-full rounded-lg border border-line bg-panel2 px-3 text-sm text-fg outline-none placeholder:text-muted/60 focus:border-volt/70; }
+.input { @apply h-10 w-full rounded-lg border border-line bg-panel2 px-3 text-sm text-fg outline-none placeholder:text-muted/60 focus:border-fg; }
 .btn { @apply inline-flex h-10 items-center justify-center gap-2 rounded-lg px-4 text-sm font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed; }
-.btn-primary { @apply btn bg-volt text-black hover:bg-volt/90; }
+.btn-primary { @apply btn bg-volt text-ink hover:bg-volt/85; }
 .btn-ghost { @apply btn border border-line bg-transparent text-fg hover:bg-panel2; }
 .btn-sm { @apply h-8 px-3 text-xs; }
-.chip { @apply inline-flex items-center gap-1 rounded-md bg-panel2 px-1.5 py-0.5 text-[11px] text-muted; }
-.eyebrow { @apply text-xs font-semibold uppercase tracking-widest text-volt; }
+.chip { @apply inline-flex items-center gap-1 rounded-md bg-panel2 px-1.5 py-0.5 text-[11px] text-ink-3; }
+.eyebrow { @apply font-mono text-xs font-medium uppercase tracking-widest text-ink-3; }
 input[type=number].no-spin::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+/* Design A "Uitslagenlijst" – bouwstenen voor de landingspagina */
+.bm-wrap { @apply mx-auto w-full max-w-[1200px] px-4 sm:px-6; }
+.bm-display { font-weight: 800; font-stretch: var(--bm-display-stretch); text-transform: uppercase; line-height: 0.92; letter-spacing: -0.01em; }
+.bm-h2 { @apply m-0 font-extrabold uppercase leading-none; font-stretch: 75%; font-size: clamp(38px, 5vw, 60px); overflow-wrap: break-word; hyphens: auto; }
+.bm-kicker { @apply font-mono text-[13px] uppercase tracking-[0.06em] text-muted; }
+.bm-btn-accent { @apply inline-flex min-h-[48px] items-center justify-center rounded-[3px] bg-accent px-[26px] py-3 text-[17px] font-bold text-ink hover:bg-[#c8e43a]; }
+.bm-btn-ink { @apply flex min-h-[48px] items-center justify-between gap-3 rounded-paper bg-ink px-[18px] py-3 font-bold text-white hover:bg-black; }
+.bm-btn-outline { @apply inline-flex min-h-[44px] items-center rounded-[3px] border border-[#8a877f] px-4 py-2 text-[15px] text-ink hover:border-ink; }
+.bm-field { @apply flex flex-col gap-1 text-xs text-[#5e5b53]; }
+.bm-input { @apply min-h-[40px] w-full rounded-none border-0 border-b-[1.5px] border-ink bg-transparent px-0 py-2 font-mono text-[15px] text-ink outline-none; }
+.bm-input:focus-visible { outline: 2px solid var(--bm-ink); outline-offset: 2px; }
+.bm-table { @apply w-full border-collapse text-[15px]; }
+.bm-table thead th, .bm-table thead td { @apply border-b-[1.5px] border-ink px-3 py-3 text-left text-xs font-medium uppercase tracking-[0.06em] text-muted first:pl-0 last:pr-0; }
+.bm-table tbody th, .bm-table tbody td { @apply border-b border-line px-3 text-left first:pl-0 last:pr-0; }
+.bm-mark { @apply bg-accent px-1 font-bold text-ink; box-decoration-break: clone; -webkit-box-decoration-break: clone; }

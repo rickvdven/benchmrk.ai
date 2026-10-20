@@ -1,0 +1,59 @@
+/* Benchmrk · design A "Uitslagenlijst" · licht
+   Bron: Benchmrk design-canvas, artboards "A licht". Zet dit bovenaan src/index.css (of equivalent). */
+
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+/* Liever self-hosten: npm i @fontsource-variable/archivo @fontsource/ibm-plex-mono en importeer die in main.tsx. */
+
+:root {
+  /* Kleur */
+  --bm-ground:      #EFEEEA; /* pagina-ondergrond, licht warmgrijs (geen crème) */
+  --bm-surface:     #FFFFFF; /* papier: kaarten, de uitslagenbon, invoer */
+  --bm-surface-2:   #E4E2DC; /* subtiel vlak, placeholders, hover op rijen */
+  --bm-line:        #D6D3CB; /* haarlijnen, tabelrijen, kaartranden */
+  --bm-line-strong: #141413; /* koplijnen boven secties en tabelkoppen (1.5px) */
+  --bm-ink:         #141413; /* hoofdtekst, koppen, primaire donkere knop */
+  --bm-ink-2:       #3A3833; /* lopende tekst secundair (10:1) */
+  --bm-ink-3:       #4A4843; /* nav-links, labels (7.9:1) */
+  --bm-muted:       #6A675F; /* metadata, bijschriften (4.9:1, minimum voor kleine tekst) */
+  --bm-accent:      #D4F046; /* lime: ALLEEN als vlak (knoppen, markering MRK, highlight). Nooit als tekstkleur op licht. */
+  --bm-on-accent:   #141413; /* tekst op lime (14:1) */
+
+  /* Segmentkleuren in grafieken/balken (verschillen in lichtheid, niet alleen tint) */
+  --bm-seg-runs:    #141413;
+  --bm-seg-stations:#77736A;
+  --bm-seg-roxzone: #C3BFB3;
+
+  /* Type */
+  --bm-font-sans: 'Archivo', system-ui, sans-serif;
+  --bm-font-mono: 'IBM Plex Mono', ui-monospace, monospace; /* alleen voor tijden, tempo's, splits, data */
+  --bm-display-stretch: 72%;  /* font-stretch voor koppen (Archivo condensed) */
+
+  /* Vorm */
+  --bm-radius: 3px;           /* knoppen, invoer */
+  --bm-radius-paper: 2px;     /* uitslagenbon / kaarten */
+  --bm-shadow-paper: 0 1px 0 #D6D3CB, 0 18px 40px rgba(20, 20, 19, 0.12);
+  --bm-max: 1200px;           /* contentbreedte */
+  --bm-gutter: 24px;          /* 16px op mobiel */
+}
+
+body { background: var(--bm-ground); color: var(--bm-ink); font-family: var(--bm-font-sans); font-size: 17px; line-height: 1.55; }
+::selection { background: var(--bm-accent); color: var(--bm-on-accent); }
+:focus-visible { outline: 2px solid var(--bm-ink); outline-offset: 3px; }
+.tabular, time, td.num { font-family: var(--bm-font-mono); font-variant-numeric: tabular-nums; }
+
+/* Tailwind v4: plak in je CSS na @import "tailwindcss";
+@theme {
+  --color-ground: #EFEEEA; --color-surface: #FFFFFF; --color-surface-2: #E4E2DC;
+  --color-line: #D6D3CB; --color-ink: #141413; --color-ink-2: #3A3833; --color-ink-3: #4A4843;
+  --color-muted: #6A675F; --color-accent: #D4F046;
+  --font-sans: 'Archivo', system-ui, sans-serif; --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+}
+*/
+
+/* Tailwind v3: tailwind.config.ts → theme.extend
+colors: { ground:'#EFEEEA', surface:'#FFFFFF', 'surface-2':'#E4E2DC', line:'#D6D3CB',
+          ink:{ DEFAULT:'#141413', 2:'#3A3833', 3:'#4A4843' }, muted:'#6A675F', accent:'#D4F046' },
+fontFamily: { sans:['Archivo','system-ui','sans-serif'], mono:['"IBM Plex Mono"','ui-monospace','monospace'] },
+borderRadius: { DEFAULT:'3px' },
+boxShadow: { paper:'0 1px 0 #D6D3CB, 0 18px 40px rgba(20,20,19,0.12)' },
+*/

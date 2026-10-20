@@ -133,7 +133,7 @@ export default function Cockpit() {
                   aria-label={`${n}`}
                   aria-pressed={todayScore === n}
                   onClick={() => setMorning(today, n)}
-                  className={clsx('stat h-8 w-8 rounded-md border text-sm', todayScore === n ? (n >= 4 ? 'border-warn bg-warn text-black' : 'border-volt bg-volt text-black') : 'border-line hover:border-volt/60')}
+                  className={clsx('stat h-8 w-8 rounded-md border text-sm', todayScore === n ? (n >= 4 ? 'border-warn bg-warn text-white' : 'border-volt bg-volt text-black') : 'border-line hover:border-volt/60')}
                 >
                   {n}
                 </button>

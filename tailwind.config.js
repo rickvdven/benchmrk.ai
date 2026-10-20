@@ -15,10 +15,24 @@ export default {
         bad: 'rgb(var(--bad) / <alpha-value>)',
         good: 'rgb(var(--good) / <alpha-value>)',
         sky: 'rgb(var(--sky) / <alpha-value>)',
+        ground: '#efeeea',
+        surface: '#ffffff',
+        'surface-2': '#e4e2dc',
+        ink: { DEFAULT: '#141413', 2: '#3a3833', 3: '#4a4843' },
+        accent: '#d4f046',
+      },
+      textColor: {
+        volt: 'rgb(var(--volt-text) / <alpha-value>)',
+      },
+      borderRadius: {
+        paper: '2px',
+      },
+      boxShadow: {
+        paper: '0 1px 0 #d6d3cb, 0 18px 40px rgba(20, 20, 19, 0.12)',
       },
       fontFamily: {
-        sans: ['Geist', 'system-ui', 'sans-serif'],
-        mono: ['"Geist Mono"', 'ui-monospace', 'monospace'],
+        sans: ['"Archivo Variable"', 'Archivo', 'system-ui', 'sans-serif'],
+        mono: ['"IBM Plex Mono"', 'ui-monospace', 'monospace'],
       },
     },
   },
