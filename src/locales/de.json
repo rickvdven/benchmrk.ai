@@ -123,6 +123,8 @@
     "ck.welcome": "Willkommen zurück{name}",
     "ck.morning": "Sehnen- / Muskelsteifheit beim Aufwachen (1–10)?",
     "ck.guardOn": "Sehnenschutz ist heute aktiv: Belastungseinheiten werden gelenkschonend.",
+    "ck.morningSaved": "Steifheit heute Morgen: {n}/10",
+    "ck.morningEdit": "Ändern",
     "ck.today": "Heute",
     "ck.openPlan": "Plan öffnen",
     "ck.markDone": "Als erledigt markieren",
