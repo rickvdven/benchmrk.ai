@@ -1,133 +1,131 @@
-WEBVTT
-
 1
-00:00:00.400 --> 00:00:02.904
+00:00:00,400 --> 00:00:02,904
 HYROX draait niet om je tijd zien.
 
 2
-00:00:02.904 --> 00:00:04.967
+00:00:02,904 --> 00:00:04,967
 Het draait om je tijd hálen.
 
 3
-00:00:04.967 --> 00:00:09.460
-RoxEngine traint jouw leden, week na week, naar hun doeltijd.
+00:00:04,967 --> 00:00:09,460
+Benchmrk traint jouw leden, week na week, naar hun doeltijd.
 
 4
-00:00:10.160 --> 00:00:11.717
+00:00:10,160 --> 00:00:11,717
 Je kiest een doeltijd.
 
 5
-00:00:11.717 --> 00:00:18.228
-RoxEngine rekent terug wat daarvoor nodig is: welk looptempo, welke stations, hoeveel weken.
+00:00:11,717 --> 00:00:18,228
+Benchmrk rekent terug wat daarvoor nodig is: welk looptempo, welke stations, hoeveel weken.
 
 6
-00:00:18.228 --> 00:00:21.130
+00:00:18,228 --> 00:00:21,130
 En bouwt daar het complete schema omheen.
 
 7
-00:00:21.830 --> 00:00:27.000
+00:00:21,830 --> 00:00:27,000
 Je leden starten via jouw gymlink, en zijn meteen aan jouw gym gekoppeld.
 
 8
-00:00:27.700 --> 00:00:30.084
+00:00:27,700 --> 00:00:30,084
 Vijf minuten later staat het plan.
 
 9
-00:00:30.084 --> 00:00:33.240
+00:00:30,084 --> 00:00:33,240
 Op hun eigen drempel, met uitleg per horloge.
 
 10
-00:00:33.940 --> 00:00:35.238
+00:00:33,940 --> 00:00:35,238
 Een oude blessure?
 
 11
-00:00:35.238 --> 00:00:39.060
+00:00:35,238 --> 00:00:39,060
 Het schema bouwt er slim omheen, met gerichte prehab.
 
 12
-00:00:39.760 --> 00:00:44.190
+00:00:39,760 --> 00:00:44,190
 En de krachttraining gaat precies naar de stations waar de meeste winst ligt.
 
 13
-00:00:44.890 --> 00:00:49.965
+00:00:44,890 --> 00:00:49,965
 Elke dag staat er een concrete training klaar, richting die ene doeltijd.
 
 14
-00:00:49.965 --> 00:00:53.650
+00:00:49,965 --> 00:00:53,650
 Tempo, hartslag, stations, en een taper naar de race.
 
 15
-00:00:54.350 --> 00:00:58.200
+00:00:54,350 --> 00:00:58,200
 In de cockpit zie je elke week hoe dicht je bij je doel komt.
 
 16
-00:00:58.200 --> 00:01:01.860
+00:00:58,200 --> 00:01:01,860
 De voorspelling en je kans schuiven mee met elke training.
 
 17
-00:01:02.560 --> 00:01:07.065
+00:01:02,560 --> 00:01:07,065
 Na elke training checkt de app: zat je goed, te hard, of te zacht?
 
 18
-00:01:07.065 --> 00:01:10.410
+00:01:07,065 --> 00:01:10,410
 En de volgende trainingen sturen automatisch bij.
 
 19
-00:01:11.410 --> 00:01:12.148
+00:01:11,410 --> 00:01:12,148
 En de sims?
 
 20
-00:01:12.148 --> 00:01:13.691
+00:01:12,148 --> 00:01:13,691
 Die volgen jóuw manier.
 
 21
-00:01:13.691 --> 00:01:21.540
+00:01:13,691 --> 00:01:21,540
 Bijvoorbeeld: acht keer vijfhonderd meter met de helft van elk station, opbouwend naar race-afstand, en zelfs verder.
 
 22
-00:01:22.240 --> 00:01:26.210
+00:01:22,240 --> 00:01:26,210
 Eén keer instellen, en al je leden trainen volgens jouw opbouw.
 
 23
-00:01:26.910 --> 00:01:28.590
+00:01:26,910 --> 00:01:28,590
 Gym dicht, of geen tijd?
 
 24
-00:01:28.590 --> 00:01:31.250
+00:01:28,590 --> 00:01:31,250
 Je krijgt meteen een slim alternatief.
 
 25
-00:01:31.950 --> 00:01:36.710
+00:01:31,950 --> 00:01:36,710
 Dubbels trainen samen naar één doeltijd, met een slimme verdeling per station.
 
 26
-00:01:37.410 --> 00:01:40.290
+00:01:37,410 --> 00:01:40,290
 En alles is onderbouwd met sportwetenschap.
 
 27
-00:01:40.990 --> 00:01:47.157
+00:01:40,990 --> 00:01:47,157
 Voor jouw gym betekent dit: leden die gemotiveerd blijven, en een plan dat aansluit op jouw lessen.
 
 28
-00:01:47.157 --> 00:01:49.586
+00:01:47,157 --> 00:01:49,586
 Jij en je coaches gebruiken het gratis.
 
 29
-00:01:49.586 --> 00:01:53.760
+00:01:49,586 --> 00:01:53,760
 En je verdient twintig procent op elk abonnement, elk jaar opnieuw.
 
 30
-00:01:54.460 --> 00:01:55.538
+00:01:54,460 --> 00:01:55,538
 Personal trainer?
 
 31
-00:01:55.538 --> 00:01:58.139
-Jij coacht, RoxEngine doet het rekenwerk.
+00:01:55,538 --> 00:01:58,139
+Jij coacht, Benchmrk doet het rekenwerk.
 
 32
-00:01:58.139 --> 00:02:02.580
+00:01:58,139 --> 00:02:02,580
 Gratis voor jou, en twintig procent van elk abonnement van je klanten.
 
 33
-00:02:03.580 --> 00:02:08.470
+00:02:03,580 --> 00:02:08,470
 Zet je gymcode klaar, en laat je leden vandaag nog trainen naar hun doeltijd.

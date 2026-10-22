@@ -4,9 +4,9 @@ import { useQueryClient } from '@tanstack/react-query';
 import { DisclaimerFooter } from './Disclaimer';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
-import { Activity, CalendarDays, Gauge, HeartPulse, Gift, LogOut, NotebookPen, Settings, Shield, Users } from 'lucide-react';
+import { Activity, Building2, CalendarDays, Gauge, HeartPulse, Gift, LogOut, NotebookPen, Settings, Shield, Users } from 'lucide-react';
 import { supabase } from '../lib/supabase';
-import { useAuth, useIsAdmin, useProfileRow, useRealtime } from '../data/hooks';
+import { useAuth, useIsAdmin, useIsGymAccount, useProfileRow, useRealtime } from '../data/hooks';
 import { LANGS, useI18n, type Lang } from '../lib/i18n';
 import { onQueueChange, pendingCount } from '../lib/queue';
 
@@ -55,6 +55,7 @@ export function Layout({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const { t, setLang, setUnits } = useI18n();
   const admin = useIsAdmin();
+  const gymAccount = useIsGymAccount().isGym;
   const prof = useProfileRow();
   useEffect(() => {
     // the profile's language and units follow the athlete across devices
@@ -137,6 +138,12 @@ export function Layout({ children }: { children: ReactNode }) {
                   </NavLink>
                 ))}
               </nav>
+            )}
+            {gymAccount && (
+              <NavLink to="/my-gym" className={({ isActive }) => clsx('flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-sm font-medium', isActive ? 'bg-panel2 text-volt' : 'text-muted hover:text-fg')}>
+                <Building2 className="h-4 w-4" />
+                <span className="hidden sm:inline">{t('nav.myGym')}</span>
+              </NavLink>
             )}
             {admin && (
               <NavLink to="/admin" className={({ isActive }) => clsx('flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-sm font-medium', isActive ? 'bg-panel2 text-volt' : 'text-volt/80 hover:text-volt')}>

@@ -290,6 +290,41 @@ export function useMyGym() {
   });
 }
 
+/** Gyms this account manages (accounts labelled 'gym'). Admins manage every gym from the admin screens instead. */
+export interface ManagedGym {
+  id: string;
+  name: string;
+  city: string;
+  code: string;
+}
+export function useManagedGyms() {
+  const { user } = useAuth();
+  return useQuery({
+    queryKey: ['managed-gyms', user?.id],
+    enabled: !!user,
+    staleTime: 5 * 60_000,
+    retry: false,
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc('my_managed_gyms');
+      if (error) throw error;
+      return (data ?? []) as ManagedGym[];
+    },
+  });
+}
+/** True for accounts with the 'gym' label, or that manage at least one gym. */
+export function useIsGymAccount() {
+  const { user } = useAuth();
+  const gyms = useManagedGyms();
+  const role = useQuery({
+    queryKey: ['is-gym-role', user?.id],
+    enabled: !!user,
+    staleTime: 5 * 60_000,
+    retry: false,
+    queryFn: async () => (await supabase.rpc('has_role', { _uid: user!.id, _role: 'gym' })).data === true,
+  });
+  return { isGym: role.data === true || (gyms.data ?? []).length > 0, loading: gyms.isLoading || role.isLoading };
+}
+
 // ---------------- derived coach state ----------------
 /** Completed entries as input for the adaptive rules and the session analysis. */
 export function logsOf(byDate: Record<string, EntryRow>): LoggedSession[] {

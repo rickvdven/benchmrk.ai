@@ -2,7 +2,7 @@ import { lazy, Suspense, type ComponentType, type ReactNode } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { Spinner } from './components/ui';
-import { useAdminQuery, useAuth, useIsAdmin, useProfileRow, useSubscription } from './data/hooks';
+import { useAdminQuery, useAuth, useIsAdmin, useIsGymAccount, useProfileRow, useSubscription } from './data/hooks';
 import { membershipOk, PaywallScreen } from './components/Paywall';
 import { isComplete } from './data/mapping';
 import { configured } from './lib/supabase';
@@ -36,6 +36,7 @@ const SettingsPage = lazyRetry(() => import('./pages/Settings'));
 const Admin = lazyRetry(() => import('./pages/admin/Admin'));
 const Science = lazyRetry(() => import('./pages/Science'));
 const InvitePage = lazyRetry(() => import('./pages/Invite'));
+const MyGym = lazyRetry(() => import('./pages/MyGym'));
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { user, ready } = useAuth();
@@ -47,8 +48,10 @@ function RequireAuth({ children }: { children: ReactNode }) {
 
 function RequireProfile({ children }: { children: ReactNode }) {
   const p = useProfileRow();
-  if (p.isLoading) return <Spinner />;
-  if (!isComplete(p.data)) return <Navigate to="/onboarding" replace />;
+  const gym = useIsGymAccount();
+  if (p.isLoading || gym.loading) return <Spinner />;
+  // a gym account that only manages its gym does not need an athlete intake
+  if (!isComplete(p.data)) return <Navigate to={gym.isGym ? '/my-gym' : '/onboarding'} replace />;
   return <RequireMembership>{children}</RequireMembership>;
 }
 
@@ -99,6 +102,7 @@ export default function App() {
           <Route path="/science" element={<Science />} />
           <Route path="/settings" element={app(<SettingsPage />)} />
           <Route path="/invite" element={app(<InvitePage />)} />
+          <Route path="/my-gym" element={<RequireAuth><MyGym /></RequireAuth>} />
           <Route path="/admin/*" element={<RequireAdmin><Admin /></RequireAdmin>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
