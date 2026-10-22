@@ -55,5 +55,22 @@
       "path": "/api/cron/daily",
       "schedule": "0 5 * * *"
     }
+  ],
+  "redirects": [
+    {
+      "source": "/demo/roxengine-demo-nl.mp4",
+      "destination": "/demo/benchmrk-demo-nl.mp4",
+      "permanent": true
+    },
+    {
+      "source": "/demo/roxengine-demo-nl.srt",
+      "destination": "/demo/benchmrk-demo-nl.srt",
+      "permanent": true
+    },
+    {
+      "source": "/demo/roxengine-demo-nl.vtt",
+      "destination": "/demo/benchmrk-demo-nl.vtt",
+      "permanent": true
+    }
   ]
 }
