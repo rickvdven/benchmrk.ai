@@ -5,6 +5,7 @@ import { DISCLAIMER } from '../components/Disclaimer';
 import { ChanceInfo, GoalGap } from '../components/Chance';
 import { LangSwitch, Wordmark } from '../components/Layout';
 import { AppTour } from '../components/AppTour';
+import { dropPrerender } from '../lib/prerender';
 import {
   STATIONS,
   defaultSchedule,
@@ -541,6 +542,8 @@ function Compare({ l }: { l: (k: LKey) => string }) {
 }
 
 export default function Landing() {
+  // the build-time copy of this page can go as soon as the live one is on screen
+  useEffect(dropPrerender, []);
   const { lang, t } = useI18n();
   const settings = useAppSettings();
   // the yearly price is set in Admin → Settings (app_settings.price_year_cents), the same value commissions use

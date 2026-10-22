@@ -902,8 +902,9 @@ function initialLang(): { lang: Lang; chosen: boolean } {
   return { lang: (UI_LANGS.includes(nav as Lang) ? nav : 'en') as Lang, chosen: false };
 }
 
-export function I18nProvider({ children }: { children: ReactNode }) {
-  const [init] = useState(initialLang);
+/** `initial` fixes the language, e.g. for the build-time prerender of the home page. */
+export function I18nProvider({ children, initial }: { children: ReactNode; initial?: Lang }) {
+  const [init] = useState(() => (initial ? { lang: initial, chosen: true } : initialLang()));
   const [lang, setLangState] = useState<Lang>(init.lang);
   useEffect(() => {
     if (init.chosen) return;

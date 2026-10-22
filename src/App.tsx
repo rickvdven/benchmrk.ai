@@ -1,4 +1,4 @@
-import { lazy, Suspense, type ComponentType, type ReactNode } from 'react';
+import { lazy, Suspense, useEffect, type ComponentType, type ReactNode } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { Spinner } from './components/ui';
@@ -6,6 +6,7 @@ import { useAdminQuery, useAuth, useIsAdmin, useProfileRow, useSubscription } fr
 import { membershipOk, PaywallScreen } from './components/Paywall';
 import { isComplete } from './data/mapping';
 import { configured } from './lib/supabase';
+import { dropPrerender } from './lib/prerender';
 
 /** After a new deploy old chunks 404: reload once instead of showing a broken page. */
 function lazyRetry<T extends ComponentType<unknown>>(f: () => Promise<{ default: T }>) {
@@ -72,11 +73,19 @@ function RequireAdmin({ children }: { children: ReactNode }) {
 
 function Home() {
   const { user, ready } = useAuth();
+  // a signed-in athlete goes to the cockpit: the prerendered landing page must not stay behind
+  useEffect(() => {
+    if (ready && user) dropPrerender();
+  }, [ready, user]);
   if (!ready) return <Spinner />;
   return user ? <Navigate to="/cockpit" replace /> : <Landing />;
 }
 
 export default function App() {
+  const loc = useLocation();
+  useEffect(() => {
+    if (loc.pathname !== '/' || !configured) dropPrerender();
+  }, [loc.pathname]);
   if (!configured)
     return <div className="p-8 text-center text-muted">Missing VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY.</div>;
   const app = (el: ReactNode) => (
