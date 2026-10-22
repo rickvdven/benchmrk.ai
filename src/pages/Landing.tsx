@@ -546,6 +546,7 @@ export default function Landing() {
   // the yearly price is set in Admin → Settings (app_settings.price_year_cents), the same value commissions use
   const year = (Number(settings.data?.price_year_cents) || 3000) / 100;
   const l = (k: LKey) => (L[lang]?.[k] ?? en[k]).replace('{price}', fmtEur(year, lang)).replace('{month}', fmtEur(year / 12, lang));
+  const hasVideo = lang === 'nl';
   const beta = settings.data?.paywall_enabled !== true;
   const disclaimer = DISCLAIMER[lang] ?? DISCLAIMER.en;
   const navLink = 'text-[15px] text-ink-3 hover:text-ink';
@@ -607,8 +608,8 @@ export default function Landing() {
               <Link to="/auth?mode=signup" className="bm-btn-accent w-full sm:w-auto">
                 {l('cta')}
               </Link>
-              <a href="#how" className="text-base text-ink underline underline-offset-[5px]">
-                {l('how')}
+              <a href={hasVideo ? '#video' : '#how'} className="text-base text-ink underline underline-offset-[5px]">
+                {hasVideo ? l('vid.watch') : l('how')}
               </a>
             </div>
             <p className="mt-7 text-sm text-muted">{[l('tick1'), l('tick2'), l('tick3')].join(' · ')}</p>
@@ -617,6 +618,38 @@ export default function Landing() {
             <QuickCheck l={l} />
           </div>
         </section>
+
+        {/* explainer video for athletes (Dutch voice-over; shown only in NL) */}
+        {hasVideo && (
+          <section id="video" className="bm-wrap scroll-mt-4 pb-6 pt-6" aria-labelledby="video-title">
+            <div className="border-t-[1.5px] border-ink pt-12">
+              <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-4">
+                <div>
+                  <p className="bm-kicker mb-4">{l('vid.kicker')}</p>
+                  <h2 id="video-title" className="bm-h2 max-w-[16ch]">
+                    {l('vid.title')}
+                  </h2>
+                </div>
+                <p className="max-w-[380px] text-[15px] text-muted">{l('vid.sub')}</p>
+              </div>
+              <video
+                className="mt-8 block aspect-video w-full border border-line bg-ink shadow-[0_24px_60px_rgba(20,20,19,0.14)]"
+                controls
+                preload="none"
+                playsInline
+                poster="/video/benchmrk-atleten-nl-poster.jpg"
+                aria-label={l('vid.label')}
+              >
+                <source src="/video/benchmrk-atleten-nl.mp4" type="video/mp4" />
+                <track kind="subtitles" src="/video/benchmrk-atleten-nl.vtt" srcLang="nl" label="Nederlands" default />
+              </video>
+              <details className="mt-4 max-w-[760px] text-[15px] text-ink-2">
+                <summary className="cursor-pointer text-ink underline underline-offset-[5px]">{l('vid.transcript')}</summary>
+                <p className="mt-3">{l('vid.text')}</p>
+              </details>
+            </div>
+          </section>
+        )}
 
         {/* the app in action: an illustration with example values, not live data */}
         <section className="bm-wrap pt-6" aria-labelledby="app-title">
