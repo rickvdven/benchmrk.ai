@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { GROESBEEK, injuriesOf, type SimProtocol } from '../../engine';
 import { ProtocolFields } from '../../components/SimProtocolEditor';
+import { GymManager } from '../../components/GymManager';
 import { Roadmap } from './Roadmap';
 import { NavLink, Route, Routes, useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -207,6 +208,7 @@ function AthleteDetail() {
   const { id } = useParams();
   const qc = useQueryClient();
   const q = useQuery({ queryKey: ['admin', 'athlete', id], queryFn: () => rpc<Record<string, unknown>>('admin_get_athlete', { _uid: id }) });
+  const roles = useQuery({ queryKey: ['admin', 'roles', id], queryFn: async () => ((await supabase.from('user_roles').select('role').eq('user_id', id!)).data ?? []).map((r) => r.role as string) });
   if (!q.data) return <Spinner />;
   const d = q.data as {
     profile: ProfileRow;
@@ -222,6 +224,7 @@ function AthleteDetail() {
   const model = complete ? raceModel(toProfile(p), todayISO()) : null;
   const plan = complete ? generateSeason(toProfile(p), { lang, today: todayISO() }) : [];
   const isAdmin = (qc.getQueryData<AthleteListRow[]>(['admin', 'athletes']) ?? []).find((x) => x.id === id)?.is_admin;
+  const isGym = (roles.data ?? []).includes('gym');
   return (
     <div className="space-y-4">
       <Notice>{t('ad.readOnly')}</Notice>
@@ -232,6 +235,21 @@ function AthleteDetail() {
             {p.email} · {p.category ? t(`cat.${p.category}` as I18nKey) : '—'} · {p.race_name} {p.race_date} {d.team ? `· team ${d.team.code}` : ''}
           </p>
         </div>
+        <div className="flex flex-wrap gap-2">
+        <button
+          className="btn-ghost btn-sm"
+          onClick={async () => {
+            try {
+              await rpc('admin_set_role', { _uid: id, _role: 'gym', _on: !isGym });
+              qc.invalidateQueries({ queryKey: ['admin'] });
+              toast.success(t('common.saved'));
+            } catch (e) {
+              toast.error((e as Error).message);
+            }
+          }}
+        >
+          {isGym ? t('ad.removeGym') : t('ad.makeGym')}
+        </button>
         <button
           className="btn-ghost btn-sm"
           onClick={async () => {
@@ -246,6 +264,7 @@ function AthleteDetail() {
         >
           {isAdmin ? t('ad.removeAdmin') : t('ad.makeAdmin')}
         </button>
+        </div>
       </div>
       {model && (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -735,13 +754,14 @@ function SimTemplates() {
 }
 
 
-type GymRow = { id?: string; name: string; code: string; city: string; equipment: 'hyrox' | 'gym' | 'home'; sim_protocol_id: string | null; active: boolean; members?: number };
+type GymRow = { id?: string; name: string; code: string; city: string; equipment: 'hyrox' | 'gym' | 'home'; sim_protocol_id: string | null; active: boolean; members?: number; programs?: number; managers?: (string | null)[] };
 function Gyms() {
   const { t } = useI18n();
   const qc = useQueryClient();
   const q = useQuery({ queryKey: ['admin', 'gyms'], queryFn: () => rpc<GymRow[]>('admin_list_gyms') });
   const tpl = useQuery({ queryKey: ['admin', 'simTpl'], queryFn: async () => ((await supabase.from('sim_protocols').select('id, name').order('name')).data ?? []) as { id: string; name: string }[] });
   const [edit, setEdit] = useState<GymRow | null>(null);
+  const [manage, setManage] = useState<string | null>(null);
   if (!q.data) return <Spinner />;
   const saveGym = async () => {
     if (!edit) return;
@@ -762,10 +782,12 @@ function Gyms() {
             <span className="font-semibold">{g.name}</span>
             <span className="chip stat">{g.code}</span>
             {!g.active && <span className="chip bg-bad/15 text-bad">off</span>}
-            <span className="text-xs text-muted">{g.city} · {g.members ?? 0} {t('ad.gymMembers')} · {(tpl.data ?? []).find((x) => x.id === g.sim_protocol_id)?.name ?? '—'}</span>
-            <button className="btn-ghost btn-sm ml-auto" onClick={() => setEdit(g)}>{t('ad.edit')}</button>
+            <span className="text-xs text-muted">{g.city} · {g.members ?? 0} {t('ad.gymMembers')} · {g.programs ?? 0} {t('ad.gymPrograms')} · {(g.managers ?? []).length} {t('ad.gymManagers')} · {(tpl.data ?? []).find((x) => x.id === g.sim_protocol_id)?.name ?? '—'}</span>
+            <button className="btn-ghost btn-sm ml-auto" onClick={() => setManage(manage === g.id ? null : g.id!)}>{manage === g.id ? t('ad.gymClose') : t('ad.gymManage')}</button>
+            <button className="btn-ghost btn-sm" onClick={() => setEdit(g)}>{t('ad.edit')}</button>
           </div>
           <p className="break-all text-xs text-volt">{window.location.origin}/?gym={g.code}</p>
+          {manage === g.id && <div className="border-t border-line pt-3"><GymManager key={g.id} gymId={g.id!} asAdmin /></div>}
         </div>
       ))}
       <button className="btn-ghost btn-sm" onClick={() => setEdit({ name: '', code: '', city: '', equipment: 'hyrox', sim_protocol_id: null, active: true })}>+ {t('ad.gymNew')}</button>
