@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { DISCLAIMER } from '../components/Disclaimer';
 import { ChanceInfo, GoalGap } from '../components/Chance';
 import { LangSwitch, Wordmark } from '../components/Layout';
+import { AppTour } from '../components/AppTour';
 import {
   STATIONS,
   defaultSchedule,
@@ -652,6 +653,17 @@ export default function Landing() {
           </div>
         </section>
 
+        {/* the app in action: an auto-playing tour, computed live with the engine */}
+        <section id="tour" className="bm-wrap scroll-mt-4 pb-10 pt-16 sm:pt-[100px]" aria-labelledby="tour-title">
+          <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-4">
+            <h2 id="tour-title" className="bm-h2 max-w-[14ch]">
+              {l('tour.title')}
+            </h2>
+            <p className="max-w-[380px] text-[15px] text-muted">{l('tour.sub')}</p>
+          </div>
+          <AppTour l={(k) => l(k as LKey)} />
+        </section>
+
         {/* problem */}
         <section className="bm-wrap pb-10 pt-16 sm:pt-[120px]" aria-labelledby="prob-title">
           <h2 id="prob-title" className="bm-h2 max-w-[760px]">
@@ -705,6 +717,31 @@ export default function Landing() {
                 <span aria-hidden>→</span>
               </Link>
             </div>
+          </div>
+        </section>
+
+        {/* fits in with gyms, coaches, races and watches instead of replacing them */}
+        <section className="bm-wrap pb-10 pt-16 sm:pt-[100px]" aria-labelledby="fit-title">
+          <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-4">
+            <h2 id="fit-title" className="bm-h2 max-w-[16ch]">
+              {l('fit.title')}
+            </h2>
+            <p className="max-w-[380px] text-[15px] text-muted">{l('fit.sub')}</p>
+          </div>
+          <div className="mt-8 grid gap-x-10 sm:mt-12 sm:grid-cols-2 lg:grid-cols-4">
+            {(['gym', 'pt', 'race', 'watch'] as const).map((k, i) => (
+              <div key={k} className="border-t-[1.5px] border-ink pb-8 pt-5">
+                <div className="font-mono text-[13px] text-muted">{String(i + 1).padStart(2, '0')}</div>
+                <h3 className="my-2.5 text-[20px] font-bold leading-tight sm:text-[22px]">{l(`fit.${k}.h` as LKey)}</h3>
+                <p className="text-ink-2">{l(`fit.${k}.d` as LKey)}</p>
+                {k === 'gym' && (
+                  <a href="/nl/voor-gyms" className="mt-3 inline-flex min-h-[44px] items-center gap-1.5 text-ink underline underline-offset-[5px]">
+                    {l('fit.gym.link')}
+                    <span aria-hidden>→</span>
+                  </a>
+                )}
+              </div>
+            ))}
           </div>
         </section>
 
