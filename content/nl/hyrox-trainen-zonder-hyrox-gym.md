@@ -28,6 +28,9 @@ faq:
   - q: Kun je ook zonder loopmogelijkheid trainen?
     a: Dan vervangt Benchmrk een drempelsessie door 5 × 4 minuten op fiets, airbike, roeier of SkiErg op 95 tot 100 % van je drempelhartslag.
 sources:
+  - title: HYROX Singles Rulebook, seizoen 26/27
+    url: https://maintain.hyrox.com/rulebooks/HYROX_RulebookSingles_EN.pdf
+    accessed: 2026-10-22
   - title: HYROX – The Fitness Race (stations, afstanden en gewichten)
     url: https://hyrox.com/the-fitness-race/
     accessed: 2026-10-22
@@ -51,8 +54,8 @@ Kies per station een oefening die dezelfde beweging of dezelfde vermoeidheid gee
 | Station | In een gewone gym | Thuis of buiten |
 |---|---|---|
 | SkiErg (1000 m) | Roeier, zelfde afstand, of 3–4 min hard op de airbike | 2 min band-pulldowns met gestrekte armen + 10 burpees |
-| Sled push (2 × 25 m) | 20 m zware walking lunges met dumbbells of halter | 4 × 20 s heuvelsprints of 20 m bear crawl |
-| Sled pull (2 × 25 m) | 3 × 12 zware rows + 20 m achteruit lopen | 3 × 15 rows met een band of met een volle rugzak |
+| Sled push (4 × 12,5 m) | 20 m zware walking lunges met dumbbells of halter | 4 × 20 s heuvelsprints of 20 m bear crawl |
+| Sled pull (4 × 12,5 m) | 3 × 12 zware rows + 20 m achteruit lopen | 3 × 15 rows met een band of met een volle rugzak |
 | Burpee broad jumps (80 m) | Zelfde oefening | Zelfde oefening |
 | Roeien (1000 m) | SkiErg, zelfde afstand, of 2–3 min hard op de fiets | 400 m lopen op race-inspanning |
 | Farmers carry (200 m) | Dumbbells of kettlebells | Twee volle jerrycans of tassen |

@@ -28,6 +28,9 @@ faq:
   - q: Wanneer doe je de laatste zware simulatie?
     a: In de regels van de app 10 tot 14 dagen voor de race. Daarna wordt het volume kleiner en blijft het tempo gelijk.
 sources:
+  - title: HYROX Singles Rulebook, seizoen 26/27
+    url: https://maintain.hyrox.com/rulebooks/HYROX_RulebookSingles_EN.pdf
+    accessed: 2026-10-22
   - title: HYROX – The Fitness Race (raceformat en gewichten per divisie)
     url: https://hyrox.com/the-fitness-race/
     accessed: 2026-10-22
@@ -42,15 +45,15 @@ Een HYROX-race is 8 keer 1 km lopen, telkens gevolgd door één workout-station.
 | # | Station | Afstand of aantal |
 |---|---|---|
 | 1 | SkiErg | 1000 m |
-| 2 | Sled push | 2 × 25 m |
-| 3 | Sled pull | 2 × 25 m |
+| 2 | Sled push | 50 m (4 × 12,5 m) |
+| 3 | Sled pull | 50 m (4 × 12,5 m) |
 | 4 | Burpee broad jumps | 80 m |
 | 5 | Roeien | 1000 m |
 | 6 | Farmers carry | 200 m |
 | 7 | Sandbag lunges | 100 m |
 | 8 | Wall balls | 100 herhalingen |
 
-De gewichten verschillen per divisie. Je vindt ze per divisie in de gids [Open of Pro](/nl/gids/open-of-pro).
+Volgens het rulebook van seizoen 26/27 duw en trek je de sled in 4 stukken van 12,5 m. De gewichten verschillen per divisie. Je vindt ze per divisie in de gids [Open of Pro](/nl/gids/open-of-pro).
 
 ## Hoe ziet de 16-wekenopbouw eruit?
 
