@@ -34,13 +34,13 @@ sources:
   - title: HYROX – Best HYROX Preparation
     url: https://hyrox.com/best-hyrox-preparation/
     accessed: 2026-10-22
-  - title: HYROX Sports Science Report 2025 (samenvatting Brandt et al. 2025)
-    url: https://hyrox.com/wp-content/uploads/2025/12/SSAC-Report.pdf
+  - title: Brandt, Ebel, Lebahn en Schmidt (2025), Frontiers in Physiology, doi:10.3389/fphys.2025.1519240
+    url: https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2025.1519240/full
     accessed: 2026-10-22
 ---
 ## Waarom kun je zonder HYROX-gym een goede race lopen?
 
-Omdat lopen het grootste deel van de race is, en lopen kan overal. In de studie van Brandt en collega's (2025) ging van de mediane 86,2 minuten 51,2 minuten op aan lopen. Je drempeltempo trainen heeft dus geen speciale gym nodig. Hoe je dat tempo bepaalt, lees je in [drempeltempo bepalen](/nl/gids/drempeltempo-bepalen).
+Omdat lopen het grootste deel van de race is, en lopen kan overal. In de studie van Brandt en collega's (2025) was de mediane eindtijd 86,5 minuten, waarvan mediaan 51,2 minuten lopen. Je drempeltempo trainen heeft dus geen speciale gym nodig. Hoe je dat tempo bepaalt, lees je in [drempeltempo bepalen](/nl/gids/drempeltempo-bepalen).
 
 Rick van de Ven, oprichter van Benchmrk en Pro-atleet, ging met beperkte trainingsmogelijkheden van 1:19 naar 1:14. Zijn volgende doel is 1:09.
 
