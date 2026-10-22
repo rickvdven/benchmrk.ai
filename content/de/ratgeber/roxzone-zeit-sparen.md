@@ -1,7 +1,7 @@
 ---
 title: Wie sparst du Zeit in der Roxzone?
-seoTitle: "Roxzone: So sparst du Zeit bei den Wechseln im HYROX | Benchmrk"
-description: "Die Roxzone kostet selbst Top-Athleten über 4 Minuten. So verlierst du dort keine Zeit: Route kennen, Strafen vermeiden, nicht gehen, Wechsel in jeder Sim üben."
+seoTitle: "Roxzone: Zeit bei den HYROX-Wechseln sparen | Benchmrk"
+description: "Die Roxzone kostet selbst Top-Athleten über 4 Minuten. So sparst du Zeit: Route kennen, Strafen vermeiden, nicht gehen, Wechsel in jeder Sim üben."
 breadcrumb: Roxzone
 order: 7
 updated: 2026-10-22

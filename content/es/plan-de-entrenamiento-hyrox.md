@@ -41,7 +41,7 @@ sources:
 ---
 ## ¿En qué consiste una carrera HYROX?
 
-Una carrera HYROX son 8 veces 1 km corriendo, cada una seguida de una estación de trabajo. Las estaciones son siempre las mismas y van en el mismo orden. Tu plan tiene que entrenar dos cosas: correr y las estaciones, y sobre todo la combinación.
+Una carrera HYROX son 8 veces 1 km corriendo, cada una seguida de una estación. Las estaciones son siempre las mismas, en el mismo orden. Tu plan debe que entrenar dos cosas: correr y las estaciones, y sobre todo la combinación.
 
 | # | Estación | Distancia o repeticiones |
 |---|---|---|
@@ -58,7 +58,7 @@ Según el reglamento de la temporada 26/27, empujas y arrastras el trineo en 4 t
 
 ## ¿Cómo es la progresión de 16 semanas?
 
-El plan va en cinco fases, de lo general a lo específico de la carrera. Cada fase tiene su propio objetivo.
+El plan va en cinco fases, de lo general a lo específico. Cada fase tiene su objetivo.
 
 | Semana | Fase | Objetivo |
 |---|---|---|
@@ -90,7 +90,7 @@ Cinco pruebas sustituyen a una sesión normal y después ajustan tus ritmos. En 
 
 ## ¿Cómo es una semana de ejemplo?
 
-Esta es una semana de ejemplo de 5 días en la fase de umbral. Los ritmos son relativos a tu ritmo umbral (T).
+Semana de ejemplo de 5 días en la fase de umbral. Los ritmos son relativos a tu ritmo umbral (T).
 
 | Día | Sesión | Contenido |
 |---|---|---|
@@ -104,7 +104,7 @@ Cómo montar un simulacro lo explica [crear un simulacro HYROX](/es/guia/crear-u
 
 ## ¿Cómo haces el taper en las dos últimas semanas?
 
-El taper dura 2 semanas. En las reglas de la app entrenas la primera semana de taper a un 65 % aproximadamente de tu volumen y la semana de carrera a un 40 %. El último simulacro duro cae de 10 a 14 días antes de la carrera, y la última fuerza dura de 7 a 10 días antes. Son decisiones de Benchmrk, no el resultado de un solo estudio. Más en la guía [taper para HYROX](/es/guia/taper-hyrox).
+El taper dura 2 semanas. En las reglas de la app entrenas la primera semana de taper a un 65 % aproximadamente de tu volumen y la semana de carrera a un 40 %. El último simulacro duro cae de 10 a 14 días antes de la carrera, y la última fuerza dura de 7 a 10 días antes. Son decisiones de Benchmrk, no de un solo estudio. Más en la guía [taper para HYROX](/es/guia/taper-hyrox).
 
 ## Así lo hace Benchmrk
 
