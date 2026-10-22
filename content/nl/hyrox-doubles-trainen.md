@@ -18,7 +18,7 @@ summary:
   - Doubles gebruikt de gewichten van Open; Mixed die van de mannen.
 faq:
   - q: Moet je in Doubles samen lopen?
-    a: Ja. Volgens HYROX lopen partners in Doubles samen en verdelen ze het werk op de stations zoals ze willen.
+    a: Ja. Volgens het Doubles-rulebook lopen jullie elke kilometer samen; loopt één van jullie vooruit, dan volgt 1 minuut straf. Ook ga je samen een station in en samen eruit.
   - q: Welke gewichten gelden in HYROX Doubles?
     a: Doubles Women gebruikt de gewichten van Women Open, Doubles Men en Doubles Mixed die van Men Open. Een voorbeeld is de sled push van 152 kg inclusief slee bij Men en Mixed.
   - q: Hoe verdeel je het werk op een station?
@@ -28,6 +28,9 @@ faq:
   - q: Kun je in Doubles met verschillende niveaus racen?
     a: Ja. Jullie lopen op het tempo van de langzaamste, en de sterkste neemt op de stations meer werk. Benchmrk waarschuwt als het looptempo jullie doeltijd in de weg zit.
 sources:
+  - title: HYROX Doubles Rulebook, seizoen 26/27
+    url: https://maintain.hyrox.com/rulebooks/HYROX_RulebookDoubles_EN.pdf
+    accessed: 2026-10-22
   - title: HYROX – The Fitness Race (divisies, Doubles-regel en gewichten)
     url: https://hyrox.com/the-fitness-race/
     accessed: 2026-10-22
@@ -37,7 +40,7 @@ sources:
 ---
 ## Wat is anders aan Doubles?
 
-In Doubles lopen jullie samen en verdelen jullie het werk op de stations zoals je wilt. Dat staat zo op de site van HYROX. Het parcours is gelijk aan de individuele race: 8 keer 1 km met na elke kilometer een station. Wat verandert, is dat het tempo van twee mensen samen moet kloppen.
+In Doubles lopen jullie samen en verdelen jullie het werk op de stations zoals je wilt. Volgens het rulebook van seizoen 26/27 lopen jullie elke kilometer samen, gaan jullie samen een station in en weer uit, en werkt op een station steeds één van jullie terwijl de ander rust. Het parcours is gelijk aan de individuele race: 8 keer 1 km met na elke kilometer een station. Wat verandert, is dat het tempo van twee mensen samen moet kloppen.
 
 | Divisie | Gewichten gelijk aan | Voorbeeld: sled push | Voorbeeld: wall balls |
 |---|---|---|---|

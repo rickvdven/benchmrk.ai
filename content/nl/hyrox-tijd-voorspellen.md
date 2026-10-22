@@ -27,10 +27,16 @@ faq:
   - q: Wat als mijn kans op mijn doeltijd laag is?
     a: Onder 60 % stelt Benchmrk een passender doel voor. Je kiest zelf of je dat overneemt of je doel houdt.
 sources:
+  - title: HYROX Singles Rulebook, seizoen 26/27
+    url: https://maintain.hyrox.com/rulebooks/HYROX_RulebookSingles_EN.pdf
+    accessed: 2026-10-22
+  - title: Brandt, Ebel, Lebahn en Schmidt (2025), Frontiers in Physiology, doi:10.3389/fphys.2025.1519240
+    url: https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2025.1519240/full
+    accessed: 2026-10-22
   - title: HYROX – The Fitness Race (raceformat en stations)
     url: https://hyrox.com/the-fitness-race/
     accessed: 2026-10-22
-  - title: HYROX Sports Science Report 2025 (Brandt et al. 2025 en de data-analyse van Duffuler)
+  - title: HYROX Sports Science Report 2025 (data-analyse Duffuler)
     url: https://hyrox.com/wp-content/uploads/2025/12/SSAC-Report.pdf
     accessed: 2026-10-22
 ---
@@ -48,7 +54,7 @@ Je eindtijd bestaat uit drie delen: de runs, de stations en de Roxzone. Een HYRO
 
 Je looptijd is 8 keer je racetempo per kilometer. Dat racetempo is trager dan je drempeltempo, omdat je na elk station met vermoeide benen loopt. Hoe groot dat verschil is, verschilt per persoon. Benchmrk meet het in de benchmarks met een volledige sim. Welk tempo je nodig hebt voor je doeltijd, lees je in [runs pacen](/nl/gids/runs-pacen). Je drempeltempo zelf bepaal je met [deze gids](/nl/gids/drempeltempo-bepalen).
 
-In onderzoek bleek lopen het grootste deel van de race. In de studie van Brandt en collega's (2025) ging van de mediane 86,2 minuten 51,2 minuten op aan lopen. In een analyse van ruim 14.000 uitslagen in Open mannen, uit 15 races in 2024 en 2025, hingen de runs 5 tot en met 8 het sterkst samen met de eindtijd.
+In onderzoek bleek lopen het grootste deel van de race. In de studie van Brandt en collega's (2025) was de mediane eindtijd 86,5 minuten, waarvan mediaan 51,2 minuten lopen. In een analyse van ruim 14.000 uitslagen in Open mannen, uit 15 races in 2024 en 2025, hingen de runs 5 tot en met 8 het sterkst samen met de eindtijd.
 
 ## Hoe schat je je stationtijden?
 
@@ -56,7 +62,7 @@ Het best met tijden die je zelf hebt gemeten, op racegewicht en na een kilometer
 
 ## Hoe telt de Roxzone mee?
 
-De Roxzone is de wisseltijd tussen de looproute en de stations. Je komt er bij elke overgang tussen lopen en een station doorheen. Benchmrk schat de Roxzone op basis van je drempeltempo en houdt hem apart, zodat je ziet wat sneller wisselen oplevert. Tips staan in [tijd winnen in de Roxzone](/nl/gids/roxzone-tijd-winnen).
+De Roxzone is de zone tussen het loopparcours en de stations. Het rulebook onderscheidt die drie delen van het parcours, en je gaat de Roxzone in en uit via een IN- en een OUT-boog. Je komt er bij elke overgang tussen lopen en een station doorheen. Benchmrk schat de Roxzone op basis van je drempeltempo en houdt hem apart, zodat je ziet wat sneller wisselen oplevert. Tips staan in [tijd winnen in de Roxzone](/nl/gids/roxzone-tijd-winnen).
 
 ## Hoe ziet een voorspelling eruit? Een voorbeeld
 

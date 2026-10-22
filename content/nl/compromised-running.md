@@ -9,11 +9,11 @@ answer: >-
   Compromised running is hardlopen terwijl je al vermoeid bent van stationwerk, zoals in een HYROX-race na
   elke sled, lunge of wall ball. Je traint het door stationwerk en lopen direct te combineren: in een sim, of
   met een korte afsluiter na je drempelloop, zoals 3 × (2 minuten station plus 1 km op racetempo). Onderzoek
-  laat zien dat lopen ongeveer 60 % van de racetijd is. Dat lopen onder vermoeidheid de grootste factor is,
+  laat zien dat lopen meer dan 60 % van de racetijd is. Dat lopen onder vermoeidheid de grootste factor is,
   is niet gemeten.
 summary:
   - Compromised running is lopen na stationwerk, met vermoeide benen.
-  - Lopen was in onderzoek ongeveer 60 % van de racetijd.
+  - Lopen was in onderzoek meer dan 60 % van de racetijd.
   - Lopen onder vermoeidheid is in die studie niet apart gemeten.
   - Train het in een sim, of met een compromised-afsluiter als je geen sim-dag hebt.
 faq:
@@ -28,13 +28,12 @@ faq:
   - q: Hoe meet je of je beter wordt in lopen onder vermoeidheid?
     a: Vergelijk je laatste run in een sim met je eerste. In de pace-decaytest van Benchmrk is het doel dat run 8 binnen 12 seconden per kilometer van run 1 blijft.
 sources:
-  - title: HYROX Sports Science Report 2025 (samenvatting Brandt et al. 2025 en data-analyse Duffuler)
+  - title: HYROX Sports Science Report 2025 (data-analyse Duffuler)
     url: https://hyrox.com/wp-content/uploads/2025/12/SSAC-Report.pdf
     accessed: 2026-10-22
-  - title: Brandt et al. (2025), Frontiers in Physiology, doi:10.3389/fphys.2025.1519240
-    url: https://doi.org/10.3389/fphys.2025.1519240
+  - title: Brandt, Ebel, Lebahn en Schmidt (2025), Frontiers in Physiology, doi:10.3389/fphys.2025.1519240
+    url: https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2025.1519240/full
     accessed: 2026-10-22
-    note: oorspronkelijke studie; de cijfers op deze pagina komen uit de samenvatting in het SSAC-rapport
   - title: HYROX – Best HYROX Preparation
     url: https://hyrox.com/best-hyrox-preparation/
     accessed: 2026-10-22
@@ -49,7 +48,7 @@ Het onderzoek laat zien dat lopen het grootste deel van de race is. Het laat nie
 
 | Bevinding | Wat de studie vond |
 |---|---|
-| Aandeel lopen | 51,2 van de mediane 86,2 minuten, ongeveer 60 % |
+| Aandeel lopen | Meer dan 60 % van de tijd; mediaan 51,2 minuten lopen bij een eindtijd van 86,5 minuten |
 | Sterkste samenhang met eindtijd | VO₂max, daarna trainingsvolume en vetpercentage |
 | Geen duidelijke samenhang | Grijpkracht en spiermassa |
 | Hoogste lactaat en RPE | Op de stations, met de top bij de wall balls |

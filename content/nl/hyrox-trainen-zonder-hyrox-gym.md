@@ -28,19 +28,22 @@ faq:
   - q: Kun je ook zonder loopmogelijkheid trainen?
     a: Dan vervangt Benchmrk een drempelsessie door 5 × 4 minuten op fiets, airbike, roeier of SkiErg op 95 tot 100 % van je drempelhartslag.
 sources:
+  - title: HYROX Singles Rulebook, seizoen 26/27
+    url: https://maintain.hyrox.com/rulebooks/HYROX_RulebookSingles_EN.pdf
+    accessed: 2026-10-22
   - title: HYROX – The Fitness Race (stations, afstanden en gewichten)
     url: https://hyrox.com/the-fitness-race/
     accessed: 2026-10-22
   - title: HYROX – Best HYROX Preparation
     url: https://hyrox.com/best-hyrox-preparation/
     accessed: 2026-10-22
-  - title: HYROX Sports Science Report 2025 (samenvatting Brandt et al. 2025)
-    url: https://hyrox.com/wp-content/uploads/2025/12/SSAC-Report.pdf
+  - title: Brandt, Ebel, Lebahn en Schmidt (2025), Frontiers in Physiology, doi:10.3389/fphys.2025.1519240
+    url: https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2025.1519240/full
     accessed: 2026-10-22
 ---
 ## Waarom kun je zonder HYROX-gym een goede race lopen?
 
-Omdat lopen het grootste deel van de race is, en lopen kan overal. In de studie van Brandt en collega's (2025) ging van de mediane 86,2 minuten 51,2 minuten op aan lopen. Je drempeltempo trainen heeft dus geen speciale gym nodig. Hoe je dat tempo bepaalt, lees je in [drempeltempo bepalen](/nl/gids/drempeltempo-bepalen).
+Omdat lopen het grootste deel van de race is, en lopen kan overal. In de studie van Brandt en collega's (2025) was de mediane eindtijd 86,5 minuten, waarvan mediaan 51,2 minuten lopen. Je drempeltempo trainen heeft dus geen speciale gym nodig. Hoe je dat tempo bepaalt, lees je in [drempeltempo bepalen](/nl/gids/drempeltempo-bepalen).
 
 Rick van de Ven, oprichter van Benchmrk en Pro-atleet, ging met beperkte trainingsmogelijkheden van 1:19 naar 1:14. Zijn volgende doel is 1:09.
 
@@ -51,8 +54,8 @@ Kies per station een oefening die dezelfde beweging of dezelfde vermoeidheid gee
 | Station | In een gewone gym | Thuis of buiten |
 |---|---|---|
 | SkiErg (1000 m) | Roeier, zelfde afstand, of 3–4 min hard op de airbike | 2 min band-pulldowns met gestrekte armen + 10 burpees |
-| Sled push (2 × 25 m) | 20 m zware walking lunges met dumbbells of halter | 4 × 20 s heuvelsprints of 20 m bear crawl |
-| Sled pull (2 × 25 m) | 3 × 12 zware rows + 20 m achteruit lopen | 3 × 15 rows met een band of met een volle rugzak |
+| Sled push (4 × 12,5 m) | 20 m zware walking lunges met dumbbells of halter | 4 × 20 s heuvelsprints of 20 m bear crawl |
+| Sled pull (4 × 12,5 m) | 3 × 12 zware rows + 20 m achteruit lopen | 3 × 15 rows met een band of met een volle rugzak |
 | Burpee broad jumps (80 m) | Zelfde oefening | Zelfde oefening |
 | Roeien (1000 m) | SkiErg, zelfde afstand, of 2–3 min hard op de fiets | 400 m lopen op race-inspanning |
 | Farmers carry (200 m) | Dumbbells of kettlebells | Twee volle jerrycans of tassen |
