@@ -1,7 +1,7 @@
 ---
 title: ¿Cómo haces el taper las dos últimas semanas antes de HYROX?
 seoTitle: "Taper para HYROX: las últimas 2 semanas | Benchmrk"
-description: Taper de 2 semanas, con menos volumen y el mismo ritmo. Qué dice el estudio, cuándo caen tu último simulacro y tu última fuerza dura, y cómo es la semana de carrera.
+description: Taper de 2 semanas con menos volumen y el mismo ritmo. Qué dice el estudio, cuándo hacer tu último simulacro y tu última fuerza dura, y la semana de carrera.
 breadcrumb: Taper
 translationOf: gids/hyrox-taper
 order: 3
@@ -116,4 +116,4 @@ Cómo encaja el taper en el plan completo está en [plan de entrenamiento HYROX]
 
 ## Así lo hace Benchmrk
 
-El taper está de serie en cada plan de 8 semanas o más. La app baja tu volumen a un 65 % aproximadamente y después a un 40 %, planifica tu último simulacro duro de 10 a 14 días antes de la carrera y tu última fuerza dura de 7 a 10 días antes. En la semana de carrera, las sesiones largas se convierten en carreras cortas con tramos a ritmo de carrera. El día de la carrera recibes un consejo de pacing y de alimentación.
+El taper viene de serie en cada plan de 8 semanas o más. La app baja tu volumen a un 65 % aproximadamente y luego a un 40 %, y planifica tu último simulacro duro de 10 a 14 días antes de la carrera y tu última fuerza dura de 7 a 10 días antes. En la semana de carrera, las sesiones largas pasan a carreras cortas con tramos a ritmo de carrera. El día de la carrera recibes consejo de pacing y alimentación.
