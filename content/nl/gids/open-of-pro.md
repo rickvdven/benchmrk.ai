@@ -27,6 +27,8 @@ faq:
     a: Je schrijft je per race in voor een divisie. Voor kwalificatie voor het WK gelden aparte regels; atleten van 60 jaar en ouder kwalificeren zich alleen via Open.
   - q: Welke divisie past bij mij?
     a: Kijk naar je stationtijden op de zware stations. Kost de sled push of de lunges je op Open-gewicht al veel tijd, dan kost Pro je nog meer. HYROX heeft daarnaast een korte vragenlijst om je niveau te bepalen.
+  - q: Mag je boven de 60 in Pro starten?
+    a: Ja, bij reguliere races kun je vanaf 60 jaar tot en met 80+ in Pro inschrijven en op het podium komen. Voor het WK kwalificeer je je 60+ alleen via Open, en op het WK race je met Open-gewichten.
 sources:
   - title: HYROX Singles Rulebook, seizoen 26/27
     url: https://maintain.hyrox.com/rulebooks/HYROX_RulebookSingles_EN.pdf
