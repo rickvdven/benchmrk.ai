@@ -70,3 +70,21 @@ input[type=number].no-spin::-webkit-inner-spin-button { -webkit-appearance: none
 .bm-table thead th, .bm-table thead td { @apply border-b-[1.5px] border-ink px-3 py-3 text-left text-xs font-medium uppercase tracking-[0.06em] text-muted first:pl-0 last:pr-0; }
 .bm-table tbody th, .bm-table tbody td { @apply border-b border-line px-3 text-left first:pl-0 last:pr-0; }
 .bm-mark { @apply bg-accent px-1 font-bold text-ink; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+
+/* Landing: app tour (AppTour.tsx). Every element ends visible; reduced motion shows the end state at once. */
+@keyframes bm-progress { from { width: 0; } to { width: 100%; } }
+@keyframes bm-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes bm-pop { 0% { opacity: 0; transform: scale(0.6); } 70% { transform: scale(1.12); } 100% { opacity: 1; transform: none; } }
+@keyframes bm-scan { 0% { transform: translateY(-40px); } 100% { transform: translateY(260px); } }
+@keyframes bm-grow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+@keyframes bm-type { from { max-width: 0; } to { max-width: 12ch; } }
+.bm-scene { animation: bm-in 0.35s ease-out both; }
+.bm-row { animation: bm-in 0.45s ease-out both; }
+.bm-pop { animation: bm-pop 0.4s ease-out both; }
+.bm-scan { animation: bm-scan 1.4s ease-in-out 2 both; opacity: 0.9; }
+.bm-bar { transform-origin: bottom; animation: bm-grow 0.5s ease-out both; }
+.bm-type { animation: bm-type 1s steps(7) 0.2s both; }
+@media (prefers-reduced-motion: reduce) {
+  .bm-scene, .bm-row, .bm-pop, .bm-scan, .bm-bar, .bm-type { animation: none; }
+  .bm-scan { display: none; }
+}
