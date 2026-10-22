@@ -1,7 +1,7 @@
 ---
 title: Wie machst du Tapering in den letzten zwei Wochen vor HYROX?
 seoTitle: "HYROX-Tapering: So gehst du die letzten 2 Wochen an"
-description: Tapering über 2 Wochen, mit weniger Umfang und gleichem Tempo. Was die Forschung sagt, wann deine letzte Sim und Kraft liegen und wie die Rennwoche aussieht.
+description: Tapering über 2 Wochen, mit weniger Umfang und gleichem Tempo. Was die Forschung sagt, wann deine letzte Sim und Kraft liegen und wie die Rennwoche läuft.
 breadcrumb: Tapering
 order: 3
 updated: 2026-10-22

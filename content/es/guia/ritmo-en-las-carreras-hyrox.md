@@ -1,7 +1,7 @@
 ---
 title: ¿A qué ritmo tienes que correr los runs para tu tiempo objetivo?
 seoTitle: "Ritmo en los runs de HYROX: ¿cuál para tu objetivo?"
-description: Calcula tu ritmo de carrera necesario a partir de tu tiempo objetivo, las estaciones y la Roxzone. Con ejemplo, caída por run y cómo dosificar el run 1 y el 8.
+description: Calcula tu ritmo de carrera necesario a partir de tu tiempo objetivo, las estaciones y la Roxzone. Con ejemplo, caída por run y cómo dosificar.
 breadcrumb: Ritmo en los runs
 translationOf: gids/runs-pacen
 order: 5

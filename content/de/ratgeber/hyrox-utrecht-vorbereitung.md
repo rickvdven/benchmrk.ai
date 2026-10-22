@@ -28,7 +28,7 @@ faq:
   - q: Kann ich mein Ticket noch stornieren?
     a: Nur mit einem Flex Add-On, und das kannst du nachträglich nicht mehr hinzufügen. Damit bekommst du bis 31 Tage vor dem Renntag 100 % zurück und bis 7 Tage davor 50 %. Prüfe die Bedingungen deines eigenen Tickets.
   - q: Muss ich früh einchecken?
-    a: Der Early Check-in gilt nur für Athleten, die am Donnerstag, 26.11., starten, und zwar am Mittwoch, 25.11., von 17:00 bis 20:00 Uhr. Alle anderen checken am Renntag ein, ab 90 Minuten vor der ersten Startwelle deiner Division.
+    a: Der Early Check-in gilt nur für Athleten, die am Donnerstag starten, und zwar am Mittwoch, 25. November, von 17:00 bis 20:00 Uhr. Alle anderen checken am Renntag ein, ab 90 Minuten vor der ersten Startwelle deiner Division.
 sources:
   - title: HYROX Utrecht, offizielle Rennseite (Daten, Ort, Check-in, Tickets)
     url: https://hyrox.com/event/hyrox-utrecht/

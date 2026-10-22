@@ -1,7 +1,7 @@
 ---
 title: ¿Cómo montas un entrenamiento de simulacro HYROX?
 seoTitle: "Crear un simulacro HYROX: de 4 rondas al ensayo general"
-description: "Un simulacro HYROX crece de 4 rondas con medias estaciones hasta un ensayo general completo. Por fase: distancia, volumen de estaciones, ritmo y cuándo parar."
+description: "Un simulacro HYROX crece de 4 rondas con medias estaciones hasta un ensayo general completo. Por fase: distancia, volumen de estaciones y ritmo."
 breadcrumb: Crear un simulacro
 translationOf: gids/hyrox-sim-opbouwen
 order: 6
