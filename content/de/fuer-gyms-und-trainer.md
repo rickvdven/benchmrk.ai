@@ -1,7 +1,7 @@
 ---
 title: Wie nutzt du Benchmrk als Gym oder Personal Trainer?
 seoTitle: "Benchmrk für Gyms und Trainer: Gymcode und Sim-Vorlagen"
-description: Mit einem Gymcode folgen deine Mitglieder deinem Sim-Aufbau und deinem Material, jeder behält aber einen eigenen Plan auf eigener Schwelle. So geht es für Gyms und Trainer.
+description: Mit einem Gymcode folgen deine Mitglieder deiner Sim-Vorlage und deinem Material, jeder behält aber einen eigenen Plan auf eigener Schwelle.
 breadcrumb: Für Gyms
 order: 5
 updated: 2026-10-22

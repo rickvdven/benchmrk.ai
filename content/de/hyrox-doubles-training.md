@@ -1,7 +1,7 @@
 ---
 title: Wie trainierst du für HYROX Doubles?
 seoTitle: "HYROX Doubles trainieren: Tempo, Stationen, Sim"
-description: In Doubles lauft ihr zusammen und teilt die Stationen auf. So bestimmst du das Teamtempo, verteilst jede Station nach euren Stärken und trainierst eine gemeinsame Sim.
+description: In Doubles lauft ihr zusammen und teilt die Stationen auf. So bestimmst du das Teamtempo, verteilst die Stationen und trainierst eine gemeinsame Sim.
 breadcrumb: Doubles
 order: 6
 updated: 2026-10-22
