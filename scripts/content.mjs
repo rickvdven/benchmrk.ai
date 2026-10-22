@@ -13,7 +13,7 @@ export const AUTHOR = {
   jobTitle: 'Oprichter van Benchmrk',
   description: 'Oprichter van Benchmrk en Pro-atleet in HYROX-races',
 };
-export const ORG = { '@type': 'Organization', name: 'Benchmrk', url: `${SITE}/`, logo: `${SITE}/favicon.svg` };
+export const ORG = { '@type': 'Organization', name: 'Benchmrk', url: `${SITE}/`, logo: `${SITE}/icon-512.png` };
 
 /** Per taal: padsegment voor gidsen, labels en de vaste teksten van het sjabloon. */
 export const LOCALES = {
@@ -274,11 +274,14 @@ function shell({ lang, title, description, canonical, ogType, jsonld, body }) {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#efeeea">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
 <link rel="canonical" href="${SITE}${canonical}">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#EFEEEA">
 <meta property="og:type" content="${ogType}">
 <meta property="og:site_name" content="Benchmrk">
 <meta property="og:locale" content="${LOCALES[lang].ogLocale}">
