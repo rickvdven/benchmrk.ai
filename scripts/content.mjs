@@ -144,7 +144,8 @@ export function validate(pages) {
         if (src.type !== p.type) e(`translationOf "${p.translationOf}" is een ${src.type}, deze pagina een ${p.type}`);
         if (pages.some((o) => o !== p && o.lang === p.lang && o.translationOf === p.translationOf)) e(`meerdere ${p.lang}-vertalingen van ${p.translationOf}`);
         // vertalen mag niets toevoegen of weglaten: zelfde getallen, tabellen en secties als de NL-bron
-        const nums = (t) => new Set((String(t).replace(/(\d)[.,](\d)/g, '$1.$2').match(/\d+(?:\.\d+)?/g) ?? []));
+        // Koreaanse datums schrijven de maand als cijfer (1월); NL schrijft die uit, dus laat die cijfers buiten de vergelijking
+        const nums = (t) => new Set((String(t).replace(/\d{1,2}월/g, ' ').replace(/(\d)[.,](\d)/g, '$1.$2').match(/\d+(?:\.\d+)?/g) ?? []));
         const miss = [...nums(src.answer)].filter((n) => !nums(p.answer).has(n));
         if (miss.length) w(`antwoordblok mist getallen uit de NL-bron: ${miss.join(', ')}`);
         const srcAll = nums(`${src.body} ${src.faq?.map((f) => f.a).join(' ')}`);
