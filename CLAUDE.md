@@ -36,7 +36,7 @@ Deploy: Merge naar main = automatisch live via Vercel; elke andere branch krijgt
 - `src/pages/` – Landing, Cockpit, Plan, Settings, Science, admin/* · `src/components/` – UI-onderdelen
 - `src/lib/i18n.tsx` + `src/locales/*.json` – talen EN/NL/DE/ES/KO. Taal: `?lang=` > eigen keuze > IP-land (`/api/geo`) > browser
 - `server/` – API-routes (notes, whiteboard, notify, tts, geo, unsubscribe, cron) · `server/_lib/` – mail, templates, Supabase-client
-- `content/` – gidsen en website-pagina's in Markdown (zie `content/README.md`, instructie in `COPY_AGENT.md`); bij de build gerenderd tot statische HTML onder `/nl/…`, plus `sitemap.xml` en `robots.txt`
+- `content/` – gidsen en website-pagina's in Markdown (zie `content/README.md`, instructie in `COPY_AGENT.md`); bij de build gerenderd tot statische HTML onder `/nl/…`, `/en/…`, `/de/…`, `/es/…` en `/ko/…` (vertalingen via `translationOf`, met hreflang), plus `sitemap.xml` en `robots.txt`
 - `supabase/migrations/` – 001–019, alle toegepast. Nieuwe migratie = volgend nummer; toepassen via Supabase SQL-editor of Management API
 
 ## Afspraken
