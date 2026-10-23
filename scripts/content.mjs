@@ -406,7 +406,7 @@ export function sitemap(pages) {
   const latest = (lang) => pages.filter((p) => p.lang === lang).map((p) => p.updated).sort().pop();
   const entry = (loc, lastmod, alternates) =>
     `  <url>\n    <loc>${SITE}${loc}</loc>${lastmod ? `\n    <lastmod>${lastmod}</lastmod>` : ''}${(alternates ?? []).map(([l, u]) => `\n    <xhtml:link rel="alternate" hreflang="${l}" href="${SITE}${u}"/>`).join('')}\n  </url>`;
-  const rows = [entry('/'), entry('/science')];
+  const rows = [entry('/'), entry('/science'), entry('/gym')];
   for (const lang of Object.keys(LOCALES)) rows.push(entry(overviewUrl(lang), latest(lang)));
   for (const p of pages) {
     const alt = p.alternates ? [[p.lang, p.url], ...Object.entries(p.alternates)] : null;

@@ -250,5 +250,8 @@
   "vid.watch": "Watch the video (1 min)",
   "vid.transcript": "Read the video transcript",
   "vid.label": "Video: how Benchmrk works",
-  "vid.text": ""
+  "vid.text": "",
+  "nav.gyms": "For gyms",
+  "vid.gym": "Coaching a group? Watch the demo for gyms and PTs",
+  "foot.hyrox": "Benchmrk is not affiliated with HYROX."
 }

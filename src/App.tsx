@@ -37,6 +37,7 @@ const Admin = lazyRetry(() => import('./pages/admin/Admin'));
 const Science = lazyRetry(() => import('./pages/Science'));
 const InvitePage = lazyRetry(() => import('./pages/Invite'));
 const MyGym = lazyRetry(() => import('./pages/MyGym'));
+const Gym = lazyRetry(() => import('./pages/Gym'));
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { user, ready } = useAuth();
@@ -100,6 +101,7 @@ export default function App() {
           <Route path="/doubles" element={app(<Doubles />)} />
           <Route path="/recovery" element={<Recovery />} />
           <Route path="/science" element={<Science />} />
+          <Route path="/gym" element={<Gym />} />
           <Route path="/settings" element={app(<SettingsPage />)} />
           <Route path="/invite" element={app(<InvitePage />)} />
           <Route path="/my-gym" element={<RequireAuth><MyGym /></RequireAuth>} />

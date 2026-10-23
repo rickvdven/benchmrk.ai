@@ -243,5 +243,8 @@
   "fit.race.h": "Carreras HYROX",
   "fit.race.d": "Planifica tu temporada en torno a las carreras del calendario oficial. Eliges la división por carrera y el plan usa los pesos oficiales.",
   "fit.watch.h": "Tu reloj",
-  "fit.watch.d": "Mantén tu reloj y tus apps. Benchmrk solo pide ritmo, pulso y RPE, y te muestra dónde encontrar tu umbral en Garmin, Apple, Polar o Coros."
+  "fit.watch.d": "Mantén tu reloj y tus apps. Benchmrk solo pide ritmo, pulso y RPE, y te muestra dónde encontrar tu umbral en Garmin, Apple, Polar o Coros.",
+  "nav.gyms": "Para gimnasios",
+  "vid.gym": "¿Entrenas a un grupo? Mira la demo para gimnasios y entrenadores",
+  "foot.hyrox": "Benchmrk no está afiliado a HYROX."
 }
