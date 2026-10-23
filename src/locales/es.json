@@ -123,6 +123,8 @@
     "ck.welcome": "Bienvenido/a de nuevo{name}",
     "ck.morning": "¿Rigidez de tendones / músculos al despertar (1–10)?",
     "ck.guardOn": "Protección de tendones activa hoy: las sesiones de impacto pasan a bajo impacto.",
+    "ck.morningSaved": "Rigidez esta mañana: {n}/10",
+    "ck.morningEdit": "Cambiar",
     "ck.today": "Hoy",
     "ck.openPlan": "Abrir plan",
     "ck.markDone": "Marcar como hecha",
