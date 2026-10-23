@@ -5,6 +5,7 @@ import { SiteFooter, SiteHeader } from '../components/SiteChrome';
 import { useAppSettings, useAuth } from '../data/hooks';
 import { useI18n, type Lang } from '../lib/i18n';
 import { fmtEur } from '../lib/money';
+import { nb } from '../lib/brand';
 import en from '../locales/gym.en.json';
 import nl from '../locales/gym.nl.json';
 import de from '../locales/gym.de.json';
@@ -91,7 +92,7 @@ export default function Gym() {
         {/* hero */}
         <section className="bm-wrap pb-16 pt-9 sm:pb-20 sm:pt-12">
           <p className="bm-kicker mb-[18px] sm:mb-7">{g('hero.kicker')}</p>
-          <h1 className="bm-display max-w-[16ch] text-[clamp(44px,6vw,88px)] !leading-[0.94] [overflow-wrap:anywhere] [text-wrap:balance]">{g('hero.h1')}</h1>
+          <h1 className="bm-display max-w-[16ch] text-[clamp(44px,6vw,88px)] !leading-[0.94] [overflow-wrap:anywhere] [text-wrap:balance]">{nb(g('hero.h1'))}</h1>
           <p className="mt-6 max-w-[620px] text-[17px] text-ink-2 sm:mt-8 sm:text-[19px]">{g('hero.sub')}</p>
           <div className="mt-7 flex flex-wrap items-center gap-5 sm:mt-10">
             <a href={mailto} className="bm-btn-accent w-full sm:w-auto">
@@ -109,7 +110,7 @@ export default function Gym() {
           <div className="border-t-[1.5px] border-ink pt-12">
             <p className="bm-kicker mb-4">{g('demo.kicker')}</p>
             <h2 id="demo-title" className="bm-h2 max-w-[18ch]">
-              {g('demo.title')}
+              {nb(g('demo.title'))}
             </h2>
             <div className="mt-8">
               {hasVideo || play ? (
@@ -138,14 +139,14 @@ export default function Gym() {
         {/* three steps */}
         <section className="bm-wrap flex flex-wrap gap-12 pb-10 pt-16 sm:pt-[100px]" aria-labelledby="how-title">
           <h2 id="how-title" className="bm-h2 flex-[1_1_300px]">
-            {g('how.title')}
+            {nb(g('how.title'))}
           </h2>
           <ol className="m-0 flex flex-[2_1_520px] list-none flex-col p-0">
             {steps.map((s, i) => (
               <li key={s.h} className={clsx('flex gap-5 border-t border-line py-[22px] sm:gap-7', i === steps.length - 1 && 'border-b')}>
                 <span className="min-w-[64px] font-mono text-muted">{String(i + 1).padStart(2, '0')}</span>
                 <div>
-                  <h3 className="text-[20px] font-bold">{s.h}</h3>
+                  <h3 className="text-[20px] font-bold">{nb(s.h)}</h3>
                   <p className="mt-1.5 text-ink-2">{s.d}</p>
                 </div>
               </li>
@@ -156,7 +157,7 @@ export default function Gym() {
         {/* what the gym decides, what stays per member */}
         <section className="bm-wrap pb-10 pt-16 sm:pt-[100px]" aria-labelledby="split-title">
           <h2 id="split-title" className="bm-h2 max-w-[18ch]">
-            {g('split.title')}
+            {nb(g('split.title'))}
           </h2>
           <div className="mt-9 overflow-x-auto rounded-paper border border-line bg-surface shadow-paper" tabIndex={0} role="region" aria-label={g('split.title')}>
             <table className="w-full min-w-[560px] border-collapse text-[15px]">
@@ -186,13 +187,13 @@ export default function Gym() {
         {/* four features */}
         <section className="bm-wrap pb-10 pt-16 sm:pt-[100px]" aria-labelledby="feat-title">
           <h2 id="feat-title" className="bm-h2 max-w-[18ch]">
-            {g('feat.title')}
+            {nb(g('feat.title'))}
           </h2>
           <div className="mt-8 grid gap-x-10 sm:mt-12 sm:grid-cols-2 lg:grid-cols-4">
             {feats.map((f, i) => (
               <div key={f.h} className="border-t-[1.5px] border-ink pb-8 pt-5">
                 <div className="font-mono text-[13px] text-muted">{String(i + 1).padStart(2, '0')}</div>
-                <h3 className="my-2.5 text-[20px] font-bold leading-tight sm:text-[22px]">{f.h}</h3>
+                <h3 className="my-2.5 text-[20px] font-bold leading-tight sm:text-[22px]">{nb(f.h)}</h3>
                 <p className="text-ink-2">{f.d}</p>
               </div>
             ))}
@@ -203,7 +204,7 @@ export default function Gym() {
         <section className="bm-wrap pb-10 pt-6 sm:pt-12" aria-labelledby="pt-title">
           <div className="bg-ink px-6 py-12 text-ground sm:px-12 sm:py-16">
             <h2 id="pt-title" className="bm-h2 max-w-[20ch] !text-ground">
-              {g('pt.title')}
+              {nb(g('pt.title'))}
             </h2>
             <p className="mt-6 max-w-[62ch] text-[17px] text-[#e4e2dc]">{g('pt.text')}</p>
             <Link to={user ? '/invite' : '/auth?mode=signup'} className="bm-btn-accent mt-8 w-full sm:w-auto">
@@ -223,7 +224,7 @@ export default function Gym() {
         {/* faq */}
         <section className="bm-wrap pb-10 pt-16 sm:pt-[100px]" aria-labelledby="faq-title">
           <h2 id="faq-title" className="bm-h2">
-            {g('faq.title')}
+            {nb(g('faq.title'))}
           </h2>
           <div className="mt-8 max-w-[820px] border-b border-line">
             {faq.map((f) => (
@@ -247,7 +248,7 @@ export default function Gym() {
         <section className="bm-wrap pb-16 pt-10 sm:pb-[120px] sm:pt-[60px]" aria-labelledby="end-title">
           <div className="border-t-[1.5px] border-ink pt-12">
             <h2 id="end-title" className="bm-h2 max-w-[18ch]">
-              {g('end.title')}
+              {nb(g('end.title'))}
             </h2>
             <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
               <a href={mailto} className="bm-btn-accent w-full sm:w-auto">
