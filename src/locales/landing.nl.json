@@ -243,5 +243,15 @@
   "fit.race.h": "HYROX-races",
   "fit.race.d": "Plan je seizoen rond de races uit de officiële kalender. Per race kies je je divisie, en het plan rekent met de officiële gewichten.",
   "fit.watch.h": "Je horloge",
-  "fit.watch.d": "Houd je horloge en je eigen apps. Benchmrk vraagt alleen tempo, hartslag en RPE, en laat zien waar je je drempel vindt in Garmin, Apple, Polar of Coros."
+  "fit.watch.d": "Houd je horloge en je eigen apps. Benchmrk vraagt alleen tempo, hartslag en RPE, en laat zien waar je je drempel vindt in Garmin, Apple, Polar of Coros.",
+  "vid.kicker": "Video · 78 seconden",
+  "vid.title": "Zo werkt Benchmrk",
+  "vid.sub": "Van je doeltijd naar een plan dat meebeweegt met jouw week. Ondertitels staan aan.",
+  "vid.watch": "Bekijk de video (1 min)",
+  "vid.transcript": "Lees de tekst van de video",
+  "vid.label": "Video: zo werkt Benchmrk",
+  "vid.text": "Je hebt al een paar HYROX-races gelopen. Je kent je eindtijd. Maar weet je ook waar je de meeste tijd verliest? Benchmrk maakt je verbeterplan op basis van data en onderzoek: jouw drempeltempo, jouw splits en sportwetenschappelijke bronnen. Vul je doeltijd en drempeltempo in. Je ziet je verwachte tijd per run, per station en in de Roxzone, en de kans dat je je doel haalt. Is je doel niet haalbaar? Dan zegt de app dat ook. Je plan draait om jouw week. In je eigen gym of thuis, met het materiaal dat je hebt. Na elke training log je tempo, hartslag en hoe het voelde. Volgde je een les in je gym? Scan het whiteboard. Voel je pijn? Dan past het plan zich aan. Vijf benchmarks meten je vooruitgang. Daarna rekent de app je tempo's en je kans opnieuw uit. De laatste twee weken taper je af. En op racedag weet je precies welk tempo bij je doel hoort. Rick bouwde Benchmrk voor zijn eigen training: van 1:19 naar 1:14 in Pro. Nu traint hij naar 1:09. Reken je eigen race door op benchmrk.ai.",
+  "nav.gyms": "Voor gyms",
+  "vid.gym": "Coach je een groep? Bekijk de demo voor gyms en PT's",
+  "foot.hyrox": "Benchmrk is niet verbonden aan HYROX."
 }

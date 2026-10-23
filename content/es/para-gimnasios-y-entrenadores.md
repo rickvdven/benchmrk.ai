@@ -5,21 +5,22 @@ description: Con un código de gimnasio tus miembros siguen tu progresión de si
 breadcrumb: Para gimnasios
 translationOf: voor-gyms
 order: 5
-updated: 2026-10-22
+updated: 2026-10-23
 answer: >-
-  Como gimnasio recibes un código de gimnasio. Los miembros que lo introducen siguen tu plantilla de
-  simulacro y el material de tu gimnasio. Cada uno mantiene su propio plan con su ritmo umbral y su
-  frecuencia cardiaca umbral. Una plantilla fija por bloque de semanas cuánto del kilómetro de carrera y del
-  volumen de estaciones hacen tus miembros, por ejemplo 3 semanas al 50 % y después 2 semanas al 100 %. Si
-  cambias la plantilla, los planes de tus miembros la siguen.
+  Como gimnasio recibes una cuenta con código y enlace de invitación. En Mi gimnasio defines el material y
+  tus programas de simulacro. Los miembros que se vinculan con tu enlace o código siguen tu programa, y cada
+  uno mantiene su plan con su ritmo umbral. Un programa fija por bloque de semanas cuánto del kilómetro de
+  carrera y del volumen de estaciones hacen, por ejemplo 3 semanas al 50 % y después 2 semanas al 100 %. Si
+  lo cambias, los planes se recalculan.
 summary:
-  - Un código de gimnasio vincula a los miembros con tu gimnasio.
-  - Los miembros siguen tu plantilla de simulacro y el material de tu gimnasio.
+  - Gestionas tu gimnasio y tus programas de simulacro tú mismo en Mi gimnasio.
+  - Los miembros se vinculan con tu enlace de invitación o con el código del gimnasio.
+  - Los miembros siguen tu programa de simulacro y el material de tu gimnasio.
   - Cada miembro mantiene su propio plan, con su propio umbral y su propia fecha de carrera.
   - Un WOD de tu clase en grupo cuenta como día de entrenamiento.
 faq:
   - q: ¿Cómo se vinculan los miembros a mi gimnasio?
-    a: Introducen el código de gimnasio en sus ajustes. Después siguen la plantilla de simulacro y el material del gimnasio.
+    a: Con tu enlace de invitación, o introduciendo el código de gimnasio en sus ajustes. Después siguen el programa de simulacro y el material del gimnasio. También pueden dejar el gimnasio.
   - q: ¿Todos mis miembros reciben el mismo plan?
     a: No. La progresión del simulacro es la misma, pero los ritmos, los límites de frecuencia cardiaca, la fecha de carrera y la división son de cada miembro. Cada plan calcula con su propio umbral.
   - q: ¿Qué hay en una plantilla de simulacro?
@@ -27,7 +28,7 @@ faq:
   - q: ¿Pueden los miembros entrenar sin código de gimnasio?
     a: Sí. Sin gimnasio siguen la progresión estándar de Benchmrk por fase, o una propia.
   - q: ¿Puedo trabajar como entrenador personal con un grupo fijo?
-    a: Un grupo puede compartir un código de la misma manera. En la beta, Benchmrk te deja el gimnasio listo con código, material y plantilla.
+    a: Un grupo puede compartir un código de gimnasio de la misma manera. Como gimnasio o entrenador gestionas tu gimnasio y tus programas de simulacro tú mismo en Mi gimnasio. Si un entrenador trae atletas, también hay una solicitud de embajador con comisión.
 sources:
   - title: HYROX – The Fitness Race (estaciones y volumen de carrera)
     url: https://hyrox.com/the-fitness-race/
@@ -38,7 +39,7 @@ sources:
 ---
 ## ¿Qué hace un código de gimnasio?
 
-Un código de gimnasio vincula a un miembro con tu gimnasio. Cuando un miembro introduce el código, su plan adopta dos cosas: tu plantilla de simulacro y el material que hay en tu gimnasio. El miembro mantiene su propio plan, con sus propios ritmos y su propia fecha de carrera. Los miembros también pueden dejar el gimnasio.
+Un código de gimnasio vincula a un miembro con tu gimnasio, igual que tu enlace de invitación. Cuando un miembro se vincula, su plan adopta dos cosas: tu programa de simulacro y el material que hay en tu gimnasio. El miembro mantiene su propio plan, con sus propios ritmos y su propia fecha de carrera. Los miembros también pueden dejar el gimnasio.
 
 | Lo que decide el gimnasio | Lo que sigue siendo de cada miembro |
 |---|---|
@@ -77,4 +78,4 @@ Tus miembros entrenan entre clases a su propio nivel, con tu progresión como co
 
 ## Así lo hace Benchmrk
 
-En la beta, un gimnasio recibe un código de gimnasio, con el material y una plantilla de simulacro propia. Los miembros que introducen el código siguen tu progresión. Si actualizas la plantilla, sus planes se adaptan. Además, cada plan se adapta a lo que registra el miembro: ritmo, frecuencia cardiaca y RPE. Los miembros empiezan gratis en la beta; después Benchmrk cuesta 30 € al año.
+Un gimnasio gestiona su material y sus programas de simulacro en Mi gimnasio. Los miembros que se vinculan con tu enlace o con el código siguen tu progresión. Si actualizas un programa, sus planes se adaptan. Además, cada plan se adapta a lo que registra el miembro: ritmo, frecuencia cardiaca y RPE. Los miembros empiezan gratis en la beta; después Benchmrk cuesta 30 € al año. [Ver la demo y solicitar una cuenta de gimnasio](/gym?lang=es).

@@ -436,7 +436,7 @@ export function sitemap(pages) {
   const links = (alt) => (alt ? [...Object.entries(alt), ['x-default', alt[DEFAULT_LANG] ?? Object.values(alt)[0]]] : []);
   const entry = (loc, lastmod, alt) =>
     `  <url>\n    <loc>${SITE}${loc}</loc>${lastmod ? `\n    <lastmod>${lastmod}</lastmod>` : ''}${links(alt).map(([l, u]) => `\n    <xhtml:link rel="alternate" hreflang="${l}" href="${SITE}${u}"/>`).join('')}\n  </url>`;
-  const rows = [entry('/'), entry('/science')];
+  const rows = [entry('/'), entry('/science'), entry('/gym')];
   const ovAlt = overviewAlternates(pages);
   for (const lang of Object.keys(ovAlt)) rows.push(entry(overviewUrl(lang), latest(lang), ovAlt));
   for (const p of pages) rows.push(entry(p.url, p.updated, p.alternates));

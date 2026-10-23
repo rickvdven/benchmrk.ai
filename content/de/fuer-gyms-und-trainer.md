@@ -4,22 +4,23 @@ seoTitle: "Benchmrk für Gyms und Trainer: Gymcode und Sim-Vorlagen"
 description: Mit einem Gymcode folgen deine Mitglieder deiner Sim-Vorlage und deinem Material, jeder behält aber einen eigenen Plan auf eigener Schwelle.
 breadcrumb: Für Gyms
 order: 5
-updated: 2026-10-22
+updated: 2026-10-23
 translationOf: voor-gyms
 answer: >-
-  Als Gym bekommst du einen Gymcode. Mitglieder, die diesen Code eingeben, folgen deiner Sim-Vorlage und dem
-  Material deines Gyms. Jeder behält einen eigenen Plan mit eigenem Schwellentempo und eigener
-  Schwellenherzfrequenz. Eine Vorlage legt pro Block von Wochen fest, wie viel vom Renn-Kilometer und vom
-  Stationsumfang deine Mitglieder machen, zum Beispiel 3 Wochen bei 50 % und später 2 Wochen bei 100 %.
-  Passt du die Vorlage an, folgen die Pläne deiner Mitglieder.
+  Als Gym bekommst du ein Gym-Konto mit Gymcode und Einladungslink. Unter Mein Gym legst du Material und
+  Sim-Programme selbst fest. Mitglieder, die sich über deinen Link oder mit dem Code verknüpfen, folgen deinem
+  Programm, und jeder behält einen eigenen Plan mit eigenem Schwellentempo. Ein Programm legt pro Block von
+  Wochen fest, wie viel vom Renn-Kilometer und vom Stationsumfang deine Mitglieder machen, zum Beispiel
+  3 Wochen bei 50 % und später 2 Wochen bei 100 %. Passt du es an, rechnen die Pläne deiner Mitglieder mit.
 summary:
-  - Ein Gymcode verknüpft Mitglieder mit deinem Gym.
-  - Mitglieder folgen deiner Sim-Vorlage und dem Material deines Gyms.
+  - Du verwaltest dein Gym und deine Sim-Programme selbst unter Mein Gym.
+  - Mitglieder verknüpfen sich über deinen Einladungslink oder mit dem Gymcode.
+  - Mitglieder folgen deinem Sim-Programm und dem Material deines Gyms.
   - Jedes Mitglied behält einen eigenen Plan mit eigener Schwelle und eigenem Renndatum.
   - Ein WOD aus deiner Gruppenstunde zählt als Trainingstag.
 faq:
   - q: Wie verknüpfen sich Mitglieder mit meinem Gym?
-    a: Sie geben den Gymcode in ihren Einstellungen ein. Danach folgen sie der Sim-Vorlage und dem Material des Gyms.
+    a: Über deinen Einladungslink oder indem sie den Gymcode in ihren Einstellungen eingeben. Danach folgen sie dem Sim-Programm und dem Material des Gyms. Sie können das Gym auch wieder verlassen.
   - q: Bekommen alle meine Mitglieder denselben Plan?
     a: Nein. Der Sim-Aufbau ist gleich, aber Tempi, Herzfrequenzgrenzen, Renndatum und Division sind pro Mitglied verschieden. Jeder Plan rechnet mit der eigenen Schwelle.
   - q: Was steht in einer Sim-Vorlage?
@@ -27,7 +28,7 @@ faq:
   - q: Können Mitglieder auch ohne Gymcode trainieren?
     a: Ja. Ohne Gym folgen sie dem Standardaufbau von Benchmrk pro Phase oder einem eigenen Aufbau.
   - q: Kann ich als Personal Trainer mit einer festen Gruppe arbeiten?
-    a: Eine Gruppe kann auf dieselbe Weise einen Code teilen. In der Beta richtet Benchmrk das Gym mit Code, Material und Vorlage für dich ein.
+    a: Eine Gruppe kann auf dieselbe Weise einen Gymcode teilen. Als Gym oder Trainer verwaltest du dein Gym und deine Sim-Programme selbst unter Mein Gym. Bringt ein Trainer Athleten mit, gibt es außerdem eine Botschafter-Anmeldung mit Provision.
 sources:
   - title: HYROX – The Fitness Race (Stationen und Rennumfang)
     url: https://hyrox.com/the-fitness-race/
@@ -38,7 +39,7 @@ sources:
 ---
 ## Was macht ein Gymcode?
 
-Ein Gymcode verknüpft ein Mitglied mit deinem Gym. Gibt ein Mitglied den Code ein, übernimmt sein Plan zwei Dinge: deine Sim-Vorlage und das Material, das in deinem Gym steht. Das Mitglied behält einen eigenen Plan, mit eigenen Tempi und einem eigenen Renndatum. Mitglieder können das Gym auch wieder verlassen.
+Ein Gymcode verknüpft ein Mitglied mit deinem Gym, genau wie dein Einladungslink. Verknüpft sich ein Mitglied, übernimmt sein Plan zwei Dinge: dein Sim-Programm und das Material, das in deinem Gym steht. Das Mitglied behält einen eigenen Plan, mit eigenen Tempi und einem eigenen Renndatum. Mitglieder können das Gym auch wieder verlassen.
 
 | Was das Gym bestimmt | Was pro Mitglied bleibt |
 |---|---|
@@ -77,4 +78,4 @@ Deine Mitglieder trainieren zwischen den Stunden auf ihrem eigenen Niveau, mit d
 
 ## So macht es Benchmrk
 
-Ein Gym bekommt in der Beta einen Gymcode, mit Material und einer eigenen Sim-Vorlage. Mitglieder, die den Code eingeben, folgen deinem Aufbau. Aktualisierst du die Vorlage, passen sich ihre Pläne an. Außerdem passt sich jeder Plan an das an, was das Mitglied loggt: Tempo, Herzfrequenz und RPE. Mitglieder starten kostenlos in der Beta; danach kostet Benchmrk 30 € pro Jahr.
+Ein Gym verwaltet Material und Sim-Programme selbst unter Mein Gym. Mitglieder, die sich über deinen Link oder mit dem Gymcode verknüpfen, folgen deinem Aufbau. Aktualisierst du ein Programm, passen sich ihre Pläne an. Außerdem passt sich jeder Plan an das an, was das Mitglied loggt: Tempo, Herzfrequenz und RPE. Mitglieder starten kostenlos in der Beta; danach kostet Benchmrk 30 € pro Jahr. [Demo ansehen und Gym-Konto anfragen](/gym?lang=de).

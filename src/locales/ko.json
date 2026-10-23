@@ -123,6 +123,8 @@
     "ck.welcome": "다시 오신 걸 환영해요{name}",
     "ck.morning": "기상 시 힘줄 / 근육 뻣뻣함 (1–10)?",
     "ck.guardOn": "오늘은 힘줄 보호 모드가 켜져 있어요: 충격이 큰 세션은 저충격으로 바뀌어요.",
+    "ck.morningSaved": "오늘 아침 뻣뻣함: {n}/10",
+    "ck.morningEdit": "수정",
     "ck.today": "오늘",
     "ck.openPlan": "플랜 열기",
     "ck.markDone": "완료로 표시",

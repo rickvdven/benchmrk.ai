@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import clsx from 'clsx';
 import { toast } from 'sonner';
 import { Award, ShieldAlert } from 'lucide-react';
-import { STATIONS, stationLabel, goalStationTargets, radarScores, weekMilestone, daysBetween, fmtHms, fmtMmss, phaseLabel, weekOf, zones, type Session } from '../engine';
+import { STATIONS, stationLabel, goalStationTargets, radarScores, weekMilestone, daysBetween, fmtHms, fmtMmss, mondayOf, phaseLabel, weekOf, zones, type Session } from '../engine';
 import { useCoach, useMutations, usePlanChanges, useTeam } from '../data/hooks';
 import { useI18n, type I18nKey } from '../lib/i18n';
 import { Notice, PageHeader, Spinner, Stat } from '../components/ui';
@@ -28,6 +28,7 @@ export default function Cockpit() {
   const team = useTeam();
   const [open, setOpen] = useState<Session | null>(null);
   const [bench, setBench] = useState(false);
+  const [editMorning, setEditMorning] = useState(false);
   const [dismissed, setDismissed] = useState<string | null>(() => {
     try {
       return localStorage.getItem('rox:dismiss-adjust');
@@ -44,7 +45,13 @@ export default function Cockpit() {
   const todays = week?.sessions.find((s) => s.date === today);
   const todayScore = c.morning[today];
   const days = daysBetween(today, profile.raceDate);
-  const adjustKey = adjust ? `${adjust.kind}:${adjust.evidence.join(',')}` : null;
+  // the rest-week suggestion is re-evaluated every day on a rolling week, so its evidence keeps changing:
+  // answer it once per calendar week instead of once per set of evidence
+  const weekStart = mondayOf(today);
+  const adjustKey = adjust ? (adjust.kind === 'deload' ? `deload:${weekStart}` : `${adjust.kind}:${adjust.evidence.join(',')}`) : null;
+  const deloadApplied = adjust?.kind === 'deload' && (changes.data ?? []).some((ch) => ch.kind === 'deload' && String(ch.created_at).slice(0, 10) >= weekStart);
+  const stiffCeiling = c.rules?.achillesStiffnessCeiling ?? 4;
+  const hasScore = typeof todayScore === 'number';
   const z = zones(profile.athlete.lthr, profile.athlete.maxHr);
   const partnerName = team.partner?.display_name ?? null;
   const partnerToday = team.partnerEntries.find((e) => e.date === today);
@@ -64,7 +71,7 @@ export default function Cockpit() {
       <div className="space-y-4">
         {(profile.goalSec < 1800 || profile.goalSec > 14400) && <Notice tone="bad">{t('ck.goalInvalid')}</Notice>}
 
-        {adjust && adjustKey !== dismissed && (
+        {adjust && adjustKey !== dismissed && !deloadApplied && (
           <div className="panel border-sky/50 p-4">
             <p className="text-xs font-semibold uppercase tracking-wider text-sky">{t('ck.adjust')}</p>
             <p className="mt-1 text-sm">{t(`ck.adjust.${adjust.kind}` as I18nKey, { n: 'sec' in adjust ? adjust.sec : 0 })}</p>
@@ -122,26 +129,42 @@ export default function Cockpit() {
           </button>
         )}
 
-        <div className={clsx('panel p-4', todayScore >= (c.rules?.achillesStiffnessCeiling ?? 4) && 'border-warn/60 bg-warn/10')}>
-          <div className="flex flex-wrap items-center gap-3">
-            <ShieldAlert className={clsx('h-5 w-5', todayScore >= 4 ? 'text-warn' : 'text-volt')} />
-            <p className="text-sm font-medium">{t('ck.morning')}</p>
-            <div className="ml-auto flex flex-wrap gap-1">
-              {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
-                <button
-                  key={n}
-                  aria-label={`${n}`}
-                  aria-pressed={todayScore === n}
-                  onClick={() => setMorning(today, n)}
-                  className={clsx('stat h-8 w-8 rounded-md border text-sm', todayScore === n ? (n >= 4 ? 'border-warn bg-warn text-white' : 'border-volt bg-volt text-black') : 'border-line hover:border-volt/60')}
-                >
-                  {n}
-                </button>
-              ))}
+        {hasScore && !editMorning ? (
+          // saved for today: one slim line instead of the full 1-10 question
+          <div className={clsx(todayScore >= stiffCeiling ? 'panel border-warn/60 bg-warn/10 p-4' : 'px-1')}>
+            <p className={clsx('flex flex-wrap items-center gap-2 text-sm', todayScore >= stiffCeiling ? 'text-warn' : 'text-muted')}>
+              <ShieldAlert className="h-4 w-4 shrink-0" aria-hidden />
+              <span>{t('ck.morningSaved', { n: todayScore })}</span>
+              <button type="button" className="underline underline-offset-4 hover:text-fg" onClick={() => setEditMorning(true)}>
+                {t('ck.morningEdit')}
+              </button>
+            </p>
+            {todayScore >= stiffCeiling && <p className="mt-2 text-sm text-warn">{t('ck.guardOn')}</p>}
+          </div>
+        ) : (
+          <div className={clsx('panel p-4', hasScore && todayScore >= stiffCeiling && 'border-warn/60 bg-warn/10')}>
+            <div className="flex flex-wrap items-center gap-3">
+              <ShieldAlert className={clsx('h-5 w-5', hasScore && todayScore >= stiffCeiling ? 'text-warn' : 'text-volt')} />
+              <p className="text-sm font-medium">{t('ck.morning')}</p>
+              <div className="ml-auto flex flex-wrap gap-1">
+                {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
+                  <button
+                    key={n}
+                    aria-label={`${n}`}
+                    aria-pressed={todayScore === n}
+                    onClick={() => {
+                      void setMorning(today, n);
+                      setEditMorning(false);
+                    }}
+                    className={clsx('stat h-8 w-8 rounded-md border text-sm', todayScore === n ? (n >= stiffCeiling ? 'border-warn bg-warn text-white' : 'border-volt bg-volt text-black') : 'border-line hover:border-volt/60')}
+                  >
+                    {n}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
-          {todayScore >= (c.rules?.achillesStiffnessCeiling ?? 4) && <p className="mt-2 text-sm text-warn">{t('ck.guardOn')}</p>}
-        </div>
+        )}
 
         {week && weekMilestone(week, profile, lang) && (
           <div className="panel flex items-center gap-3 border-volt/40 p-4 text-sm">

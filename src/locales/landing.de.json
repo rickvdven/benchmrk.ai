@@ -243,5 +243,8 @@
   "fit.race.h": "HYROX-Rennen",
   "fit.race.d": "Plane deine Saison rund um die Rennen im offiziellen Kalender. Pro Rennen wählst du deine Division, und der Plan rechnet mit den offiziellen Gewichten.",
   "fit.watch.h": "Deine Uhr",
-  "fit.watch.d": "Behalte deine Uhr und deine Apps. Benchmrk fragt nur Tempo, Herzfrequenz und RPE ab und zeigt, wo du deine Schwelle in Garmin, Apple, Polar oder Coros findest."
+  "fit.watch.d": "Behalte deine Uhr und deine Apps. Benchmrk fragt nur Tempo, Herzfrequenz und RPE ab und zeigt, wo du deine Schwelle in Garmin, Apple, Polar oder Coros findest.",
+  "nav.gyms": "Für Gyms",
+  "vid.gym": "Du coachst eine Gruppe? Sieh dir die Demo für Gyms und PTs an",
+  "foot.hyrox": "Benchmrk steht in keiner Verbindung zu HYROX."
 }

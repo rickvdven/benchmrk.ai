@@ -1,9 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import clsx from 'clsx';
-import { DISCLAIMER } from '../components/Disclaimer';
 import { ChanceInfo, GoalGap } from '../components/Chance';
-import { LangSwitch, Wordmark } from '../components/Layout';
+import { SiteFooter, SiteHeader } from '../components/SiteChrome';
 import { AppTour } from '../components/AppTour';
 import {
   STATIONS,
@@ -31,6 +30,8 @@ import {
 } from '../engine';
 import { useI18n, type Lang } from '../lib/i18n';
 import { useAppSettings } from '../data/hooks';
+import { fmtEur } from '../lib/money';
+import { nb } from '../lib/brand';
 import en from '../locales/landing.en.json';
 import nl from '../locales/landing.nl.json';
 import de from '../locales/landing.de.json';
@@ -39,12 +40,6 @@ import ko from '../locales/landing.ko.json';
 
 type LKey = keyof typeof en;
 const L: Record<Lang, Record<string, string>> = { en, nl, de, es, ko };
-
-/** A euro amount as each language writes it: €30 and €2,50 (nl), but 30 € and 2,50 € (de, es). */
-function fmtEur(n: number, lang: Lang) {
-  const num = n.toLocaleString(lang === 'ko' ? 'en' : lang, { minimumFractionDigits: Number.isInteger(n) ? 0 : 2, maximumFractionDigits: 2 });
-  return lang === 'de' || lang === 'es' ? `${num}\u00a0€` : `€${num}`;
-}
 
 const DIVISIONS: { id: string; cat: Category; sex: Sex; label: string }[] = [
   { id: 'ow', cat: 'solo_open', sex: 'woman', label: 'Open · Women' },
@@ -541,14 +536,13 @@ function Compare({ l }: { l: (k: LKey) => string }) {
 }
 
 export default function Landing() {
-  const { lang, t } = useI18n();
+  const { lang } = useI18n();
   const settings = useAppSettings();
   // the yearly price is set in Admin → Settings (app_settings.price_year_cents), the same value commissions use
   const year = (Number(settings.data?.price_year_cents) || 3000) / 100;
   const l = (k: LKey) => (L[lang]?.[k] ?? en[k]).replace('{price}', fmtEur(year, lang)).replace('{month}', fmtEur(year / 12, lang));
+  const hasVideo = lang === 'nl';
   const beta = settings.data?.paywall_enabled !== true;
-  const disclaimer = DISCLAIMER[lang] ?? DISCLAIMER.en;
-  const navLink = 'text-[15px] text-ink-3 hover:text-ink';
   // links from the static guides land on /#check: the page renders after the hash jump, so scroll once it exists
   useEffect(() => {
     const id = window.location.hash.slice(1);
@@ -568,33 +562,15 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen bg-ground text-ink">
-      <header className="border-b border-line">
-        <nav className="bm-wrap flex items-center gap-7 py-2.5 sm:py-[18px]" aria-label="Benchmrk">
-          <Link to="/" className="text-[20px] no-underline sm:text-[22px]">
-            <Wordmark />
-          </Link>
-          <div className="hidden flex-grow flex-wrap gap-6 md:flex">
-            <a href="#how" className={navLink}>
-              {l('how')}
-            </a>
-            <a href="#examples" className={navLink}>
-              {l('nav.examples')}
-            </a>
-            <a href="#price" className={navLink}>
-              {l('nav.price')}
-            </a>
-            <Link to="/science" className={navLink}>
-              {l('nav.science')}
-            </Link>
-          </div>
-          <div className="ml-auto flex items-center gap-3 sm:gap-5">
-            <LangSwitch className="min-h-[44px] text-[15px]" />
-            <Link to="/auth" className="bm-btn-outline">
-              {t('nav.signin')}
-            </Link>
-          </div>
-        </nav>
-      </header>
+      <SiteHeader
+        items={[
+          { label: l('how'), href: '#how' },
+          { label: l('nav.examples'), href: '#examples' },
+          { label: l('nav.price'), href: '#price' },
+          { label: l('nav.science'), to: '/science' },
+          { label: l('nav.gyms'), to: '/gym' },
+        ]}
+      />
 
       <main>
         {/* hero */}
@@ -607,8 +583,8 @@ export default function Landing() {
               <Link to="/auth?mode=signup" className="bm-btn-accent w-full sm:w-auto">
                 {l('cta')}
               </Link>
-              <a href="#how" className="text-base text-ink underline underline-offset-[5px]">
-                {l('how')}
+              <a href={hasVideo ? '#video' : '#how'} className="text-base text-ink underline underline-offset-[5px]">
+                {hasVideo ? l('vid.watch') : l('how')}
               </a>
             </div>
             <p className="mt-7 text-sm text-muted">{[l('tick1'), l('tick2'), l('tick3')].join(' · ')}</p>
@@ -617,6 +593,44 @@ export default function Landing() {
             <QuickCheck l={l} />
           </div>
         </section>
+
+        {/* explainer video for athletes (Dutch voice-over; shown only in NL) */}
+        {hasVideo && (
+          <section id="video" className="bm-wrap scroll-mt-4 pb-6 pt-6" aria-labelledby="video-title">
+            <div className="border-t-[1.5px] border-ink pt-12">
+              <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-4">
+                <div>
+                  <p className="bm-kicker mb-4">{l('vid.kicker')}</p>
+                  <h2 id="video-title" className="bm-h2 max-w-[16ch]">
+                    {nb(l('vid.title'))}
+                  </h2>
+                </div>
+                <p className="max-w-[380px] text-[15px] text-muted">{l('vid.sub')}</p>
+              </div>
+              <video
+                className="mt-8 block aspect-video w-full border border-line bg-ink shadow-[0_24px_60px_rgba(20,20,19,0.14)]"
+                controls
+                preload="none"
+                playsInline
+                poster="/video/benchmrk-atleten-nl-poster.jpg"
+                aria-label={l('vid.label')}
+              >
+                <source src="/video/benchmrk-atleten-nl.mp4" type="video/mp4" />
+                <track kind="subtitles" src="/video/benchmrk-atleten-nl.vtt" srcLang="nl" label="Nederlands" default />
+              </video>
+              <details className="mt-4 max-w-[760px] text-[15px] text-ink-2">
+                <summary className="cursor-pointer text-ink underline underline-offset-[5px]">{l('vid.transcript')}</summary>
+                <p className="mt-3">{l('vid.text')}</p>
+              </details>
+              <p className="mt-4 text-[15px] text-muted">
+                <Link to="/gym#demo" className="text-ink underline underline-offset-[5px]">
+                  {l('vid.gym')}
+                </Link>{' '}
+                <span aria-hidden>→</span>
+              </p>
+            </div>
+          </section>
+        )}
 
         {/* the app in action: an illustration with example values, not live data */}
         <section className="bm-wrap pt-6" aria-labelledby="app-title">
@@ -735,10 +749,10 @@ export default function Landing() {
                 <h3 className="my-2.5 text-[20px] font-bold leading-tight sm:text-[22px]">{l(`fit.${k}.h` as LKey)}</h3>
                 <p className="text-ink-2">{l(`fit.${k}.d` as LKey)}</p>
                 {k === 'gym' && (
-                  <a href="/nl/voor-gyms" className="mt-3 inline-flex min-h-[44px] items-center gap-1.5 text-ink underline underline-offset-[5px]">
+                  <Link to="/gym" className="mt-3 inline-flex min-h-[44px] items-center gap-1.5 text-ink underline underline-offset-[5px]">
                     {l('fit.gym.link')}
                     <span aria-hidden>→</span>
-                  </a>
+                  </Link>
                 )}
               </div>
             ))}
@@ -749,7 +763,7 @@ export default function Landing() {
         <section className="bm-wrap pb-10 pt-16 sm:pt-[100px]" aria-labelledby="cmp-title">
           <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-4">
             <h2 id="cmp-title" className="bm-h2">
-              {l('cmp.title')}
+              {nb(l('cmp.title'))}
             </h2>
             <p className="max-w-[380px] text-[15px] text-muted">{l('cmp.sub')}</p>
           </div>
@@ -815,19 +829,7 @@ export default function Landing() {
         </section>
       </main>
 
-      <footer className="border-t border-line">
-        <div className="bm-wrap flex flex-wrap justify-between gap-6 pb-12 pt-8 text-[13px] text-muted">
-          <p className="max-w-3xl">{disclaimer.short}</p>
-          <div className="flex gap-5">
-            <a href="/nl/gids" className="text-ink-3 underline">
-              {l('foot.guides')}
-            </a>
-            <Link to="/science" className="text-ink-3 underline">
-              {disclaimer.sources}
-            </Link>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter guides={l('foot.guides')} notAffiliated={l('foot.hyrox')} />
     </div>
   );
 }

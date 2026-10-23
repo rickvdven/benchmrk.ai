@@ -243,5 +243,15 @@
   "fit.race.h": "HYROX races",
   "fit.race.d": "Plan your season around the races in the official calendar. Pick your division per race, and the plan uses the official weights.",
   "fit.watch.h": "Your watch",
-  "fit.watch.d": "Keep your watch and your own apps. Benchmrk only asks for pace, heart rate and RPE, and shows where to find your threshold in Garmin, Apple, Polar or Coros."
+  "fit.watch.d": "Keep your watch and your own apps. Benchmrk only asks for pace, heart rate and RPE, and shows where to find your threshold in Garmin, Apple, Polar or Coros.",
+  "vid.kicker": "Video · 78 seconds",
+  "vid.title": "How Benchmrk works",
+  "vid.sub": "From your goal time to a plan that moves with your week. Subtitles are on.",
+  "vid.watch": "Watch the video (1 min)",
+  "vid.transcript": "Read the video transcript",
+  "vid.label": "Video: how Benchmrk works",
+  "vid.text": "",
+  "nav.gyms": "For gyms",
+  "vid.gym": "Coaching a group? Watch the demo for gyms and PTs",
+  "foot.hyrox": "Benchmrk is not affiliated with HYROX."
 }
