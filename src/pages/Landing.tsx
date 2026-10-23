@@ -31,6 +31,7 @@ import {
 import { useI18n, type Lang } from '../lib/i18n';
 import { useAppSettings } from '../data/hooks';
 import { fmtEur } from '../lib/money';
+import { nb } from '../lib/brand';
 import en from '../locales/landing.en.json';
 import nl from '../locales/landing.nl.json';
 import de from '../locales/landing.de.json';
@@ -601,7 +602,7 @@ export default function Landing() {
                 <div>
                   <p className="bm-kicker mb-4">{l('vid.kicker')}</p>
                   <h2 id="video-title" className="bm-h2 max-w-[16ch]">
-                    {l('vid.title')}
+                    {nb(l('vid.title'))}
                   </h2>
                 </div>
                 <p className="max-w-[380px] text-[15px] text-muted">{l('vid.sub')}</p>
@@ -762,7 +763,7 @@ export default function Landing() {
         <section className="bm-wrap pb-10 pt-16 sm:pt-[100px]" aria-labelledby="cmp-title">
           <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-4">
             <h2 id="cmp-title" className="bm-h2">
-              {l('cmp.title')}
+              {nb(l('cmp.title'))}
             </h2>
             <p className="max-w-[380px] text-[15px] text-muted">{l('cmp.sub')}</p>
           </div>
