@@ -114,9 +114,9 @@ export function Layout({ children }: { children: ReactNode }) {
       }
     });
   }, [user]);
-
   // the public landing page brings its own header and footer (design A)
-  if (!user && loc.pathname === '/') return <>{children}</>;
+  // the public pages draw their own header and footer
+  if (loc.pathname === '/gym' || (!user && loc.pathname === '/')) return <>{children}</>;
   return (
     <div className="min-h-screen">
       <header className="sticky top-0 z-40 border-b border-line bg-bg/85 backdrop-blur">

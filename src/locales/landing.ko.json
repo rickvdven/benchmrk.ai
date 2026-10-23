@@ -243,5 +243,8 @@
   "fit.race.h": "HYROX 레이스",
   "fit.race.d": "공식 캘린더의 레이스를 중심으로 시즌을 계획하세요. 레이스마다 디비전을 고르면 플랜이 공식 무게를 적용해요.",
   "fit.watch.h": "내 시계",
-  "fit.watch.d": "시계와 기존 앱은 그대로 쓰세요. Benchmrk는 페이스, 심박, RPE만 묻고, Garmin, Apple, Polar, Coros에서 역치를 찾는 방법을 알려줘요."
+  "fit.watch.d": "시계와 기존 앱은 그대로 쓰세요. Benchmrk는 페이스, 심박, RPE만 묻고, Garmin, Apple, Polar, Coros에서 역치를 찾는 방법을 알려줘요.",
+  "nav.gyms": "체육관용",
+  "vid.gym": "그룹을 코칭하나요? 체육관과 PT용 데모 보기",
+  "foot.hyrox": "Benchmrk는 HYROX와 제휴 관계가 없습니다."
 }
