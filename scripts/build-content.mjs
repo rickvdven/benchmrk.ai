@@ -4,7 +4,7 @@ import { copyFileSync, mkdirSync, writeFileSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
-import { FONT_FILES, LOCALES, loadContent, overviewUrl, renderOverview, renderPage, robots, sitemap, validate } from './content.mjs';
+import { FONT_FILES, LOCALES, loadContent, overviewAlternates, overviewUrl, renderOverview, renderPage, robots, sitemap, validate } from './content.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const dist = join(root, 'dist');
@@ -31,7 +31,7 @@ const write = (rel, html) => {
   writeFileSync(file, html);
 };
 for (const p of pages) write(`${p.url.slice(1)}/index.html`, renderPage(p));
-for (const lang of Object.keys(LOCALES)) write(`${overviewUrl(lang).slice(1)}/index.html`, renderOverview(lang, pages));
+for (const lang of Object.keys(overviewAlternates(pages))) write(`${overviewUrl(lang).slice(1)}/index.html`, renderOverview(lang, pages));
 write('sitemap.xml', sitemap(pages));
 write('robots.txt', robots());
 const require = createRequire(import.meta.url);

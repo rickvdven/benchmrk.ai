@@ -7,50 +7,16 @@ import { Marked } from 'marked';
 import YAML from 'yaml';
 
 export const SITE = 'https://benchmrk.ai';
-export const AUTHOR = {
+export const authorFor = (lang) => ({
   '@type': 'Person',
   name: 'Rick van de Ven',
-  jobTitle: 'Oprichter van Benchmrk',
-  description: 'Oprichter van Benchmrk en Pro-atleet in HYROX-races',
-};
+  jobTitle: LOCALES[lang].t.authorJob,
+  description: LOCALES[lang].t.authorDesc,
+});
 export const ORG = { '@type': 'Organization', name: 'Benchmrk', url: `${SITE}/`, logo: `${SITE}/icon-512.png` };
 
-/** Per taal: padsegment voor gidsen, labels en de vaste teksten van het sjabloon. */
-export const LOCALES = {
-  nl: {
-    guides: 'gids',
-    ogLocale: 'nl_NL',
-    t: {
-      home: 'Home',
-      guides: 'Gidsen',
-      guide: 'Gids',
-      page: 'Training',
-      updated: 'Bijgewerkt op',
-      by: 'Door',
-      role: 'oprichter Benchmrk, Pro-atleet',
-      answer: 'Het antwoord',
-      short: 'In het kort',
-      faq: 'Veelgestelde vragen',
-      sources: 'Bronnen',
-      accessed: 'geraadpleegd op',
-      ctaKicker: 'Snelle check',
-      ctaTitle: 'Wat is jouw kans op je doeltijd?',
-      ctaText: 'Vul je drempeltempo, je doeltijd en je sterke en zwakke stations in. Je ziet direct je verwachte tijd per run, station en Roxzone.',
-      ctaButton: 'Doe de snelle check',
-      ctaNote: 'Gratis tijdens de bèta, zonder account.',
-      disclaimer: 'Benchmrk is niet verbonden aan HYROX.',
-      disclaimerLong: 'Benchmrk is niet verbonden aan HYROX. HYROX is een merk van de rechthebbende en wordt hier alleen beschrijvend gebruikt. Deze informatie vervangt geen medisch advies.',
-      science: 'Wetenschap en bronnen',
-      overviewTitle: 'Trainen voor HYROX: alle gidsen',
-      overviewSeo: 'Trainen voor HYROX: gidsen en schema’s | Benchmrk',
-      overviewDesc: 'Praktische gidsen over trainen voor HYROX: schema, pacing, stations, taper en compromised running. Met tabellen, voorbeeldtrainingen en bronnen.',
-      overviewIntro: 'Antwoorden op de vragen die je hebt als je traint voor een HYROX-race. Elke gids begint met het korte antwoord en eindigt met bronnen.',
-      overviewPages: 'Trainen',
-      overviewGuides: 'Gidsen',
-      months: ['januari', 'februari', 'maart', 'april', 'mei', 'juni', 'juli', 'augustus', 'september', 'oktober', 'november', 'december'],
-    },
-  },
-};
+import { DEFAULT_LANG, LOCALES } from './locales.mjs';
+export { LOCALES };
 
 const LIMITS = {
   seoTitle: 60,
@@ -64,12 +30,15 @@ const LIMITS = {
   pageLinks: 1,
 };
 
+/** Woordlimieten uit COPY_AGENT.md gelden voor NL; andere talen schalen mee (Koreaans heeft langere "woorden"). */
+const scaled = (lang, [lo, hi]) => [Math.round(lo * LOCALES[lang].factor), Math.round(hi * LOCALES[lang].factor)];
+
 export const urlOf = (lang, type, slug) => (type === 'gids' ? `/${lang}/${LOCALES[lang].guides}/${slug}` : `/${lang}/${slug}`);
 export const overviewUrl = (lang) => `/${lang}/${LOCALES[lang].guides}`;
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const words = (s) => (String(s).replace(/<[^>]+>/g, ' ').match(/[\p{L}\p{N}][\p{L}\p{N}'’.,:/%–-]*/gu) ?? []).length;
-const sentences = (s) => String(s).split(/(?<=[.?!])\s+(?=[A-ZÀ-Ý0-9“"])/).filter(Boolean).length;
+const sentences = (s) => String(s).split(/(?<=[.?!])\s+(?=[\p{Lu}0-9“"가-힣])/u).filter(Boolean).length;
 const plain = (md) =>
   String(md)
     .replace(/```[\s\S]*?```/g, ' ')
@@ -85,9 +54,9 @@ const slugify = (s) =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '');
 const isDate = (d) => /^\d{4}-\d{2}-\d{2}$/.test(d) && !Number.isNaN(Date.parse(d));
-const dateNl = (iso, lang) => {
+const dateIn = (iso, lang) => {
   const [y, m, d] = iso.split('-').map(Number);
-  return `${d} ${LOCALES[lang].t.months[m - 1]} ${y}`;
+  return LOCALES[lang].date(y, m, d, LOCALES[lang].t);
 };
 
 /** Leest frontmatter + body. Datums blijven strings (YAML zou er Date-objecten van maken). */
@@ -115,6 +84,21 @@ export function loadContent(root) {
     for (const f of readdirSync(dir)) if (f.endsWith('.md')) add(join(dir, f), 'pagina');
     const gdir = join(dir, LOCALES[lang].guides);
     if (existsSync(gdir)) for (const f of readdirSync(gdir)) if (f.endsWith('.md')) add(join(gdir, f), 'gids');
+  }
+  // vertaalgroepen: NL-pagina = sleutel (pad binnen content/nl zonder .md), vertalingen wijzen ernaar via translationOf
+  const keyOf = (p) => (p.lang === DEFAULT_LANG ? `${p.type === 'gids' ? 'gids/' : ''}${p.slug}` : p.translationOf);
+  const groups = new Map();
+  for (const p of pages) {
+    p.group = keyOf(p);
+    if (!p.group) continue;
+    if (!groups.has(p.group)) groups.set(p.group, []);
+    groups.get(p.group).push(p);
+  }
+  const order = Object.keys(LOCALES);
+  for (const members of groups.values()) {
+    if (members.length < 2) continue;
+    const alt = Object.fromEntries(members.sort((a, b) => order.indexOf(a.lang) - order.indexOf(b.lang)).map((m) => [m.lang, m.url]));
+    for (const m of members) m.alternates = alt;
   }
   return pages.sort((a, b) => a.url.localeCompare(b.url));
 }
@@ -150,8 +134,37 @@ export function validate(pages) {
     else if (p.description.length > LIMITS.description) e(`description is ${p.description.length} tekens (max ${LIMITS.description})`);
     if (!isDate(p.updated ?? '')) e('updated moet een datum JJJJ-MM-DD zijn');
     if (p.published && !isDate(p.published)) e('published moet een datum JJJJ-MM-DD zijn');
+    const L = LOCALES[p.lang];
+    if (!L) e(`onbekende taal ${p.lang}`);
+    if (p.lang !== DEFAULT_LANG) {
+      const src = p.translationOf ? pages.find((o) => o.lang === DEFAULT_LANG && o.group === p.translationOf) : null;
+      if (!p.translationOf) e('translationOf ontbreekt (pad van de NL-pagina, bv. gids/hyrox-taper)');
+      else if (!src) e(`translationOf "${p.translationOf}" verwijst naar geen NL-pagina`);
+      else {
+        if (src.type !== p.type) e(`translationOf "${p.translationOf}" is een ${src.type}, deze pagina een ${p.type}`);
+        if (pages.some((o) => o !== p && o.lang === p.lang && o.translationOf === p.translationOf)) e(`meerdere ${p.lang}-vertalingen van ${p.translationOf}`);
+        // vertalen mag niets toevoegen of weglaten: zelfde getallen, tabellen en secties als de NL-bron
+        // Koreaanse datums schrijven de maand als cijfer (1월); NL schrijft die uit, dus laat die cijfers buiten de vergelijking
+        const nums = (t) => new Set((String(t).replace(/\d{1,2}월/g, ' ').replace(/(\d)[.,](\d)/g, '$1.$2').match(/\d+(?:\.\d+)?/g) ?? []));
+        const miss = [...nums(src.answer)].filter((n) => !nums(p.answer).has(n));
+        if (miss.length) w(`antwoordblok mist getallen uit de NL-bron: ${miss.join(', ')}`);
+        const srcAll = nums(`${src.body} ${src.faq?.map((f) => f.a).join(' ')}`);
+        const myAll = nums(`${p.body} ${p.faq?.map((f) => f.a).join(' ')}`);
+        const miss2 = [...srcAll].filter((n) => !myAll.has(n));
+        const extra = [...myAll].filter((n) => !srcAll.has(n));
+        if (miss2.length) w(`getallen uit de NL-bron ontbreken: ${miss2.join(', ')}`);
+        if (extra.length) w(`getallen die niet in de NL-bron staan: ${extra.join(', ')}`);
+        const h2 = (t) => (t.match(/^## /gm) ?? []).length;
+        if (h2(p.body) !== h2(src.body)) w(`${h2(p.body)} H2-secties, de NL-bron heeft er ${h2(src.body)}`);
+        const tb = (t) => (t.match(/^\|\s*:?-{2,}/gm) ?? []).length;
+        if (tb(p.body) !== tb(src.body)) w(`${tb(p.body)} tabellen, de NL-bron heeft er ${tb(src.body)}`);
+        if ((p.faq ?? []).length !== (src.faq ?? []).length) w(`${(p.faq ?? []).length} FAQ-vragen, de NL-bron heeft er ${(src.faq ?? []).length}`);
+        if ((p.sources ?? []).map((x) => x.url).join() !== (src.sources ?? []).map((x) => x.url).join()) w('bronnen wijken af van de NL-bron');
+      }
+    }
     const aw = words(p.answer ?? '');
-    if (aw < LIMITS.answer[0] || aw > LIMITS.answer[1]) e(`antwoordblok is ${aw} woorden (${LIMITS.answer.join('–')})`);
+    const [alo, ahi] = scaled(p.lang, LIMITS.answer);
+    if (aw < alo || aw > ahi) e(`antwoordblok is ${aw} woorden (${alo}–${ahi})`);
     if (p.answer && !/\d/.test(p.answer)) w('antwoordblok bevat geen getal');
     const sn = (p.summary ?? []).length;
     if (sn < LIMITS.summary[0] || sn > LIMITS.summary[1]) e(`"In het kort" heeft ${sn} bullets (${LIMITS.summary.join('–')})`);
@@ -168,15 +181,16 @@ export function validate(pages) {
       if (!isDate(s.accessed ?? '')) e(`bron "${s.title}" heeft een peildatum (accessed) nodig`);
     }
     const secs = sections(p.body);
-    const zo = secs.find((s) => /^zo doet benchmrk het/i.test(s.heading));
-    if (!zo) e('sectie "## Zo doet Benchmrk het" ontbreekt');
-    else if (words(plain(zo.text)) > LIMITS.benchmrk) e(`"Zo doet Benchmrk het" is ${words(plain(zo.text))} woorden (max ${LIMITS.benchmrk})`);
+    const zo = secs.find((s) => L.benchmrk.test(s.heading));
+    const maxZo = Math.round(LIMITS.benchmrk * L.factor);
+    if (!zo) e(`sectie "## ${L.benchmrkTitle}" ontbreekt`);
+    else if (words(plain(zo.text)) > maxZo) e(`"${L.benchmrkTitle}" is ${words(plain(zo.text))} woorden (max ${maxZo})`);
     if (secs.length < 3) e('minimaal 3 H2-secties nodig');
     if (/^# /m.test(p.body)) e('gebruik geen H1 in de body; de H1 komt uit title');
     if (!/^\|.*\|\s*$/m.test(p.body)) e('geen tabel gevonden (praktijkblok en getallen horen in een tabel)');
     const all = [p.answer, ...(p.summary ?? []), p.body, ...fq.map((f) => `${f.q} ${f.a}`)].join('\n');
     if (/(?<!\[)![^[]/.test(all.replace(/!\[/g, ''))) w('bevat een uitroepteken');
-    if (/ultieme/i.test(all + p.title)) e('geen "ultieme gids"');
+    if (/ultieme|ultimate guide|ultimativ|definitive guide|guía definitiva|궁극의/i.test(all + p.title)) e('geen "ultieme gids"');
     const links = [...new Set(linksIn(p.body))].filter((u) => u !== p.url);
     const guideLinks = links.filter((u) => u.startsWith(`/${p.lang}/${LOCALES[p.lang].guides}/`));
     const pageLinks = links.filter((u) => u.startsWith(`/${p.lang}/`) && !guideLinks.includes(u) && u !== overviewUrl(p.lang));
@@ -184,7 +198,7 @@ export function validate(pages) {
     if (pageLinks.length < LIMITS.pageLinks) e(`${pageLinks.length} links naar een website-pagina (min ${LIMITS.pageLinks})`);
     for (const u of links) if (u.startsWith(`/${p.lang}/`) && u !== overviewUrl(p.lang) && !urls.has(u)) w(`interne link ${u} bestaat (nog) niet`);
     const n = countWords(p);
-    const [lo, hi] = LIMITS.words[p.type];
+    const [lo, hi] = scaled(p.lang, LIMITS.words[p.type]);
     if (n < lo || n > hi) w(`${n} woorden (${lo}–${hi} voor een ${p.type})`);
   }
   return { errors, warnings };
@@ -213,7 +227,8 @@ function markdown() {
   return md;
 }
 
-const ctaHref = (slug) => `/?utm_source=gids&utm_medium=organic&utm_content=${encodeURIComponent(slug)}#check`;
+// de app kiest de taal uit ?lang=; NL is de standaard en blijft zonder parameter
+const ctaHref = (slug, lang) => `/?utm_source=gids&utm_medium=organic&utm_content=${encodeURIComponent(slug)}${lang === DEFAULT_LANG ? '' : `&lang=${lang}`}#check`;
 const ld = (o) => `<script type="application/ld+json">${JSON.stringify(o).replace(/</g, '\\u003c')}</script>`;
 
 const FONTS = `
@@ -265,9 +280,20 @@ blockquote{margin:0 0 16px;padding:12px 16px;background:var(--surface-2);border-
 .list{list-style:none;margin:0 0 48px;padding:0;border-top:1.5px solid var(--ink)}.list li{border-bottom:1px solid var(--line);padding:16px 0}
 .list a{font-weight:700;font-size:20px;text-decoration:none}.list a:hover{text-decoration:underline}.list p{margin:4px 0 0;color:var(--ink-3);font-size:16px}
 footer.site{border-top:1px solid var(--line);margin-top:64px}footer.site .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;padding-top:28px;padding-bottom:48px;font-size:14px;color:var(--muted)}footer.site a{color:var(--ink-3)}
-footer.site p{margin:0;max-width:640px}`;
+footer.site p{margin:0;max-width:640px}
+.langs{display:flex;flex-wrap:wrap;gap:6px 14px;list-style:none;margin:0;padding:0;font-size:14px}.langs [aria-current]{font-weight:700;color:var(--ink)}
+footer.site .col2{display:flex;flex-direction:column;gap:10px}`;
 
-function shell({ lang, title, description, canonical, ogType, jsonld, body }) {
+/** hreflang-links in <head>: alle talen van deze pagina (incl. zichzelf) en x-default = NL. */
+const hreflangTags = (alt) =>
+  alt ? `\n${Object.entries(alt).map(([l, u]) => `<link rel="alternate" hreflang="${l}" href="${SITE}${u}">`).join('\n')}\n<link rel="alternate" hreflang="x-default" href="${SITE}${alt[DEFAULT_LANG] ?? Object.values(alt)[0]}">` : '';
+/** Zichtbare taalkiezer, zodat bezoekers en crawlers de vertalingen via gewone links vinden. */
+const langSwitch = (lang, alt) =>
+  alt && Object.keys(alt).length > 1
+    ? `<nav aria-label="${esc(LOCALES[lang].t.langLabel)}"><ul class="langs">${Object.entries(alt).map(([l, u]) => `<li>${l === lang ? `<span aria-current="true" lang="${l}">${LOCALES[l].native}</span>` : `<a href="${u}" hreflang="${l}" lang="${l}">${LOCALES[l].native}</a>`}</li>`).join('')}</ul></nav>`
+    : '';
+
+function shell({ lang, title, description, canonical, ogType, jsonld, body, alternates }) {
   const t = LOCALES[lang].t;
   return `<!doctype html>
 <html lang="${lang}">
@@ -276,7 +302,7 @@ function shell({ lang, title, description, canonical, ogType, jsonld, body }) {
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
-<link rel="canonical" href="${SITE}${canonical}">
+<link rel="canonical" href="${SITE}${canonical}">${hreflangTags(alternates)}
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -297,12 +323,12 @@ ${jsonld.map(ld).join('\n')}
 <body>
 <header class="site"><div class="wrap">
 <a class="wordmark" href="/" aria-label="Benchmrk home">BENCH<span>MRK</span></a>
-<nav class="site" aria-label="Hoofdmenu"><a href="${overviewUrl(lang)}">${t.guides}</a><a class="hide-sm" href="/science">${t.science}</a><a class="btn" href="/#check">${t.ctaKicker}</a></nav>
+<nav class="site" aria-label="${esc(t.menu)}"><a href="${overviewUrl(lang)}">${t.guides}</a><a class="hide-sm" href="/science">${t.science}</a><a class="btn" href="/#check">${t.ctaKicker}</a></nav>
 </div></header>
 ${body}
 <footer class="site"><div class="wrap">
 <p>${esc(t.disclaimerLong)}</p>
-<p><a href="${overviewUrl(lang)}">${t.guides}</a> · <a href="/science">${t.science}</a></p>
+<div class="col2"><p><a href="${overviewUrl(lang)}">${t.guides}</a> · <a href="/science">${t.science}</a></p>${langSwitch(lang, alternates)}</div>
 </div></footer>
 </body>
 </html>
@@ -321,13 +347,13 @@ export function renderPage(p) {
   const md = markdown();
   const crumbs = p.type === 'gids' ? [[t.home, '/'], [t.guides, overviewUrl(p.lang)], [p.breadcrumb ?? p.title, p.url]] : [[t.home, '/'], [p.breadcrumb ?? p.title, p.url]];
   // de CTA komt direct na "Zo doet Benchmrk het"; staat die sectie als laatste, dan sluit de CTA het artikel af
-  const cta = `<aside class="cta" aria-labelledby="cta-title"><p class="kicker">${t.ctaKicker}</p><h2 id="cta-title">${esc(t.ctaTitle)}</h2><p>${esc(t.ctaText)}</p><a class="btn" href="${esc(ctaHref(p.slug))}">${esc(t.ctaButton)}</a><small>${esc(t.ctaNote)}</small></aside>`;
+  const cta = `<aside class="cta" aria-labelledby="cta-title"><p class="kicker">${t.ctaKicker}</p><h2 id="cta-title">${esc(t.ctaTitle)}</h2><p>${esc(t.ctaText)}</p><a class="btn" href="${esc(ctaHref(p.slug, p.lang))}">${esc(t.ctaButton)}</a><small>${esc(t.ctaNote)}</small></aside>`;
   const parts = p.body.split(/^(?=## )/m);
   let bodyHtml = '';
   let ctaPlaced = false;
   for (const part of parts) {
     bodyHtml += md.parse(part);
-    if (/^## zo doet benchmrk het/i.test(part)) {
+    if (LOCALES[p.lang].benchmrk.test(part.replace(/^## /, ''))) {
       bodyHtml += cta;
       ctaPlaced = true;
     }
@@ -345,7 +371,7 @@ export function renderPage(p) {
       datePublished: published,
       dateModified: p.updated,
       mainEntityOfPage: `${SITE}${p.url}`,
-      author: { ...AUTHOR, worksFor: ORG },
+      author: { ...authorFor(p.lang), worksFor: ORG },
       publisher: ORG,
       image: `${SITE}/benchmrk-app-benchmark-log.png`,
     },
@@ -357,7 +383,7 @@ ${crumbHtml(crumbs)}
 <article>
 <p class="kicker">${p.type === 'gids' ? t.guide : t.page}</p>
 <h1>${esc(p.title)}</h1>
-<p class="meta">${t.updated} <time datetime="${p.updated}">${dateNl(p.updated, p.lang)}</time> · ${t.by} Rick van de Ven, ${t.role}</p>
+<p class="meta">${t.updated} <time datetime="${p.updated}">${dateIn(p.updated, p.lang)}</time> · ${t.by} Rick van de Ven, ${t.role}</p>
 <section class="answer" aria-label="${t.answer}"><span class="tag">${t.answer}</span><p>${md.parseInline(p.answer)}</p></section>
 <section class="short"><h2>${t.short}</h2><ul>${p.summary.map((s) => `<li>${md.parseInline(s)}</li>`).join('')}</ul></section>
 ${bodyHtml}
@@ -365,13 +391,16 @@ ${bodyHtml}
 ${faq.map((f) => `<h3>${esc(f.q)}</h3><p>${esc(f.a)}</p>`).join('\n')}
 </section>
 <section class="sources"><h2 id="bronnen">${t.sources}</h2><ol>
-${(p.sources ?? []).map((s) => `<li><a href="${esc(s.url)}" rel="noopener">${esc(s.title)}</a>${s.note ? ` – ${esc(s.note)}` : ''} <span class="acc">(${t.accessed} ${dateNl(s.accessed, p.lang)})</span></li>`).join('\n')}
+${(p.sources ?? []).map((s) => `<li><a href="${esc(s.url)}" rel="noopener">${esc(s.title)}</a>${s.note ? ` – ${esc(s.note)}` : ''} <span class="acc">(${t.accessed} ${dateIn(s.accessed, p.lang)})</span></li>`).join('\n')}
 </ol></section>
 <p class="meta">${esc(t.disclaimer)}</p>
 </article>
 </div></main>`;
-  return shell({ lang: p.lang, title: p.seoTitle, description: p.description, canonical: p.url, ogType: 'article', jsonld, body });
+  return shell({ lang: p.lang, title: p.seoTitle, description: p.description, canonical: p.url, ogType: 'article', jsonld, body, alternates: p.alternates });
 }
+
+/** Overzichtspagina's van alle talen waarin pagina's staan, onderling gekoppeld voor hreflang. */
+export const overviewAlternates = (pages) => Object.fromEntries(Object.keys(LOCALES).filter((l) => pages.some((p) => p.lang === l)).map((l) => [l, overviewUrl(l)]));
 
 export function renderOverview(lang, pages) {
   const t = LOCALES[lang].t;
@@ -398,20 +427,19 @@ ${group('pagina', t.overviewPages)}
 ${group('gids', t.overviewGuides)}
 </article>
 </div></main>`;
-  return shell({ lang, title: t.overviewSeo, description: t.overviewDesc, canonical: url, ogType: 'website', jsonld, body });
+  return shell({ lang, title: t.overviewSeo, description: t.overviewDesc, canonical: url, ogType: 'website', jsonld, body, alternates: overviewAlternates(pages) });
 }
 
 /** Sitemap met lastmod per pagina en hreflang-alternates zodra een pagina vertalingen heeft (frontmatter: alternates). */
 export function sitemap(pages) {
   const latest = (lang) => pages.filter((p) => p.lang === lang).map((p) => p.updated).sort().pop();
-  const entry = (loc, lastmod, alternates) =>
-    `  <url>\n    <loc>${SITE}${loc}</loc>${lastmod ? `\n    <lastmod>${lastmod}</lastmod>` : ''}${(alternates ?? []).map(([l, u]) => `\n    <xhtml:link rel="alternate" hreflang="${l}" href="${SITE}${u}"/>`).join('')}\n  </url>`;
+  const links = (alt) => (alt ? [...Object.entries(alt), ['x-default', alt[DEFAULT_LANG] ?? Object.values(alt)[0]]] : []);
+  const entry = (loc, lastmod, alt) =>
+    `  <url>\n    <loc>${SITE}${loc}</loc>${lastmod ? `\n    <lastmod>${lastmod}</lastmod>` : ''}${links(alt).map(([l, u]) => `\n    <xhtml:link rel="alternate" hreflang="${l}" href="${SITE}${u}"/>`).join('')}\n  </url>`;
   const rows = [entry('/'), entry('/science'), entry('/gym')];
-  for (const lang of Object.keys(LOCALES)) rows.push(entry(overviewUrl(lang), latest(lang)));
-  for (const p of pages) {
-    const alt = p.alternates ? [[p.lang, p.url], ...Object.entries(p.alternates)] : null;
-    rows.push(entry(p.url, p.updated, alt));
-  }
+  const ovAlt = overviewAlternates(pages);
+  for (const lang of Object.keys(ovAlt)) rows.push(entry(overviewUrl(lang), latest(lang), ovAlt));
+  for (const p of pages) rows.push(entry(p.url, p.updated, p.alternates));
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${rows.join('\n')}\n</urlset>\n`;
 }
 

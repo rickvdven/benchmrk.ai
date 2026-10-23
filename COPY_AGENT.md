@@ -27,7 +27,7 @@ Stand op 20 oktober 2026: benchmrk.ai is een client-side React-app. Elke URL, oo
    - `/nl/gids/<slug>` voor artikelen
    - `/nl/<slug>` voor de website-pagina's
    - `/nl/gids` als overzicht
-   - EN en DE later onder `/en/guide/…` en `/de/ratgeber/…`
+   - Vertalingen: `/en/guide/…`, `/de/ratgeber/…`, `/es/guia/…`, `/ko/guide/…` (zie `content/README.md`, sectie Talen)
 3. **`robots.txt`** als echt tekstbestand:
    - Alles toestaan, inclusief GPTBot, OAI-SearchBot, PerplexityBot, ClaudeBot, Google-Extended en Bingbot.
    - App-routes die niet geïndexeerd hoeven te worden uitsluiten (inloggen, plan, logboek, admin).
@@ -106,7 +106,10 @@ Algemene feiten over de race, zoals stationafstanden, gewichten per divisie en d
   - komende races (een voorbereidingsgids per race, met datum en stad uit de officiële kalender)
   - onderwerpen van /science
 - **Elke ronde ook:** één bestaande pagina verversen. Controleer de feiten opnieuw, werk "Bijgewerkt op" bij en voeg een nieuwe vraag aan de FAQ toe.
-- **Vanaf 8 december 2026:** vertaal de 10 best presterende NL-pagina's naar EN en DE (hreflang), daarna 1 vertaling per taal per week.
+- **Vertalen (besluit Rick, 22 oktober 2026):** alle NL-pagina's staan ook in EN, DE, ES en KO, met hreflang. Elke nieuwe of ververste NL-pagina krijgt in dezelfde ronde ook die vier vertalingen (zelfde PR of een tweede PR met prefix `content/`).
+  - Vertaal niet woord voor woord. Schrijf de H1 zoals mensen in die taal zoeken, geef de pagina een eigen slug en voeg `translationOf` toe (zie `content/README.md`).
+  - Een vertaling voegt niets toe en laat niets weg: zelfde getallen, tabellen, FAQ-vragen en bronnen. `npm run content:check` waarschuwt bij afwijkingen; los die op.
+  - Verversen van een NL-pagina betekent ook de vier vertalingen bijwerken (feiten, "Bijgewerkt op", nieuwe FAQ-vraag).
 - **Logboek:** houd `content/LOG.md` bij met per ronde de datum, de pagina's en de PR-link.
 
 ## Feiten die gebruikt mogen worden

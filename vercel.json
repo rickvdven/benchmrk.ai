@@ -17,6 +17,54 @@
       "destination": "/nl/:slug/index.html"
     },
     {
+      "source": "/en/guide",
+      "destination": "/en/guide/index.html"
+    },
+    {
+      "source": "/en/guide/:slug",
+      "destination": "/en/guide/:slug/index.html"
+    },
+    {
+      "source": "/en/:slug",
+      "destination": "/en/:slug/index.html"
+    },
+    {
+      "source": "/de/ratgeber",
+      "destination": "/de/ratgeber/index.html"
+    },
+    {
+      "source": "/de/ratgeber/:slug",
+      "destination": "/de/ratgeber/:slug/index.html"
+    },
+    {
+      "source": "/de/:slug",
+      "destination": "/de/:slug/index.html"
+    },
+    {
+      "source": "/es/guia",
+      "destination": "/es/guia/index.html"
+    },
+    {
+      "source": "/es/guia/:slug",
+      "destination": "/es/guia/:slug/index.html"
+    },
+    {
+      "source": "/es/:slug",
+      "destination": "/es/:slug/index.html"
+    },
+    {
+      "source": "/ko/guide",
+      "destination": "/ko/guide/index.html"
+    },
+    {
+      "source": "/ko/guide/:slug",
+      "destination": "/ko/guide/:slug/index.html"
+    },
+    {
+      "source": "/ko/:slug",
+      "destination": "/ko/:slug/index.html"
+    },
+    {
       "source": "/((?!api/).*)",
       "destination": "/index.html"
     }
