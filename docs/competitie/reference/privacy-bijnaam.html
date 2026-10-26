@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Benchmrk · Privacy en bijnaam (referentie)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ground:#EFEEEA;--paper:#FFFFFF;--s2:#E4E2DC;--line:#D6D3CB;--ink:#141413;--ink2:#3A3833;--ink3:#4A4843;--muted:#6A675F;
+--lime:#D4F046;--limeTint:#F6FADF;--sans:'Archivo',system-ui,sans-serif;--mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow:0 1px 0 #D6D3CB,0 18px 40px rgba(20,20,19,.12)}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.5}
+::selection{background:var(--lime);color:var(--ink)}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+button,select,input{font:inherit;color:inherit}
+a{color:var(--ink);text-underline-offset:4px}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+.wm{font-weight:800;font-size:20px;letter-spacing:.01em;text-decoration:none;color:var(--ink);white-space:nowrap}
+.wm span{background:var(--lime);padding:0 3px;margin-left:1px}
+.tag{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.06em;border:1.5px solid var(--ink);padding:3px 7px;white-space:nowrap;display:inline-block}
+.title{font-weight:800;font-stretch:72%;text-transform:uppercase;line-height:.95;letter-spacing:.01em;margin:0}
+.h2{font-weight:800;font-stretch:80%;text-transform:uppercase;line-height:1;letter-spacing:.01em;margin:0;font-size:22px}
+.sub{color:var(--ink2);margin:6px 0 0}
+.small{font-size:13px;color:var(--muted)}
+.slip{background:var(--paper);border:1px solid var(--line);border-radius:2px;box-shadow:var(--shadow)}
+.dash{border-top:2px dashed #A8A498}
+.hl{background:var(--lime);color:var(--ink);padding:0 6px}
+
+/* knoppen */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:12px 20px;border-radius:3px;border:1.5px solid var(--ink);font-weight:700;text-decoration:none;cursor:pointer;background:transparent;color:var(--ink)}
+.btn.lime{background:var(--lime)}
+.btn.dark{background:var(--ink);color:var(--ground)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn.block{width:100%}
+.linkbtn{background:none;border:0;padding:10px 0;min-height:44px;cursor:pointer;text-decoration:underline;text-underline-offset:4px;color:var(--ink2)}
+
+/* formulier */
+.field{display:flex;flex-direction:column;gap:4px}
+.field label,.lbl{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3)}
+.field input,.field select{font-family:var(--mono);font-size:18px;background:transparent;border:0;border-bottom:1.5px solid var(--ink);padding:8px 0;min-height:44px;border-radius:0;width:100%}
+.field input:focus,.field select:focus{outline:none;border-bottom-width:2.5px}
+.field .help{font-size:13px;color:var(--muted)}
+.field.err input{border-bottom-color:var(--ink);background:repeating-linear-gradient(135deg,transparent 0 6px,rgba(20,20,19,.05) 6px 8px)}
+.msg{font-size:14px;display:flex;gap:8px;align-items:flex-start;margin-top:6px}
+.msg b{flex:none;font-family:var(--mono);font-size:11px;border:1.5px solid var(--ink);padding:1px 5px;margin-top:1px}
+
+/* tabs, chips */
+.seg{display:flex;border:1.5px solid var(--ink);border-radius:3px;overflow:hidden}
+.seg button{flex:1;border:0;background:transparent;padding:10px 14px;min-height:44px;font-weight:700;cursor:pointer;white-space:nowrap}
+.seg button[aria-selected="true"],.seg button[aria-pressed="true"]{background:var(--ink);color:var(--ground)}
+.chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.chips::-webkit-scrollbar{display:none}
+.chips button{border:1px solid var(--line);background:var(--paper);padding:8px 12px;min-height:44px;border-radius:3px;white-space:nowrap;cursor:pointer;font-size:14px}
+.chips button[aria-pressed="true"]{background:var(--lime);border-color:var(--ink);font-weight:700}
+
+/* app-kop + onderbalk */
+.top{border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:24px;height:60px}
+.top nav{display:flex;gap:20px;font-size:15px;flex:1}
+.top nav a{color:var(--ink3);text-decoration:none}
+.top nav a[aria-current]{color:var(--ink);font-weight:700;box-shadow:inset 0 -2px 0 var(--ink);padding-bottom:4px}
+.tabbar{display:none}
+@media (max-width:760px){
+  .wrap{padding:0 16px}
+  .top nav{display:none}
+  .tabbar{display:flex;position:fixed;left:0;right:0;bottom:0;background:var(--ground);border-top:1px solid var(--line);justify-content:space-around;padding:6px 0 calc(6px + env(safe-area-inset-bottom));z-index:20}
+  .tabbar a{font-size:12px;font-weight:600;color:var(--muted);text-decoration:none;padding:8px 10px;min-height:44px;display:flex;align-items:center}
+  .tabbar a[aria-current]{color:var(--ink);box-shadow:inset 0 -2px 0 var(--ink)}
+  body.has-tabbar{padding-bottom:72px}
+}
+
+/* referentie-statusbalk (niet in productie) */
+.refbar{background:var(--ink);color:var(--ground);font-family:var(--mono);font-size:12px;padding:8px 16px;display:flex;gap:8px;align-items:center;overflow-x:auto;white-space:nowrap}
+.refbar a{color:var(--ground);opacity:.7;text-decoration:none;padding:4px 8px;border:1px solid transparent}
+.refbar a[aria-current]{opacity:1;border-color:var(--lime);color:var(--lime)}
+
+/* toast */
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--ground);padding:12px 18px;border-radius:3px;font-weight:600;z-index:60;box-shadow:0 8px 20px rgba(0,0,0,.2)}
+@media (max-width:760px){.toast{bottom:88px;width:calc(100% - 32px);text-align:center}}
+
+/* skelet */
+.sk{background:var(--s2);border-radius:2px;display:block}
+
+.layout{display:grid;grid-template-columns:220px minmax(0,1fr);gap:40px;padding-top:32px;padding-bottom:64px}
+.side a{display:block;padding:10px 0;color:var(--ink3);text-decoration:none;min-height:44px}
+.side a[aria-current]{color:var(--ink);font-weight:700}
+.sec{padding:22px 24px;margin-bottom:22px}
+.nick{display:flex;gap:12px;align-items:flex-end;margin-top:14px;max-width:520px}
+.nick .field{flex:1}
+.nick input{font-size:22px !important}
+.opts{display:flex;flex-direction:column;gap:10px;margin-top:16px}
+.opt{display:grid;grid-template-columns:28px minmax(0,1fr);gap:12px;padding:16px;border:1.5px solid var(--line);border-radius:2px;background:var(--paper);cursor:pointer;position:relative}
+.opt input{width:22px;height:22px;margin:2px 0 0;accent-color:#141413}
+.opt.on{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.opt.off{opacity:.55;cursor:not-allowed}
+.opt .n{font-weight:700;font-size:17px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.opt p{margin:4px 0 0;color:var(--ink2);font-size:15px}
+.badge{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.05em;padding:2px 6px;border:1.2px solid var(--ink)}
+.badge.l{background:var(--lime);border-color:var(--lime)}
+.never{margin-top:18px;padding:14px 16px;background:var(--s2);font-size:15px}
+.scrim{position:fixed;inset:0;background:rgba(20,20,19,.45);z-index:30}
+.dlg{position:fixed;z-index:40;left:50%;top:50%;transform:translate(-50%,-50%);width:min(560px,calc(100% - 32px));max-height:calc(100vh - 32px);overflow:auto;background:var(--ground);border-radius:4px;padding:24px;box-shadow:0 30px 80px rgba(0,0,0,.3)}
+.dlg .check{display:flex;gap:12px;align-items:flex-start;margin-top:18px;padding:14px;background:var(--paper);border:1px solid var(--line);cursor:pointer}
+.dlg .check input{width:22px;height:22px;flex:none;accent-color:#141413;margin:1px 0 0}
+.dlg .row{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+.dlg .row .btn{flex:1}
+@media (max-width:760px){
+  .layout{grid-template-columns:minmax(0,1fr);gap:0;padding-top:16px}
+  .side{display:none}
+  .sec{padding:18px 16px}
+  .nick{flex-direction:column;align-items:stretch}
+  .dlg{left:0;right:0;bottom:0;top:auto;transform:none;width:100%;border-radius:10px 10px 0 0;padding:20px 16px calc(20px + env(safe-area-inset-bottom))}
+  .dlg .row{flex-direction:column-reverse}
+}
+</style>
+</head>
+<body class="has-tabbar">
+<div class="refbar" aria-label="Referentie: kies een staat"><span>REFERENTIE · staat:</span><a href="?state=" data-s="">Privé (standaard)</a><a href="?state=toestemming" data-s="toestemming">Naar Gym en vrienden: toestemming</a><a href="?state=gym" data-s="gym">Gym en vrienden aan</a><a href="?state=naarprive" data-s="naarprive">Terug naar Privé</a><a href="?state=bezet" data-s="bezet">Bijnaam bezet</a><a href="?state=opgeslagen" data-s="opgeslagen">Bijnaam opgeslagen</a></div><header class="top"><div class="wrap"><a class="wm" href="#">BENCH<span>MRK</span></a><nav aria-label="App"><a href="#">Plan</a><a href="#">Log</a><a href="#">Gym</a><a href="#">Challenge</a><a href="#" aria-current="page">Profiel</a></nav><span class="tag">VOORBEELD</span></div></header>
+<main class="wrap layout">
+  <nav class="side" aria-label="Instellingen"><a href="#">Profiel</a><a href="#">Plan en races</a><a href="#" aria-current="page">Privacy</a><a href="#">Gym</a><a href="#">Abonnement</a></nav>
+  <div>
+    <h1 class="title" style="font-size:clamp(36px,4.5vw,52px);margin-bottom:22px">Privacy</h1>
+
+    <section class="slip sec" aria-labelledby="nk">
+      <h2 class="h2" id="nk">Bijnaam</h2>
+      <p class="sub" style="font-size:15px">Je bijnaam staat op je kaarten en ranglijsten. Je echte naam en e-mail zie je alleen zelf.</p>
+      <form class="nick" onsubmit="event.preventDefault();location.search='?state=opgeslagen'">
+        <div class="field" id="nf"><label for="nick">Bijnaam</label><input id="nick" value="lunge_lotte" placeholder="bijv. Sledhond" maxlength="20" autocomplete="off" aria-describedby="nh"><span class="help" id="nh">3 tot 20 tekens: letters, cijfers, punt, liggend streepje of underscore.</span></div>
+        <button class="btn dark" type="submit">Opslaan</button>
+      </form>
+      <div id="nmsg"></div>
+    </section>
+
+    <section class="slip sec" aria-labelledby="ws">
+      <h2 class="h2" id="ws">Wie ziet wat</h2>
+      <p class="sub" style="font-size:15px">Je kiest zelf hoe zichtbaar je bent. Je kunt dit altijd wijzigen.</p>
+      <div class="opts" role="radiogroup" aria-labelledby="ws">
+        <label class="opt" data-v="prive"><input type="radio" name="vis" value="prive"><div><div class="n">Privé <span class="badge">STANDAARD</span></div><p>Anderen zien niets van je, behalve de kaarten die je zelf deelt.</p><p class="small" style="margin-top:6px">Je staat niet op ranglijsten.</p></div></label>
+        <label class="opt" data-v="gym"><input type="radio" name="vis" value="gym"><div><div class="n">Gym en vrienden</div><p>Leden van je gym en je vrienden zien je bijnaam, divisie, score, voorspelde tijd en benchmarktijden.</p><p class="small" style="margin-top:6px">Je staat op de ranglijst van je gym en doet mee aan de wekelijkse challenge.</p></div></label>
+        <label class="opt off" data-v="open"><input type="radio" name="vis" value="open" disabled><div><div class="n">Openbaar <span class="badge">BINNENKORT</span></div><p>Ook zichtbaar op de race- en landelijke ranglijsten en op een eigen profielpagina.</p></div></label>
+      </div>
+      <div class="never"><b>Nooit zichtbaar voor anderen:</b> e-mail, hartslag, gewicht, blessures en notities. Hartslag gebruikt de app alleen om je trainingen te beoordelen.</div>
+    </section>
+  </div>
+</main>
+<div id="dlgroot"></div>
+<nav class="tabbar" aria-label="App"><a href="#">Plan</a><a href="#">Log</a><a href="#">Gym</a><a href="#">Challenge</a><a href="#" aria-current="page">Profiel</a></nav>
+<script>
+const STATE=new URLSearchParams(location.search).get('state')||'';
+document.querySelectorAll('.refbar a').forEach(a=>{if((a.dataset.s||'')===STATE)a.setAttribute('aria-current','true')});
+
+const cur=(STATE==='gym'||STATE==='naarprive')?'gym':'prive';
+function mark(v){document.querySelectorAll('.opt').forEach(o=>{const on=o.dataset.v===v;o.classList.toggle('on',on);o.querySelector('input').checked=on;});}
+mark(cur);
+const root=document.getElementById('dlgroot');
+function consent(){
+  root.innerHTML=`<div class="scrim"></div><section class="dlg" role="dialog" aria-modal="true" aria-labelledby="ct">
+   <h2 class="title" id="ct" style="font-size:30px">Meedoen met je gym en vrienden</h2>
+   <p class="sub" style="font-size:15px">Als je dit aanzet, zien de leden en beheerders van <b>Voorbeeldgym Amsterdam</b> en de mensen in je vriendengroep je bijnaam, divisie, score "op schema", voorspelde eindtijd en benchmarktijden. Je resultaten van de wekelijkse challenge komen in de uitslag.</p>
+   <p class="sub" style="font-size:15px">Je e-mail, hartslag, gewicht, blessures en notities zien zij nooit. Je kunt dit op elk moment terugzetten naar Privé in Instellingen; je verdwijnt dan meteen van de ranglijsten.</p>
+   <label class="check"><input type="checkbox" id="ok"><span>Ik begrijp wat anderen van mij zien en ga akkoord.</span></label>
+   <div class="row"><button class="btn" onclick="location.search=''">Blijf Privé</button><button class="btn lime" id="agree" disabled onclick="location.search='?state=gym'">Zet aan</button></div>
+   <p class="small" style="margin:14px 0 0"><a href="#">Lees de privacyverklaring</a></p></section>`;
+  const ok=document.getElementById('ok');ok.addEventListener('change',()=>document.getElementById('agree').disabled=!ok.checked);
+}
+function toPrivate(){
+  root.innerHTML=`<div class="scrim"></div><section class="dlg" role="dialog" aria-modal="true" aria-labelledby="pt">
+   <h2 class="title" id="pt" style="font-size:30px">Terug naar Privé?</h2>
+   <p class="sub" style="font-size:15px">Je verdwijnt meteen van de ranglijst van je gym en uit lopende challenges. Je gegevens blijven bewaard.</p>
+   <div class="row"><button class="btn" onclick="location.search='?state=gym'">Annuleren</button><button class="btn dark" onclick="location.search=''">Zet op Privé</button></div></section>`;
+}
+document.querySelectorAll('.opt input').forEach(i=>i.addEventListener('change',()=>{ if(i.value==='gym'&&cur!=='gym'){mark(cur);consent();} if(i.value==='prive'&&cur==='gym'){mark(cur);toPrivate();} }));
+if(STATE==='toestemming') consent();
+if(STATE==='naarprive') toPrivate();
+if(STATE==='bezet'){document.getElementById('nick').value='sledhond';document.getElementById('nf').classList.add('err');document.getElementById('nick').setAttribute('aria-invalid','true');document.getElementById('nh').insertAdjacentHTML('beforebegin','<div class="msg" role="alert" style="margin:2px 0 4px"><b>!</b><span>Deze bijnaam is al bezet. Kies een andere.</span></div>');}
+if(STATE==='opgeslagen'||STATE==='gym'){const t=document.createElement('div');t.className='toast';t.setAttribute('role','status');t.textContent=STATE==='gym'?'Zichtbaarheid opgeslagen':'Bijnaam opgeslagen';document.body.appendChild(t);}
+
+</script>
+</body>
+</html>

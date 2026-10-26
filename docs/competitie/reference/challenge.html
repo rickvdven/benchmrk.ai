@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Benchmrk · Wekelijkse challenge (referentie)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ground:#EFEEEA;--paper:#FFFFFF;--s2:#E4E2DC;--line:#D6D3CB;--ink:#141413;--ink2:#3A3833;--ink3:#4A4843;--muted:#6A675F;
+--lime:#D4F046;--limeTint:#F6FADF;--sans:'Archivo',system-ui,sans-serif;--mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow:0 1px 0 #D6D3CB,0 18px 40px rgba(20,20,19,.12)}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.5}
+::selection{background:var(--lime);color:var(--ink)}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+button,select,input{font:inherit;color:inherit}
+a{color:var(--ink);text-underline-offset:4px}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+.wm{font-weight:800;font-size:20px;letter-spacing:.01em;text-decoration:none;color:var(--ink);white-space:nowrap}
+.wm span{background:var(--lime);padding:0 3px;margin-left:1px}
+.tag{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.06em;border:1.5px solid var(--ink);padding:3px 7px;white-space:nowrap;display:inline-block}
+.title{font-weight:800;font-stretch:72%;text-transform:uppercase;line-height:.95;letter-spacing:.01em;margin:0}
+.h2{font-weight:800;font-stretch:80%;text-transform:uppercase;line-height:1;letter-spacing:.01em;margin:0;font-size:22px}
+.sub{color:var(--ink2);margin:6px 0 0}
+.small{font-size:13px;color:var(--muted)}
+.slip{background:var(--paper);border:1px solid var(--line);border-radius:2px;box-shadow:var(--shadow)}
+.dash{border-top:2px dashed #A8A498}
+.hl{background:var(--lime);color:var(--ink);padding:0 6px}
+
+/* knoppen */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:12px 20px;border-radius:3px;border:1.5px solid var(--ink);font-weight:700;text-decoration:none;cursor:pointer;background:transparent;color:var(--ink)}
+.btn.lime{background:var(--lime)}
+.btn.dark{background:var(--ink);color:var(--ground)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn.block{width:100%}
+.linkbtn{background:none;border:0;padding:10px 0;min-height:44px;cursor:pointer;text-decoration:underline;text-underline-offset:4px;color:var(--ink2)}
+
+/* formulier */
+.field{display:flex;flex-direction:column;gap:4px}
+.field label,.lbl{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3)}
+.field input,.field select{font-family:var(--mono);font-size:18px;background:transparent;border:0;border-bottom:1.5px solid var(--ink);padding:8px 0;min-height:44px;border-radius:0;width:100%}
+.field input:focus,.field select:focus{outline:none;border-bottom-width:2.5px}
+.field .help{font-size:13px;color:var(--muted)}
+.field.err input{border-bottom-color:var(--ink);background:repeating-linear-gradient(135deg,transparent 0 6px,rgba(20,20,19,.05) 6px 8px)}
+.msg{font-size:14px;display:flex;gap:8px;align-items:flex-start;margin-top:6px}
+.msg b{flex:none;font-family:var(--mono);font-size:11px;border:1.5px solid var(--ink);padding:1px 5px;margin-top:1px}
+
+/* tabs, chips */
+.seg{display:flex;border:1.5px solid var(--ink);border-radius:3px;overflow:hidden}
+.seg button{flex:1;border:0;background:transparent;padding:10px 14px;min-height:44px;font-weight:700;cursor:pointer;white-space:nowrap}
+.seg button[aria-selected="true"],.seg button[aria-pressed="true"]{background:var(--ink);color:var(--ground)}
+.chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.chips::-webkit-scrollbar{display:none}
+.chips button{border:1px solid var(--line);background:var(--paper);padding:8px 12px;min-height:44px;border-radius:3px;white-space:nowrap;cursor:pointer;font-size:14px}
+.chips button[aria-pressed="true"]{background:var(--lime);border-color:var(--ink);font-weight:700}
+
+/* app-kop + onderbalk */
+.top{border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:24px;height:60px}
+.top nav{display:flex;gap:20px;font-size:15px;flex:1}
+.top nav a{color:var(--ink3);text-decoration:none}
+.top nav a[aria-current]{color:var(--ink);font-weight:700;box-shadow:inset 0 -2px 0 var(--ink);padding-bottom:4px}
+.tabbar{display:none}
+@media (max-width:760px){
+  .wrap{padding:0 16px}
+  .top nav{display:none}
+  .tabbar{display:flex;position:fixed;left:0;right:0;bottom:0;background:var(--ground);border-top:1px solid var(--line);justify-content:space-around;padding:6px 0 calc(6px + env(safe-area-inset-bottom));z-index:20}
+  .tabbar a{font-size:12px;font-weight:600;color:var(--muted);text-decoration:none;padding:8px 10px;min-height:44px;display:flex;align-items:center}
+  .tabbar a[aria-current]{color:var(--ink);box-shadow:inset 0 -2px 0 var(--ink)}
+  body.has-tabbar{padding-bottom:72px}
+}
+
+/* referentie-statusbalk (niet in productie) */
+.refbar{background:var(--ink);color:var(--ground);font-family:var(--mono);font-size:12px;padding:8px 16px;display:flex;gap:8px;align-items:center;overflow-x:auto;white-space:nowrap}
+.refbar a{color:var(--ground);opacity:.7;text-decoration:none;padding:4px 8px;border:1px solid transparent}
+.refbar a[aria-current]{opacity:1;border-color:var(--lime);color:var(--lime)}
+
+/* toast */
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--ground);padding:12px 18px;border-radius:3px;font-weight:600;z-index:60;box-shadow:0 8px 20px rgba(0,0,0,.2)}
+@media (max-width:760px){.toast{bottom:88px;width:calc(100% - 32px);text-align:center}}
+
+/* skelet */
+.sk{background:var(--s2);border-radius:2px;display:block}
+
+.cardbox{position:relative;width:100%;aspect-ratio:var(--cw)/var(--ch);overflow:hidden;margin:0 auto;box-shadow:0 10px 30px rgba(20,20,19,.18)}
+.cardbox iframe{position:absolute;left:0;top:0;border:0;transform-origin:0 0;pointer-events:none;background:var(--ground)}
+
+.head{padding:32px 0 20px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px 24px}
+.status{font-family:var(--mono);font-size:13px;border:1.5px solid var(--ink);padding:4px 10px;white-space:nowrap}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:28px;align-items:start;padding-bottom:56px}
+.box{padding:22px 24px}
+.task{font-size:22px;font-weight:600;line-height:1.35;margin:8px 0 0}
+.how{margin:16px 0 0;padding:14px 0 0;border-top:2px dashed #A8A498;font-size:15px;color:var(--ink2)}
+.how dt{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin-top:10px}
+.how dd{margin:2px 0 0}
+.enter{display:flex;gap:12px;align-items:flex-end;margin-top:16px}
+.enter .field{flex:1}
+.enter .field input{font-size:30px;font-weight:600}
+.saved{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-top:12px}
+.saved .t{font-family:var(--mono);font-size:44px;font-weight:600;letter-spacing:-.02em}
+.prbox{margin-top:16px;display:flex;gap:16px;align-items:center;background:var(--limeTint);border:1px solid #E2E8C2;padding:14px}
+.prbox .cardbox{width:96px;flex:none;box-shadow:0 4px 10px rgba(20,20,19,.15)}
+.proof{margin-top:16px;border:1.5px solid var(--ink);padding:14px 16px}
+.stand table{width:100%;border-collapse:collapse}
+.stand th{font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
+.stand td{padding:12px;border-bottom:1px solid #E9E7E1}
+.stand td.r{width:48px;font-family:var(--mono);font-size:18px;font-weight:600}
+.stand td.res{font-family:var(--mono);font-size:20px;font-weight:600;text-align:right}
+.stand tr.me{background:var(--limeTint)} .stand tr.me td.r{box-shadow:inset 6px 0 0 var(--lime)}
+.you{font-family:var(--mono);font-size:11px;font-weight:600;background:var(--lime);padding:2px 6px;margin-left:8px}
+.pr{font-family:var(--mono);font-size:11px;border:1px solid var(--ink3);padding:1px 5px;margin-left:8px;white-space:nowrap}
+.cam{font-family:var(--mono);font-size:11px;color:var(--muted);margin-left:8px}
+@media (max-width:860px){
+  .grid{grid-template-columns:minmax(0,1fr);gap:20px}
+  .box{padding:18px 16px}
+  .head{padding:22px 0 14px}
+  .enter .btn{min-height:52px}
+}
+</style>
+</head>
+<body class="has-tabbar">
+<div class="refbar" aria-label="Referentie: kies een staat"><span>REFERENTIE · staat:</span><a href="?state=" data-s="">Open, nog niets ingevuld</a><a href="?state=opgeslagen" data-s="opgeslagen">Opgeslagen + PR</a><a href="?state=top3" data-s="top3">Top 3: bewijs nodig</a><a href="?state=fout" data-s="fout">Ongeldige invoer</a><a href="?state=gesloten" data-s="gesloten">Gesloten: uitslag</a><a href="?state=prive" data-s="prive">Privé</a><a href="?state=leeg" data-s="leeg">Lege divisie</a><a href="?state=geen" data-s="geen">Geen challenge</a></div><header class="top"><div class="wrap"><a class="wm" href="#">BENCH<span>MRK</span></a><nav aria-label="App"><a href="#">Plan</a><a href="#">Log</a><a href="#">Gym</a><a href="#" aria-current="page">Challenge</a><a href="#">Profiel</a></nav><span class="tag">VOORBEELD</span></div></header>
+<main class="wrap" id="main">
+  <div class="head">
+    <div>
+      <h1 class="title" style="font-size:clamp(38px,5vw,60px)">Challenge week 44</h1>
+      <div style="margin-top:8px;font-size:18px;font-weight:700">1 km tijdrit</div>
+    </div>
+    <span class="status" id="status">Invullen kan tot zondag 18:00</span>
+  </div>
+
+  <div class="grid" id="grid">
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <section class="slip box" aria-labelledby="opd">
+        <div class="lbl" id="opd">Opdracht</div>
+        <p class="task">Loop 1 km zo snel mogelijk.</p>
+        <dl class="how">
+          <dt>Zo meet je</dt><dd>Buiten met een gps-horloge of telefoon, of op een loopband op 1 % helling.</dd>
+          <dt>Vooraf</dt><dd>10 minuten rustig inlopen. Niet op een dag met een benchmark of sim.</dd>
+          <dt>Uitslag</dt><dd>Per divisie, op zondag. Laagste tijd wint. Je mag tot zondag 18:00 verbeteren.</dd>
+        </dl>
+      </section>
+
+      <section class="slip box" aria-labelledby="res" id="resbox">
+        <div class="lbl" id="res">Je resultaat</div>
+        <form class="enter" onsubmit="event.preventDefault();location.search='?state=opgeslagen'">
+          <div class="field" id="resfield"><label for="t" class="sr" style="position:absolute;left:-9999px">Tijd in m:ss</label><input id="t" inputmode="numeric" placeholder="m:ss" autocomplete="off"></div>
+          <button class="btn dark" type="submit">Opslaan</button>
+        </form>
+        <div id="resmsg" class="small" style="margin-top:8px">Je persoonlijk record op deze challenge: <span class="mono">4:09</span> (week 32)</div>
+      </section>
+    </div>
+
+    <section class="slip stand" aria-labelledby="st" id="standbox">
+      <div class="box" style="padding-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap">
+          <h2 class="h2" id="st">Tussenstand</h2><span class="small mono" id="stnote">bijgewerkt 26 okt · 14:10</span>
+        </div>
+        <div class="chips" role="group" aria-label="Divisie" style="margin-top:14px">
+          <button aria-pressed="true">Open Women</button><button aria-pressed="false">Open Men</button><button aria-pressed="false">Pro Women</button><button aria-pressed="false">Pro Men</button><button aria-pressed="false">Doubles</button>
+        </div>
+      </div>
+      <div id="stbody"><table><thead><tr><th>#</th><th>Atleet</th><th style="text-align:right">Tijd</th></tr></thead><tbody><tr class=""><td class="r">1</td><td><b>kmloper_kim</b><span class="cam">foto ok</span></td><td class="res">3:41</td></tr><tr class=""><td class="r">2</td><td><b>sprint_saar</b><span class="cam">foto ok</span></td><td class="res">3:47</td></tr><tr class=""><td class="r">3</td><td><b>pacepaula</b><span class="cam">foto ok</span></td><td class="res">3:52</td></tr><tr class="me"><td class="r">4</td><td><b>lunge_lotte</b><span class="you">JIJ</span><span class="pr">PR</span></td><td class="res">3:58</td></tr><tr class=""><td class="r">5</td><td><b>rowmachine_ria</b></td><td class="res">4:03</td></tr><tr class=""><td class="r">6</td><td><b>lotte_k</b></td><td class="res">4:05</td></tr><tr class=""><td class="r">7</td><td><b>burpee_bo</b></td><td class="res">4:11</td></tr><tr class=""><td class="r">8</td><td><b>hardloopheidi</b></td><td class="res">4:19</td></tr><tr class=""><td class="r">9</td><td><b>sledsanne</b></td><td class="res">4:26</td></tr><tr class=""><td class="r">10</td><td><b>wallball_wil</b></td><td class="res">4:40</td></tr></tbody></table>
+      <div class="box small" style="padding-top:12px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap"><span>Top 3 telt alleen met een foto als bewijs.</span><a href="#">Meld resultaat</a></div></div>
+    </section>
+  </div>
+</main>
+<nav class="tabbar" aria-label="App"><a href="#">Plan</a><a href="#">Log</a><a href="#">Gym</a><a href="#" aria-current="page">Challenge</a><a href="#">Profiel</a></nav>
+<script>
+const STATE=new URLSearchParams(location.search).get('state')||'';
+document.querySelectorAll('.refbar a').forEach(a=>{if((a.dataset.s||'')===STATE)a.setAttribute('aria-current','true')});
+
+function fitCards(){document.querySelectorAll('.cardbox').forEach(b=>{const f=b.querySelector('iframe');const cw=+getComputedStyle(b).getPropertyValue('--cw');f.style.transform='scale('+(b.clientWidth/cw)+')';});}
+addEventListener('resize',fitCards);fitCards();
+
+const $=s=>document.querySelector(s);
+const card=`<div class="cardbox" style="--cw:1080;--ch:1920"><iframe src="kaarten/challenge-story.html" title="Kaart challenge week 44: 3:58, persoonlijk record" tabindex="-1" scrolling="no" style="width:1080px;height:1920px"></iframe></div>`;
+function saved(rank,tm='3:58'){
+  $('#resbox').innerHTML=`<div class="lbl">Je resultaat</div>
+   <div class="saved"><span class="t">${tm}</span><button class="linkbtn">Aanpassen</button></div>
+   <div class="msg" style="margin-top:4px"><b>PR</b><span>Nieuw persoonlijk record. Je vorige: <span class="mono">4:09</span></span></div>
+   ${rank?`<div class="proof"><div class="h2" style="font-size:18px">Bewijs voor de top 3</div><p class="sub" style="font-size:14px">Je staat in de top 3. Voeg voor zondag 18:00 een foto toe van je horloge, het scherm van het apparaat of je app. Zonder foto telt je resultaat niet mee voor de top 3.</p><button class="btn dark" style="margin-top:10px">Foto toevoegen</button></div>`:''}
+   <div class="prbox">${card}<div style="flex:1"><div style="font-weight:700">Persoonlijk record. Maak er een kaart van.</div><a class="btn lime" href="kaart-aanbieden.html" style="margin-top:10px">Maak een kaart</a></div></div>
+   <button class="btn block" style="margin-top:14px">Daag een vriend uit</button>`;
+  fitCards();
+}
+if(STATE==='opgeslagen') saved(false);
+if(STATE==='top3'){saved(true,'3:49');document.querySelector('#stbody tr.me .res').textContent='3:49';const tb=document.querySelector('#stbody tbody');const me=tb.querySelector('tr.me');me.querySelector('.r').textContent='3';tb.insertBefore(me,tb.children[2]);tb.children[3].querySelector('.r').textContent='4';tb.children[3].querySelector('.cam')&&tb.children[3].querySelector('.cam').remove();}
+if(STATE==='fout'){
+  $('#t').value='39:80';$('#resfield').classList.add('err');
+  $('#resmsg').outerHTML='<div class="msg"><b>!</b><span>Vul je resultaat in als m:ss, bijvoorbeeld 4:12.</span></div>';
+}
+if(STATE==='gesloten'){
+  $('#status').textContent='Gesloten';$('#standbox').style.order='-1';$('#grid').firstElementChild.style.order='0';
+  $('#st').textContent='Uitslag';$('#stnote').textContent='12 resultaten · Open Women';
+  $('#resbox').innerHTML=`<div class="lbl">Je resultaat</div><p style="margin:10px 0 0">Deze challenge is gesloten. De uitslag staat hieronder.</p><div class="saved"><span class="t">3:58</span><span class="mono" style="font-size:18px">plaats 4</span></div><div class="prbox">${card}<div style="flex:1"><div style="font-weight:700">Top 10 in Open Women. Maak er een kaart van.</div><a class="btn lime" href="kaart-aanbieden.html" style="margin-top:10px">Maak een kaart</a></div></div><p class="small" style="margin:12px 0 0">Maandag staat de volgende challenge klaar.</p>`;fitCards();
+}
+if(STATE==='prive'){
+  $('#resmsg').outerHTML='<div class="msg"><b>i</b><span>Je staat op Privé. Je kunt meedoen en je eigen record bijhouden, maar je staat niet in de uitslag. <a href="privacy.html">Zichtbaarheid aanpassen</a></span></div>';
+  document.querySelectorAll('#stbody tr.me').forEach(r=>r.remove());
+}
+if(STATE==='leeg'){
+  $('#stbody').innerHTML='<div class="box" style="padding-top:8px"><p style="margin:0">Nog geen resultaten in Open Women. Ben jij de eerste?</p></div>';
+}
+if(STATE==='geen'){
+  $('#grid').innerHTML='<section class="slip box"><h2 class="h2">Geen challenge deze week</h2><p class="sub">Deze week is er geen challenge. Maandag staat de volgende klaar.</p></section>';
+  $('#status').remove();document.querySelector('.head .title').textContent='Challenge';document.querySelector('.head div div').remove();
+}
+
+</script>
+</body>
+</html>

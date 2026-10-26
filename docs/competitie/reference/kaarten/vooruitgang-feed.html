@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Benchmrk kaart · Vooruitgang sinds de start · feed 1080x1080</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ground:#EFEEEA;--paper:#FFFFFF;--s2:#E4E2DC;--line:#D6D3CB;--ink:#141413;--ink2:#3A3833;--muted:#6A675F;--lime:#D4F046;
+--runs:#141413;--stations:#77736A;--rox:#C3BFB3;--sans:'Archivo',system-ui,sans-serif;--mono:'IBM Plex Mono',ui-monospace,monospace}
+*{box-sizing:border-box}
+html,body{margin:0;background:#9a978f}
+body{display:flex;justify-content:center;padding:0}
+.card{position:relative;width:1080px;height:1080px;background:var(--ground);color:var(--ink);font-family:var(--sans);overflow:hidden;font-variant-numeric:tabular-nums}
+.mono{font-family:var(--mono)}
+.wm{font-weight:800;letter-spacing:.01em;line-height:1;white-space:nowrap}
+.wm span{background:var(--lime);padding:0 .08em;margin-left:.05em}
+.tag{font-family:var(--mono);font-weight:600;letter-spacing:.06em;border:2px solid var(--ink);line-height:1;white-space:nowrap}
+.slip{background:var(--paper);border:1px solid var(--line);border-radius:2px;box-shadow:0 1px 0 #D6D3CB,0 24px 50px rgba(20,20,19,.14)}
+.dash{border-top:2px dashed #A8A498}
+.title{font-weight:800;font-stretch:72%;text-transform:uppercase;line-height:.95;letter-spacing:.01em}
+.lime{background:var(--lime);color:var(--ink)}
+.cta{display:flex;justify-content:space-between;align-items:center;font-weight:700}
+.strike{text-decoration:line-through;text-decoration-thickness:.08em;color:var(--muted)}
+.bar{display:flex;gap:4px}
+.bar i{display:block;height:100%}
+</style>
+</head>
+<body>
+<div class="card" style="padding:56px 60px 52px;display:flex;flex-direction:column">
+  <div style="display:flex;justify-content:space-between;align-items:center"><div class="wm" style="font-size:40px">BENCH<span>MRK</span></div><div class="tag" style="font-size:20px;padding:8px 12px">VOORBEELD</div></div>
+  <div class="slip" style="margin-top:36px;padding:30px 44px 30px;flex:1;display:flex;flex-direction:column;justify-content:space-between">
+    <div style="display:flex;justify-content:space-between;align-items:baseline">
+      <div class="title" style="font-size:44px">Vooruitgang sinds de start</div>
+      <div class="mono" style="font-size:22px;color:var(--ink2)">week 9/16</div>
+    </div>
+    <div style="margin-top:14px;display:flex;justify-content:space-between;align-items:baseline">
+      <div style="font-size:34px;font-weight:700">kmvreter</div>
+      <div class="mono" style="font-size:24px;color:var(--ink2)">Pro · Men</div>
+    </div>
+    <div style="margin-top:22px;display:flex;gap:30px;align-items:center">
+      <div class="mono lime" style="font-size:128px;font-weight:600;letter-spacing:-.04em;line-height:1;padding:12px 16px 8px">−3:12</div>
+      <div class="mono" style="font-size:28px;line-height:1.4"><span class="strike">1:22:05</span><br><span style="font-weight:600;font-size:44px">1:18:53</span></div>
+    </div>
+    <div style="margin-top:22px"><svg width="872" height="274" viewBox="0 -8.8 872 274" role="img" aria-label="Voorspelde eindtijd per week: van 1:22:05 in week 1 naar 1:18:53 in week 9">
+  <polygon points="0,230 0.0,207.0 109.0,184.0 218.0,156.4 327.0,138.0 436.0,96.6 545.0,73.6 654.0,55.2 763.0,41.4 872.0,30.4 872,230" fill="#E4E2DC"/>
+  <line x1="0" y1="92.0" x2="872" y2="92.0" stroke="#141413" stroke-width="2" stroke-dasharray="10 10"/>
+  <polyline points="0.0,207.0 109.0,184.0 218.0,156.4 327.0,138.0 436.0,96.6 545.0,73.6 654.0,55.2 763.0,41.4 872.0,30.4" fill="none" stroke="#141413" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+  <rect x="864.2" y="22.6" width="15.6" height="15.6" fill="#D4F046" stroke="#141413" stroke-width="2"/>
+  <text x="4" y="82.1" font-family="IBM Plex Mono" font-size="22" fill="#3A3833">doel 1:20:00</text>
+  <text x="0" y="260.8" font-family="IBM Plex Mono" font-size="22" fill="#6A675F">wk 1</text>
+  <text x="872" y="260.8" text-anchor="end" font-family="IBM Plex Mono" font-size="22" fill="#6A675F">wk 9</text>
+</svg></div>
+  </div>
+  <div class="cta lime" style="margin-top:28px;padding:24px 30px;font-size:34px;border-radius:3px"><span>Reken je eigen race door · benchmrk.ai</span><span aria-hidden="true">→</span></div>
+</div>
+</body>
+</html>

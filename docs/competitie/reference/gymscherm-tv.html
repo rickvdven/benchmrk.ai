@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Benchmrk · Gymscherm voor aan de muur (referentie)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ground:#EFEEEA;--paper:#FFFFFF;--s2:#E4E2DC;--line:#D6D3CB;--ink:#141413;--ink2:#3A3833;--ink3:#4A4843;--muted:#6A675F;
+--lime:#D4F046;--limeTint:#F6FADF;--sans:'Archivo',system-ui,sans-serif;--mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow:0 1px 0 #D6D3CB,0 18px 40px rgba(20,20,19,.12)}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.5}
+::selection{background:var(--lime);color:var(--ink)}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+button,select,input{font:inherit;color:inherit}
+a{color:var(--ink);text-underline-offset:4px}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+.wm{font-weight:800;font-size:20px;letter-spacing:.01em;text-decoration:none;color:var(--ink);white-space:nowrap}
+.wm span{background:var(--lime);padding:0 3px;margin-left:1px}
+.tag{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.06em;border:1.5px solid var(--ink);padding:3px 7px;white-space:nowrap;display:inline-block}
+.title{font-weight:800;font-stretch:72%;text-transform:uppercase;line-height:.95;letter-spacing:.01em;margin:0}
+.h2{font-weight:800;font-stretch:80%;text-transform:uppercase;line-height:1;letter-spacing:.01em;margin:0;font-size:22px}
+.sub{color:var(--ink2);margin:6px 0 0}
+.small{font-size:13px;color:var(--muted)}
+.slip{background:var(--paper);border:1px solid var(--line);border-radius:2px;box-shadow:var(--shadow)}
+.dash{border-top:2px dashed #A8A498}
+.hl{background:var(--lime);color:var(--ink);padding:0 6px}
+
+/* knoppen */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:12px 20px;border-radius:3px;border:1.5px solid var(--ink);font-weight:700;text-decoration:none;cursor:pointer;background:transparent;color:var(--ink)}
+.btn.lime{background:var(--lime)}
+.btn.dark{background:var(--ink);color:var(--ground)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn.block{width:100%}
+.linkbtn{background:none;border:0;padding:10px 0;min-height:44px;cursor:pointer;text-decoration:underline;text-underline-offset:4px;color:var(--ink2)}
+
+/* formulier */
+.field{display:flex;flex-direction:column;gap:4px}
+.field label,.lbl{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3)}
+.field input,.field select{font-family:var(--mono);font-size:18px;background:transparent;border:0;border-bottom:1.5px solid var(--ink);padding:8px 0;min-height:44px;border-radius:0;width:100%}
+.field input:focus,.field select:focus{outline:none;border-bottom-width:2.5px}
+.field .help{font-size:13px;color:var(--muted)}
+.field.err input{border-bottom-color:var(--ink);background:repeating-linear-gradient(135deg,transparent 0 6px,rgba(20,20,19,.05) 6px 8px)}
+.msg{font-size:14px;display:flex;gap:8px;align-items:flex-start;margin-top:6px}
+.msg b{flex:none;font-family:var(--mono);font-size:11px;border:1.5px solid var(--ink);padding:1px 5px;margin-top:1px}
+
+/* tabs, chips */
+.seg{display:flex;border:1.5px solid var(--ink);border-radius:3px;overflow:hidden}
+.seg button{flex:1;border:0;background:transparent;padding:10px 14px;min-height:44px;font-weight:700;cursor:pointer;white-space:nowrap}
+.seg button[aria-selected="true"],.seg button[aria-pressed="true"]{background:var(--ink);color:var(--ground)}
+.chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.chips::-webkit-scrollbar{display:none}
+.chips button{border:1px solid var(--line);background:var(--paper);padding:8px 12px;min-height:44px;border-radius:3px;white-space:nowrap;cursor:pointer;font-size:14px}
+.chips button[aria-pressed="true"]{background:var(--lime);border-color:var(--ink);font-weight:700}
+
+/* app-kop + onderbalk */
+.top{border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:24px;height:60px}
+.top nav{display:flex;gap:20px;font-size:15px;flex:1}
+.top nav a{color:var(--ink3);text-decoration:none}
+.top nav a[aria-current]{color:var(--ink);font-weight:700;box-shadow:inset 0 -2px 0 var(--ink);padding-bottom:4px}
+.tabbar{display:none}
+@media (max-width:760px){
+  .wrap{padding:0 16px}
+  .top nav{display:none}
+  .tabbar{display:flex;position:fixed;left:0;right:0;bottom:0;background:var(--ground);border-top:1px solid var(--line);justify-content:space-around;padding:6px 0 calc(6px + env(safe-area-inset-bottom));z-index:20}
+  .tabbar a{font-size:12px;font-weight:600;color:var(--muted);text-decoration:none;padding:8px 10px;min-height:44px;display:flex;align-items:center}
+  .tabbar a[aria-current]{color:var(--ink);box-shadow:inset 0 -2px 0 var(--ink)}
+  body.has-tabbar{padding-bottom:72px}
+}
+
+/* referentie-statusbalk (niet in productie) */
+.refbar{background:var(--ink);color:var(--ground);font-family:var(--mono);font-size:12px;padding:8px 16px;display:flex;gap:8px;align-items:center;overflow-x:auto;white-space:nowrap}
+.refbar a{color:var(--ground);opacity:.7;text-decoration:none;padding:4px 8px;border:1px solid transparent}
+.refbar a[aria-current]{opacity:1;border-color:var(--lime);color:var(--lime)}
+
+/* toast */
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--ground);padding:12px 18px;border-radius:3px;font-weight:600;z-index:60;box-shadow:0 8px 20px rgba(0,0,0,.2)}
+@media (max-width:760px){.toast{bottom:88px;width:calc(100% - 32px);text-align:center}}
+
+/* skelet */
+.sk{background:var(--s2);border-radius:2px;display:block}
+
+html,body{height:100%}
+body{overflow:hidden;display:flex;flex-direction:column}
+.tv{flex:1;min-height:0;display:grid;grid-template-rows:auto 1fr auto;padding:2.2vw 2.6vw 1.8vw;gap:1.6vw}
+.bar{display:flex;align-items:center;gap:2vw}
+.bar .wm{font-size:2.1vw}
+.bar .gym{font-weight:800;font-stretch:72%;text-transform:uppercase;font-size:2.8vw;line-height:1;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.ind{display:flex;gap:.5vw}
+.ind span{font-weight:800;font-stretch:80%;text-transform:uppercase;font-size:1.5vw;padding:.5vw 1vw;border:.15vw solid var(--ink)}
+.ind span.on{background:var(--ink);color:var(--ground)}
+.main{display:grid;grid-template-columns:minmax(0,2.1fr) minmax(0,1fr);gap:2vw;min-height:0}
+.lb{display:flex;flex-direction:column;min-height:0}
+.divhead{display:flex;align-items:center;gap:1.4vw;padding-bottom:.9vw;border-bottom:.2vw solid var(--ink)}
+.divhead h2{font-weight:800;font-stretch:72%;text-transform:uppercase;font-size:3vw;line-height:1;margin:0;flex:1}
+.pager{display:flex;gap:.5vw;align-items:center}
+.pager i{width:1.1vw;height:1.1vw;border:.15vw solid var(--ink);display:block}
+.pager i.on{background:var(--lime)}
+.legend{font-family:var(--mono);font-size:1.25vw;color:var(--ink3)}
+.timer{height:.35vw;background:var(--s2);margin-top:.6vw}
+.timer i{display:block;height:100%;width:0;background:var(--ink);animation:t 15s linear infinite}
+@keyframes t{to{width:100%}}
+@media (prefers-reduced-motion:reduce){.timer i{animation:none;width:100%}}
+.rows{flex:1;display:flex;flex-direction:column;justify-content:space-between;min-height:0;overflow:hidden;padding-top:.4vw}
+.r{display:grid;grid-template-columns:5vw minmax(0,1fr) 22vw 7vw;align-items:center;gap:1.2vw;padding:.3vw 0;border-bottom:.1vw solid var(--line)}
+.r .k{font-family:var(--mono);font-size:2.5vw;font-weight:600;text-align:center;line-height:1.2}
+.r.first .k{background:var(--lime)}
+.r .n{font-size:2.2vw;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.r .bar2{height:1.3vw;background:var(--s2);display:flex}
+.r .bar2 i{display:block;height:100%}
+.r .s{font-family:var(--mono);font-size:2.8vw;font-weight:600;text-align:right;letter-spacing:-.02em}
+.r .t{font-family:var(--mono);font-size:2.6vw;font-weight:600;text-align:right;grid-column:3/5}
+.side{display:flex;flex-direction:column;gap:1.4vw;min-height:0}
+.ch{padding:1.3vw 1.6vw;flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.ch .h{font-weight:800;font-stretch:72%;text-transform:uppercase;font-size:2.3vw;line-height:1}
+.ch .task{font-size:1.6vw;font-weight:600;margin-top:.4vw}
+.ch .d{font-family:var(--mono);font-size:1.3vw;color:var(--ink3);margin-top:1vw;padding-top:.8vw;border-top:.15vw dashed #A8A498}
+.ch .cr{display:flex;justify-content:space-between;align-items:baseline;padding:.45vw 0;border-bottom:.1vw solid #E9E7E1}
+.ch .cr b{font-size:1.6vw}
+.ch .cr span{font-family:var(--mono);font-size:1.9vw;font-weight:600}
+.join{background:var(--lime);padding:1.3vw 1.6vw;font-weight:800;font-size:2vw;line-height:1.15}
+.join small{display:block;font-family:var(--mono);font-weight:500;font-size:1.25vw;margin-top:.4vw}
+.foot{display:flex;justify-content:space-between;font-family:var(--mono);font-size:1.2vw;color:var(--ink3)}
+.banner{background:var(--ink);color:var(--ground);font-family:var(--mono);font-size:1.5vw;padding:.8vw 1.4vw;display:flex;gap:1vw;align-items:center}
+.banner b{background:var(--lime);color:var(--ink);padding:0 .6vw}
+.empty{flex:1;display:flex;flex-direction:column;justify-content:center;gap:1vw}
+.empty p{font-size:2.6vw;font-weight:700;margin:0}
+@media (max-width:900px){
+  body{overflow:auto;display:block}
+  .tv{display:flex;flex-direction:column}
+  .main{display:flex;flex-direction:column}
+  .tv{height:auto;padding:16px;gap:16px}
+  .bar{flex-wrap:wrap}.bar .wm{font-size:18px}.bar .gym{font-size:28px;flex-basis:100%;order:3}
+  .ind span{font-size:13px;padding:6px 10px}
+  .main{grid-template-columns:minmax(0,1fr)}
+  .rows{overflow:visible}
+  .bar .gym{white-space:normal}
+  .ch{overflow:visible}
+  .divhead h2{font-size:26px}.legend{font-size:12px}.pager i{width:12px;height:12px}
+  .timer{height:3px}
+  .r{grid-template-columns:40px minmax(0,1fr) auto;gap:10px;padding:8px 0}
+  .r .k{font-size:20px}.r .n{font-size:18px}.r .s,.r .t{font-size:24px;grid-column:auto}
+  .r .bar2{display:none}
+  .ch{padding:16px}.ch .h{font-size:24px}.ch .task{font-size:16px}.ch .d{font-size:13px}.ch .cr b{font-size:16px}.ch .cr span{font-size:20px}
+  .join{font-size:20px;padding:14px}.join small{font-size:12px}
+  .foot{font-size:12px;flex-wrap:wrap;gap:6px}
+  .banner{font-size:13px;padding:10px}
+  .empty p{font-size:22px}
+}
+</style>
+</head>
+<body class="">
+<div class="refbar" aria-label="Referentie: kies een staat"><span>REFERENTIE · staat:</span><a href="?state=" data-s="">Op schema (draait automatisch)</a><a href="?state=snelste" data-s="snelste">Snelste</a><a href="?state=leeg" data-s="leeg">Leeg</a><a href="?state=offline" data-s="offline">Geen verbinding</a><a href="?state=geentoegang" data-s="geentoegang">Link ongeldig</a></div>
+<div class="tv" id="tv">
+  <div class="bar">
+    <span class="wm">BENCH<span>MRK</span></span>
+    <span class="gym">Voorbeeldgym Amsterdam · oktober</span>
+    <div class="ind" aria-label="Ranglijst"><span class="on" id="i1">Op schema</span><span id="i2">Snelste</span></div>
+    <span class="tag" style="font-size:1vw;border-width:.12vw">VOORBEELD</span>
+  </div>
+  <div class="main" id="main">
+    <section class="lb">
+      <div class="divhead"><h2 id="dv">Open · Men</h2><div class="pager" aria-hidden="true"><i></i><i class="on"></i><i></i><i></i><i></i></div></div>
+      <div class="legend" id="lg" style="margin-top:.6vw">Score = progressie naar je streeftijd (70) + op schema (30)</div>
+      <div class="timer" aria-hidden="true"><i></i></div>
+      <div class="rows" id="rows"><div class="r first"><span class="k">1</span><span class="n">kmvreter</span><span class="bar2" aria-hidden="true"><i style="width:56%;background:#141413"></i><i style="width:29%;background:#8A877F"></i></span><span class="s">85</span></div><div class="r"><span class="k">2</span><span class="n">sledpusher</span><span class="bar2" aria-hidden="true"><i style="width:52%;background:#141413"></i><i style="width:27%;background:#8A877F"></i></span><span class="s">79</span></div><div class="r"><span class="k">3</span><span class="n">wallball_wim</span><span class="bar2" aria-hidden="true"><i style="width:51%;background:#141413"></i><i style="width:26%;background:#8A877F"></i></span><span class="s">77</span></div><div class="r"><span class="k">4</span><span class="n">rowmachine</span><span class="bar2" aria-hidden="true"><i style="width:47%;background:#141413"></i><i style="width:28%;background:#8A877F"></i></span><span class="s">75</span></div><div class="r"><span class="k">5</span><span class="n">burpeebas</span><span class="bar2" aria-hidden="true"><i style="width:44%;background:#141413"></i><i style="width:24%;background:#8A877F"></i></span><span class="s">68</span></div><div class="r"><span class="k">6</span><span class="n">hybride_harm</span><span class="bar2" aria-hidden="true"><i style="width:40%;background:#141413"></i><i style="width:24%;background:#8A877F"></i></span><span class="s">64</span></div><div class="r"><span class="k">7</span><span class="n">farmerfrank</span><span class="bar2" aria-hidden="true"><i style="width:31%;background:#141413"></i><i style="width:30%;background:#8A877F"></i></span><span class="s">61</span></div><div class="r"><span class="k">8</span><span class="n">skierg_sam</span><span class="bar2" aria-hidden="true"><i style="width:28%;background:#141413"></i><i style="width:21%;background:#8A877F"></i></span><span class="s">49</span></div></div>
+    </section>
+    <aside class="side">
+      <div class="slip ch">
+        <div class="h">Challenge week 44</div>
+        <div class="task">1 km tijdrit · tussenstand Open · Men</div>
+        <div class="d">invullen kan tot zondag 18:00</div>
+        <div style="margin-top:.6vw">
+          <div class="cr"><b>rowmachine</b><span>3:21</span></div>
+          <div class="cr"><b>kmvreter</b><span>3:24</span></div>
+          <div class="cr"><b>skierg_sam</b><span>3:30</span></div>
+          <div class="cr"><b>hybride_harm</b><span>3:33</span></div>
+        </div>
+      </div>
+      <div class="join">Doe mee via de app · benchmrk.ai<small>Gymcode bij de balie</small></div>
+    </aside>
+  </div>
+  <div class="foot"><span>Bijgewerkt 26 okt · 05:00</span><span>Alleen bijnamen en divisies · Benchmrk is niet verbonden aan HYROX</span></div>
+</div>
+
+<script>
+const STATE=new URLSearchParams(location.search).get('state')||'';
+document.querySelectorAll('.refbar a').forEach(a=>{if((a.dataset.s||'')===STATE)a.setAttribute('aria-current','true')});
+
+const DIVS=['Open · Women','Open · Men','Pro · Women','Pro · Men','Doubles'];
+const FAST=`<div class="r first"><span class="k">1</span><span class="n">rowmachine</span><span class="t">1:18:02</span></div><div class="r"><span class="k">2</span><span class="n">hybride_harm</span><span class="t">1:19:50</span></div><div class="r"><span class="k">3</span><span class="n">sledpusher</span><span class="t">1:20:40</span></div><div class="r"><span class="k">4</span><span class="n">skierg_sam</span><span class="t">1:20:55</span></div><div class="r"><span class="k">5</span><span class="n">kmvreter</span><span class="t">1:20:58</span></div><div class="r"><span class="k">6</span><span class="n">farmerfrank</span><span class="t">1:25:05</span></div><div class="r"><span class="k">7</span><span class="n">burpeebas</span><span class="t">1:26:10</span></div><div class="r"><span class="k">8</span><span class="n">wallball_wim</span><span class="t">1:27:15</span></div>`, SCHEMA=document.getElementById('rows').innerHTML;
+function fastest(){document.getElementById('rows').innerHTML=FAST;document.getElementById('i1').classList.remove('on');document.getElementById('i2').classList.add('on');document.getElementById('lg').textContent='Gerangschikt op voorspelde eindtijd uit de laatste benchmark';}
+if(STATE==='snelste') fastest();
+if(STATE==='leeg'){document.getElementById('main').innerHTML='<section class="empty"><p>Nog geen atleten op de ranglijst</p><div class="join" style="align-self:flex-start">Doe mee via de app · benchmrk.ai</div></section>';}
+if(STATE==='offline'){document.getElementById('tv').insertAdjacentHTML('afterbegin','<div class="banner" role="status"><b>!</b>Geen verbinding. Laatste stand van 26 okt · 05:00.</div>');}
+if(STATE==='geentoegang'){document.getElementById('tv').innerHTML='<div class="bar"><span class="wm">BENCH<span>MRK</span></span></div><section class="empty"><p>Deze link is niet meer geldig. Vraag een nieuwe aan in "Mijn gym".</p></section><div></div>';}
+if(!STATE){ // automatisch wisselen: elke 15 s de volgende divisie; na een rondje van tab wisselen
+  let d=1,tab=0;setInterval(()=>{d=(d+1)%DIVS.length;document.getElementById('dv').textContent=DIVS[d];
+    document.querySelectorAll('.pager i').forEach((p,i)=>p.classList.toggle('on',i===d));
+    if(d===0){tab=1-tab; if(tab){fastest()}else{document.getElementById('rows').innerHTML=SCHEMA;document.getElementById('i2').classList.remove('on');document.getElementById('i1').classList.add('on');document.getElementById('lg').textContent='Score = progressie naar je streeftijd (70) + op schema (30)';}}
+  },15000);
+}
+
+</script>
+</body>
+</html>

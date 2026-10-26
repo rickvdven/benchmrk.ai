@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Benchmrk · Openbare kaartpagina benchmrk.ai/k/<code> (referentie)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ground:#EFEEEA;--paper:#FFFFFF;--s2:#E4E2DC;--line:#D6D3CB;--ink:#141413;--ink2:#3A3833;--ink3:#4A4843;--muted:#6A675F;
+--lime:#D4F046;--limeTint:#F6FADF;--sans:'Archivo',system-ui,sans-serif;--mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow:0 1px 0 #D6D3CB,0 18px 40px rgba(20,20,19,.12)}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.5}
+::selection{background:var(--lime);color:var(--ink)}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+button,select,input{font:inherit;color:inherit}
+a{color:var(--ink);text-underline-offset:4px}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+.wm{font-weight:800;font-size:20px;letter-spacing:.01em;text-decoration:none;color:var(--ink);white-space:nowrap}
+.wm span{background:var(--lime);padding:0 3px;margin-left:1px}
+.tag{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.06em;border:1.5px solid var(--ink);padding:3px 7px;white-space:nowrap;display:inline-block}
+.title{font-weight:800;font-stretch:72%;text-transform:uppercase;line-height:.95;letter-spacing:.01em;margin:0}
+.h2{font-weight:800;font-stretch:80%;text-transform:uppercase;line-height:1;letter-spacing:.01em;margin:0;font-size:22px}
+.sub{color:var(--ink2);margin:6px 0 0}
+.small{font-size:13px;color:var(--muted)}
+.slip{background:var(--paper);border:1px solid var(--line);border-radius:2px;box-shadow:var(--shadow)}
+.dash{border-top:2px dashed #A8A498}
+.hl{background:var(--lime);color:var(--ink);padding:0 6px}
+
+/* knoppen */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:12px 20px;border-radius:3px;border:1.5px solid var(--ink);font-weight:700;text-decoration:none;cursor:pointer;background:transparent;color:var(--ink)}
+.btn.lime{background:var(--lime)}
+.btn.dark{background:var(--ink);color:var(--ground)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn.block{width:100%}
+.linkbtn{background:none;border:0;padding:10px 0;min-height:44px;cursor:pointer;text-decoration:underline;text-underline-offset:4px;color:var(--ink2)}
+
+/* formulier */
+.field{display:flex;flex-direction:column;gap:4px}
+.field label,.lbl{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3)}
+.field input,.field select{font-family:var(--mono);font-size:18px;background:transparent;border:0;border-bottom:1.5px solid var(--ink);padding:8px 0;min-height:44px;border-radius:0;width:100%}
+.field input:focus,.field select:focus{outline:none;border-bottom-width:2.5px}
+.field .help{font-size:13px;color:var(--muted)}
+.field.err input{border-bottom-color:var(--ink);background:repeating-linear-gradient(135deg,transparent 0 6px,rgba(20,20,19,.05) 6px 8px)}
+.msg{font-size:14px;display:flex;gap:8px;align-items:flex-start;margin-top:6px}
+.msg b{flex:none;font-family:var(--mono);font-size:11px;border:1.5px solid var(--ink);padding:1px 5px;margin-top:1px}
+
+/* tabs, chips */
+.seg{display:flex;border:1.5px solid var(--ink);border-radius:3px;overflow:hidden}
+.seg button{flex:1;border:0;background:transparent;padding:10px 14px;min-height:44px;font-weight:700;cursor:pointer;white-space:nowrap}
+.seg button[aria-selected="true"],.seg button[aria-pressed="true"]{background:var(--ink);color:var(--ground)}
+.chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.chips::-webkit-scrollbar{display:none}
+.chips button{border:1px solid var(--line);background:var(--paper);padding:8px 12px;min-height:44px;border-radius:3px;white-space:nowrap;cursor:pointer;font-size:14px}
+.chips button[aria-pressed="true"]{background:var(--lime);border-color:var(--ink);font-weight:700}
+
+/* app-kop + onderbalk */
+.top{border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:24px;height:60px}
+.top nav{display:flex;gap:20px;font-size:15px;flex:1}
+.top nav a{color:var(--ink3);text-decoration:none}
+.top nav a[aria-current]{color:var(--ink);font-weight:700;box-shadow:inset 0 -2px 0 var(--ink);padding-bottom:4px}
+.tabbar{display:none}
+@media (max-width:760px){
+  .wrap{padding:0 16px}
+  .top nav{display:none}
+  .tabbar{display:flex;position:fixed;left:0;right:0;bottom:0;background:var(--ground);border-top:1px solid var(--line);justify-content:space-around;padding:6px 0 calc(6px + env(safe-area-inset-bottom));z-index:20}
+  .tabbar a{font-size:12px;font-weight:600;color:var(--muted);text-decoration:none;padding:8px 10px;min-height:44px;display:flex;align-items:center}
+  .tabbar a[aria-current]{color:var(--ink);box-shadow:inset 0 -2px 0 var(--ink)}
+  body.has-tabbar{padding-bottom:72px}
+}
+
+/* referentie-statusbalk (niet in productie) */
+.refbar{background:var(--ink);color:var(--ground);font-family:var(--mono);font-size:12px;padding:8px 16px;display:flex;gap:8px;align-items:center;overflow-x:auto;white-space:nowrap}
+.refbar a{color:var(--ground);opacity:.7;text-decoration:none;padding:4px 8px;border:1px solid transparent}
+.refbar a[aria-current]{opacity:1;border-color:var(--lime);color:var(--lime)}
+
+/* toast */
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--ground);padding:12px 18px;border-radius:3px;font-weight:600;z-index:60;box-shadow:0 8px 20px rgba(0,0,0,.2)}
+@media (max-width:760px){.toast{bottom:88px;width:calc(100% - 32px);text-align:center}}
+
+/* skelet */
+.sk{background:var(--s2);border-radius:2px;display:block}
+
+.cardbox{position:relative;width:100%;aspect-ratio:var(--cw)/var(--ch);overflow:hidden;margin:0 auto;box-shadow:0 10px 30px rgba(20,20,19,.18)}
+.cardbox iframe{position:absolute;left:0;top:0;border:0;transform-origin:0 0;pointer-events:none;background:var(--ground)}
+
+.pubtop .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
+.grid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:48px;align-items:start;padding:36px 0 56px}
+.shared{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;font-size:15px}
+.shared b{font-weight:700}
+.check{padding:26px 28px 28px}
+.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 20px;margin-top:20px}
+.fields .wide{grid-column:1/-1}
+.pre{display:inline-block;margin-left:6px;font-family:var(--mono);font-size:10px;font-weight:600;background:var(--lime);padding:1px 5px;vertical-align:1px;letter-spacing:.04em}
+.result{margin-top:22px;border-top:2px dashed #A8A498;padding-top:18px}
+.row{display:flex;justify-content:space-between;font-family:var(--mono);padding:4px 0}
+.bar{display:flex;gap:3px;height:12px;margin-top:12px}
+.bar i{display:block;height:100%}
+.cta{margin-top:28px;padding-top:22px;border-top:1.5px solid var(--ink)}
+footer.pub{border-top:1px solid var(--line);padding:18px 0 32px;font-size:13px;color:var(--muted)}
+footer.pub .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+@media (max-width:860px){
+  .grid{grid-template-columns:1fr;gap:28px;padding-top:20px}
+  .check{padding:20px 18px 22px}
+  .fields{grid-template-columns:1fr 1fr}
+}
+@media (max-width:380px){.fields{grid-template-columns:1fr}}
+</style>
+</head>
+<body class="">
+<div class="refbar" aria-label="Referentie: kies een staat"><span>REFERENTIE · staat:</span><a href="?state=" data-s="">Normaal</a><a href="?state=berekend" data-s="berekend">Na doorrekenen</a><a href="?state=weg" data-s="weg">Kaart bestaat niet</a></div>
+<header class="top pubtop"><div class="wrap"><a class="wm" href="#">BENCH<span>MRK</span></a><a class="btn" href="#" style="min-height:44px;padding:8px 14px">Inloggen</a></div></header>
+<main class="wrap">
+  <div class="grid">
+    <section id="cardcol" aria-label="Gedeelde kaart">
+      <div class="shared">Gedeeld door <b>lunge_lotte</b> · <span class="mono">Open Women</span></div>
+      <div class="cardbox" style="--cw:1080;--ch:1080;max-width:520px;margin:0"><iframe src="kaarten/benchmark-pr-feed.html" title="Kaart van lunge_lotte: benchmark-PR −0:46, van 14:32 naar 13:46" tabindex="-1" scrolling="no" style="width:1080px;height:1080px"></iframe></div>
+    </section>
+
+    <section class="slip check" aria-labelledby="ct">
+      <h1 id="ct" class="title" style="font-size:clamp(34px,4vw,48px)">Reken je eigen race door</h1>
+      <p class="sub">Vul je drempeltempo en doeltijd in. Je ziet je verwachte eindtijd per run, station en Roxzone, en je kans op je doel.</p>
+      <form class="fields" onsubmit="event.preventDefault();location.search='?state=berekend'">
+        <div class="field wide"><label for="div">Divisie <span class="pre">INGEVULD</span></label>
+          <select id="div"><option>Open Women</option><option>Open Men</option><option>Pro Women</option><option>Pro Men</option><option>Doubles Women</option><option>Doubles Men</option><option>Doubles Mixed</option></select>
+          <span class="help">Divisie ingevuld: Open Women. Pas aan als je in een andere divisie racet.</span></div>
+        <div class="field"><label for="thr">Drempeltempo /km</label><input id="thr" inputmode="numeric" placeholder="5:05"></div>
+        <div class="field"><label for="goal">Doeltijd</label><input id="goal" inputmode="numeric" placeholder="1:28:00"></div>
+        <div class="field"><label for="wk">Weken tot je race</label><input id="wk" inputmode="numeric" placeholder="16"></div>
+        <div class="field" style="justify-content:flex-end"><button class="btn dark block" type="submit">Reken door</button></div>
+      </form>
+      <div id="result"></div>
+      <div class="cta">
+        <a class="btn lime block" href="#">Bouw mijn volledige plan</a>
+        <p class="small" style="margin:10px 0 0;text-align:center">Start gratis. Tijdens de bèta €30 per jaar.</p>
+      </div>
+      <p style="margin:22px 0 0;color:var(--ink2);font-size:15px">Benchmrk maakt een trainingsplan op je eigen drempel en voorspelt je HYROX-race per onderdeel.</p>
+    </section>
+  </div>
+</main>
+<footer class="pub"><div class="wrap"><span>Benchmrk is niet verbonden aan HYROX.</span><span class="mono">benchmrk.ai/k/R4MW · <span class="tag" style="font-size:10px">VOORBEELD</span></span></div></footer>
+
+<script>
+const STATE=new URLSearchParams(location.search).get('state')||'';
+document.querySelectorAll('.refbar a').forEach(a=>{if((a.dataset.s||'')===STATE)a.setAttribute('aria-current','true')});
+
+function fitCards(){document.querySelectorAll('.cardbox').forEach(b=>{const f=b.querySelector('iframe');const cw=+getComputedStyle(b).getPropertyValue('--cw');f.style.transform='scale('+(b.clientWidth/cw)+')';});}
+addEventListener('resize',fitCards);fitCards();
+
+if(STATE==='berekend'){
+  document.getElementById('thr').value='5:05';document.getElementById('goal').value='1:28:00';document.getElementById('wk').value='16';
+  document.getElementById('result').innerHTML=`<div class="result" aria-live="polite">
+    <div class="row" style="align-items:baseline"><span style="color:var(--ink2)">Verwacht</span><span style="font-size:40px;font-weight:600;letter-spacing:-.02em">1:26:31</span></div>
+    <div class="row"><span style="color:var(--ink2)">Kans op 1:28:00</span><span><span class="hl" style="font-weight:600">83 %</span></span></div>
+    <div class="bar" role="img" aria-label="Runs 45:10, stations 35:40, Roxzone 5:41"><i style="flex:2710;background:#141413"></i><i style="flex:2140;background:#77736A"></i><i style="flex:341;background:#C3BFB3"></i></div>
+    <div class="row small" style="margin-top:6px"><span>Runs 45:10</span><span>Stations 35:40</span><span>Roxzone 5:41</span></div>
+    <p class="small" style="margin:8px 0 0">Voorbeeldberekening. Gerekend met middenmoot-stations.</p></div>`;
+}
+if(STATE==='weg'){
+  document.getElementById('cardcol').innerHTML=`<div class="slip" style="padding:28px"><h2 class="h2" style="font-size:28px">Deze kaart bestaat niet meer</h2><p class="sub">De eigenaar heeft hem verwijderd, of de link is niet compleet. Je kunt wel je eigen race doorrekenen.</p></div>`;
+  document.querySelector('.check .help').textContent='Kies je divisie.';
+  document.querySelector('.pre').remove();
+}
+
+</script>
+</body>
+</html>

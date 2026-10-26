@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Benchmrk kaart · Racevoorspelling · link 1200x630</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ground:#EFEEEA;--paper:#FFFFFF;--s2:#E4E2DC;--line:#D6D3CB;--ink:#141413;--ink2:#3A3833;--muted:#6A675F;--lime:#D4F046;
+--runs:#141413;--stations:#77736A;--rox:#C3BFB3;--sans:'Archivo',system-ui,sans-serif;--mono:'IBM Plex Mono',ui-monospace,monospace}
+*{box-sizing:border-box}
+html,body{margin:0;background:#9a978f}
+body{display:flex;justify-content:center;padding:0}
+.card{position:relative;width:1200px;height:630px;background:var(--ground);color:var(--ink);font-family:var(--sans);overflow:hidden;font-variant-numeric:tabular-nums}
+.mono{font-family:var(--mono)}
+.wm{font-weight:800;letter-spacing:.01em;line-height:1;white-space:nowrap}
+.wm span{background:var(--lime);padding:0 .08em;margin-left:.05em}
+.tag{font-family:var(--mono);font-weight:600;letter-spacing:.06em;border:2px solid var(--ink);line-height:1;white-space:nowrap}
+.slip{background:var(--paper);border:1px solid var(--line);border-radius:2px;box-shadow:0 1px 0 #D6D3CB,0 24px 50px rgba(20,20,19,.14)}
+.dash{border-top:2px dashed #A8A498}
+.title{font-weight:800;font-stretch:72%;text-transform:uppercase;line-height:.95;letter-spacing:.01em}
+.lime{background:var(--lime);color:var(--ink)}
+.cta{display:flex;justify-content:space-between;align-items:center;font-weight:700}
+.strike{text-decoration:line-through;text-decoration-thickness:.08em;color:var(--muted)}
+.bar{display:flex;gap:4px}
+.bar i{display:block;height:100%}
+</style>
+</head>
+<body>
+<div class="card" style="padding:44px 52px;display:flex;flex-direction:column">
+  <div style="display:flex;justify-content:space-between;align-items:center"><div class="wm" style="font-size:34px">BENCH<span>MRK</span></div><div class="tag" style="font-size:16px;padding:6px 10px">VOORBEELD</div></div>
+  <div class="slip" style="margin-top:26px;flex:1;display:flex;padding:30px 36px;gap:40px">
+    <div style="flex:1.35;display:flex;flex-direction:column">
+      <div class="title" style="font-size:34px">Mijn racevoorspelling</div>
+      <div style="margin-top:8px;font-size:26px;font-weight:700">sledpusher <span class="mono" style="font-weight:400;font-size:20px;color:var(--ink2);margin-left:10px">Open · Men</span></div>
+      <div class="mono" style="margin-top:auto;font-size:124px;font-weight:600;letter-spacing:-.03em;line-height:.95">1:18:41</div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:space-between;border-left:2px dashed #A8A498;padding-left:36px">
+      <div style="display:flex;align-items:center;gap:14px"><span class="mono lime" style="font-size:46px;font-weight:600;padding:0 10px">96%</span><span class="mono" style="font-size:20px;color:var(--ink2);line-height:1.2">kans op<br>doel 1:20:00</span></div>
+      <div><div class="bar" style="height:16px;gap:3px"><i style="flex:2544;background:var(--runs)"></i><i style="flex:1852;background:var(--stations)"></i><i style="flex:325;background:var(--rox)"></i></div><div class="mono" style="display:flex;justify-content:space-between;font-size:24px;margin-top:10px"><span>42:24</span><span>30:52</span><span>5:25</span></div></div>
+      <div class="cta lime" style="padding:18px 20px;font-size:26px;border-radius:3px;line-height:1.15"><span>Reken je eigen race door · benchmrk.ai</span></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Benchmrk · Kaart aanbieden na een benchmark (referentie)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ground:#EFEEEA;--paper:#FFFFFF;--s2:#E4E2DC;--line:#D6D3CB;--ink:#141413;--ink2:#3A3833;--ink3:#4A4843;--muted:#6A675F;
+--lime:#D4F046;--limeTint:#F6FADF;--sans:'Archivo',system-ui,sans-serif;--mono:'IBM Plex Mono',ui-monospace,monospace;
+--shadow:0 1px 0 #D6D3CB,0 18px 40px rgba(20,20,19,.12)}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.5}
+::selection{background:var(--lime);color:var(--ink)}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+button,select,input{font:inherit;color:inherit}
+a{color:var(--ink);text-underline-offset:4px}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+.wm{font-weight:800;font-size:20px;letter-spacing:.01em;text-decoration:none;color:var(--ink);white-space:nowrap}
+.wm span{background:var(--lime);padding:0 3px;margin-left:1px}
+.tag{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.06em;border:1.5px solid var(--ink);padding:3px 7px;white-space:nowrap;display:inline-block}
+.title{font-weight:800;font-stretch:72%;text-transform:uppercase;line-height:.95;letter-spacing:.01em;margin:0}
+.h2{font-weight:800;font-stretch:80%;text-transform:uppercase;line-height:1;letter-spacing:.01em;margin:0;font-size:22px}
+.sub{color:var(--ink2);margin:6px 0 0}
+.small{font-size:13px;color:var(--muted)}
+.slip{background:var(--paper);border:1px solid var(--line);border-radius:2px;box-shadow:var(--shadow)}
+.dash{border-top:2px dashed #A8A498}
+.hl{background:var(--lime);color:var(--ink);padding:0 6px}
+
+/* knoppen */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:12px 20px;border-radius:3px;border:1.5px solid var(--ink);font-weight:700;text-decoration:none;cursor:pointer;background:transparent;color:var(--ink)}
+.btn.lime{background:var(--lime)}
+.btn.dark{background:var(--ink);color:var(--ground)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn.block{width:100%}
+.linkbtn{background:none;border:0;padding:10px 0;min-height:44px;cursor:pointer;text-decoration:underline;text-underline-offset:4px;color:var(--ink2)}
+
+/* formulier */
+.field{display:flex;flex-direction:column;gap:4px}
+.field label,.lbl{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3)}
+.field input,.field select{font-family:var(--mono);font-size:18px;background:transparent;border:0;border-bottom:1.5px solid var(--ink);padding:8px 0;min-height:44px;border-radius:0;width:100%}
+.field input:focus,.field select:focus{outline:none;border-bottom-width:2.5px}
+.field .help{font-size:13px;color:var(--muted)}
+.field.err input{border-bottom-color:var(--ink);background:repeating-linear-gradient(135deg,transparent 0 6px,rgba(20,20,19,.05) 6px 8px)}
+.msg{font-size:14px;display:flex;gap:8px;align-items:flex-start;margin-top:6px}
+.msg b{flex:none;font-family:var(--mono);font-size:11px;border:1.5px solid var(--ink);padding:1px 5px;margin-top:1px}
+
+/* tabs, chips */
+.seg{display:flex;border:1.5px solid var(--ink);border-radius:3px;overflow:hidden}
+.seg button{flex:1;border:0;background:transparent;padding:10px 14px;min-height:44px;font-weight:700;cursor:pointer;white-space:nowrap}
+.seg button[aria-selected="true"],.seg button[aria-pressed="true"]{background:var(--ink);color:var(--ground)}
+.chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.chips::-webkit-scrollbar{display:none}
+.chips button{border:1px solid var(--line);background:var(--paper);padding:8px 12px;min-height:44px;border-radius:3px;white-space:nowrap;cursor:pointer;font-size:14px}
+.chips button[aria-pressed="true"]{background:var(--lime);border-color:var(--ink);font-weight:700}
+
+/* app-kop + onderbalk */
+.top{border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:24px;height:60px}
+.top nav{display:flex;gap:20px;font-size:15px;flex:1}
+.top nav a{color:var(--ink3);text-decoration:none}
+.top nav a[aria-current]{color:var(--ink);font-weight:700;box-shadow:inset 0 -2px 0 var(--ink);padding-bottom:4px}
+.tabbar{display:none}
+@media (max-width:760px){
+  .wrap{padding:0 16px}
+  .top nav{display:none}
+  .tabbar{display:flex;position:fixed;left:0;right:0;bottom:0;background:var(--ground);border-top:1px solid var(--line);justify-content:space-around;padding:6px 0 calc(6px + env(safe-area-inset-bottom));z-index:20}
+  .tabbar a{font-size:12px;font-weight:600;color:var(--muted);text-decoration:none;padding:8px 10px;min-height:44px;display:flex;align-items:center}
+  .tabbar a[aria-current]{color:var(--ink);box-shadow:inset 0 -2px 0 var(--ink)}
+  body.has-tabbar{padding-bottom:72px}
+}
+
+/* referentie-statusbalk (niet in productie) */
+.refbar{background:var(--ink);color:var(--ground);font-family:var(--mono);font-size:12px;padding:8px 16px;display:flex;gap:8px;align-items:center;overflow-x:auto;white-space:nowrap}
+.refbar a{color:var(--ground);opacity:.7;text-decoration:none;padding:4px 8px;border:1px solid transparent}
+.refbar a[aria-current]{opacity:1;border-color:var(--lime);color:var(--lime)}
+
+/* toast */
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--ground);padding:12px 18px;border-radius:3px;font-weight:600;z-index:60;box-shadow:0 8px 20px rgba(0,0,0,.2)}
+@media (max-width:760px){.toast{bottom:88px;width:calc(100% - 32px);text-align:center}}
+
+/* skelet */
+.sk{background:var(--s2);border-radius:2px;display:block}
+
+.cardbox{position:relative;width:100%;aspect-ratio:var(--cw)/var(--ch);overflow:hidden;margin:0 auto;box-shadow:0 10px 30px rgba(20,20,19,.18)}
+.cardbox iframe{position:absolute;left:0;top:0;border:0;transform-origin:0 0;pointer-events:none;background:var(--ground)}
+
+.behind{opacity:1}
+.scrim{position:fixed;inset:0;background:rgba(20,20,19,.45);z-index:30}
+.sheet{position:fixed;z-index:40;background:var(--ground);left:50%;top:50%;transform:translate(-50%,-50%);width:min(920px,calc(100% - 48px));max-height:calc(100vh - 48px);overflow:auto;border-radius:4px;box-shadow:0 30px 80px rgba(0,0,0,.3)}
+.sheet-in{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:32px;padding:28px}
+.prev{background:var(--s2);border-radius:2px;padding:24px;display:flex;align-items:center;justify-content:center;min-height:420px}
+.prev .cardbox{box-shadow:0 10px 30px rgba(20,20,19,.18)}
+.close{position:absolute;right:12px;top:10px;border:0;background:none;width:44px;height:44px;font-size:26px;line-height:1;cursor:pointer}
+.grip{display:none}
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:22px}
+.acts2{display:flex;gap:20px;flex-wrap:wrap;margin-top:6px}
+.note{font-size:13px;color:var(--muted);margin-top:16px;border-top:1px solid var(--line);padding-top:12px}
+.skel{width:100%;max-width:240px;aspect-ratio:9/16;background:linear-gradient(var(--paper),var(--paper)) padding-box;border:1px solid var(--line);display:flex;flex-direction:column;gap:14px;padding:22px}
+@media (max-width:760px){
+  .sheet{left:0;right:0;bottom:0;top:auto;transform:none;width:100%;max-height:92vh;border-radius:10px 10px 0 0}
+  .sheet-in{grid-template-columns:1fr;gap:18px;padding:12px 16px calc(16px + env(safe-area-inset-bottom))}
+  .grip{display:block;width:44px;height:5px;border-radius:3px;background:var(--line);margin:8px auto 4px}
+  .prev{min-height:0;padding:14px}
+  .prev .cardbox{max-width:min(100%, calc(34vh * var(--cw) / var(--ch))) !important}
+  .acts{grid-template-columns:1fr 1fr;position:sticky;bottom:0;background:var(--ground);padding:10px 0;margin-top:12px;z-index:2;box-shadow:0 -10px 14px -10px rgba(20,20,19,.25)}
+  .acts .btn{min-height:52px}
+  .sheet .title{font-size:28px !important}
+  .close{top:4px}
+}
+</style>
+</head>
+<body class="has-tabbar">
+<div class="refbar" aria-label="Referentie: kies een staat"><span>REFERENTIE · staat:</span><a href="?state=" data-s="">Normaal</a><a href="?state=laden" data-s="laden">Laden</a><a href="?state=bijnaam" data-s="bijnaam">Geen bijnaam</a><a href="?state=fout" data-s="fout">Fout</a><a href="?state=opgeslagen" data-s="opgeslagen">Opgeslagen</a></div><header class="top"><div class="wrap"><a class="wm" href="#">BENCH<span>MRK</span></a><nav aria-label="App"><a href="#">Plan</a><a href="#" aria-current="page">Log</a><a href="#">Gym</a><a href="#">Challenge</a><a href="#">Profiel</a></nav><span class="tag">VOORBEELD</span></div></header>
+<main class="wrap behind" aria-hidden="true" style="padding-top:28px">
+  <h1 class="title" style="font-size:44px">Log</h1>
+  <div class="slip" style="margin-top:20px;padding:20px">
+    <div class="h2">Benchmark 2 van 5 opgeslagen</div>
+    <div class="mono" style="margin-top:10px">14:32 → 13:46</div>
+  </div>
+</main>
+<nav class="tabbar" aria-label="App"><a href="#">Plan</a><a href="#" aria-current="page">Log</a><a href="#">Gym</a><a href="#">Challenge</a><a href="#">Profiel</a></nav>
+<div class="scrim"></div>
+<section class="sheet" role="dialog" aria-modal="true" aria-labelledby="t">
+  <div class="grip" aria-hidden="true"></div>
+  <button class="close" aria-label="Sluiten">×</button>
+  <div class="sheet-in">
+    <div class="prev" id="prev"></div>
+    <div>
+      <h2 id="t" class="title" style="font-size:34px;padding-right:36px">Benchmark 2: <span class="mono" style="font-stretch:100%">−0:46</span></h2>
+      <p class="sub">Sneller dan je vorige benchmark. Je voorspelde eindtijd is nu <span class="mono">1:26:31</span>.</p>
+
+      <div class="lbl" style="margin-top:22px">Formaat</div>
+      <div class="seg" role="tablist" aria-label="Formaat" style="margin-top:6px">
+        <button role="tab" aria-selected="true" data-f="story">Story 9:16</button>
+        <button role="tab" aria-selected="false" data-f="feed">Feed 1:1</button>
+        <button role="tab" aria-selected="false" data-f="link">Link</button>
+      </div>
+
+      <div id="nick" style="margin-top:12px;font-size:15px;display:flex;flex-wrap:wrap;align-items:center;gap:0 6px">Op de kaart staat je bijnaam: <b>lunge_lotte</b>. <a href="privacy.html" style="padding:10px 0;min-height:44px;display:inline-flex;align-items:center">Wijzigen</a></div>
+      <div id="msg"></div>
+
+      <div class="acts" id="acts">
+        <button class="btn lime" id="share">Delen</button>
+        <button class="btn" id="save">Opslaan</button>
+      </div>
+      <div class="acts2">
+        <button class="linkbtn">Kopieer link</button>
+        <button class="linkbtn">Kopieer bijschrift</button>
+        <button class="linkbtn" style="margin-left:auto">Niet nu</button>
+      </div>
+      <p class="note">Op de kaart staan alleen je bijnaam, divisie en deze cijfers. Geen hartslag, gewicht of e-mail.</p>
+    </div>
+  </div>
+</section>
+
+<script>
+const STATE=new URLSearchParams(location.search).get('state')||'';
+document.querySelectorAll('.refbar a').forEach(a=>{if((a.dataset.s||'')===STATE)a.setAttribute('aria-current','true')});
+
+function fitCards(){document.querySelectorAll('.cardbox').forEach(b=>{const f=b.querySelector('iframe');const cw=+getComputedStyle(b).getPropertyValue('--cw');f.style.transform='scale('+(b.clientWidth/cw)+')';});}
+addEventListener('resize',fitCards);fitCards();
+
+const SIZES={story:[1080,1920,250],feed:[1080,1080,360],link:[1200,630,420]};
+const prev=document.getElementById('prev');
+function show(f){
+  if(STATE==='laden'){prev.innerHTML='<div class="skel" aria-label="Kaart maken"><span class="sk" style="height:18px;width:60%"></span><span class="sk" style="height:60px"></span><span class="sk" style="height:14px;width:80%"></span><span class="sk" style="height:14px;width:50%"></span><span class="mono small" style="margin-top:auto">Kaart maken…</span></div>';return;}
+  if(STATE==='fout'){prev.innerHTML='<div style="text-align:center;max-width:260px"><div class="h2">Geen kaart</div><p class="sub" style="font-size:14px">De kaart kon niet worden gemaakt. Probeer het over een minuut opnieuw.</p><button class="btn" style="margin-top:12px">Opnieuw proberen</button></div>';return;}
+  const [w,h,box]=SIZES[f];
+  prev.innerHTML=`<div class="cardbox" style="--cw:${w};--ch:${h};max-width:${box}px"><iframe src="kaarten/benchmark-pr-${f}.html" title="Voorbeeld van de kaart, ${f}" tabindex="-1" scrolling="no" style="width:${w}px;height:${h}px"></iframe></div>`;
+  fitCards();
+}
+document.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.seg button').forEach(x=>x.setAttribute('aria-selected',x===b));show(b.dataset.f)}));
+if(STATE==='laden'||STATE==='fout'){document.querySelectorAll('#acts button,.acts2 .linkbtn:not(:last-child)').forEach(b=>b.disabled=true)}
+if(STATE==='bijnaam'){
+  document.getElementById('nick').innerHTML='';
+  document.getElementById('msg').innerHTML='<div class="msg" style="margin-top:16px"><b>!</b><span>Kies eerst een bijnaam. Die staat op je kaart in plaats van je naam.</span></div>';
+  document.getElementById('acts').innerHTML='<a class="btn dark" href="privacy.html" style="grid-column:1/-1">Bijnaam kiezen</a>';
+}
+if(STATE==='opgeslagen'){const t=document.createElement('div');t.className='toast';t.setAttribute('role','status');t.textContent='Kaart opgeslagen';document.body.appendChild(t);}
+show('story');
+
+</script>
+</body>
+</html>
