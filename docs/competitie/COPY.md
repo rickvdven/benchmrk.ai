@@ -1,6 +1,6 @@
 # Competitie en deelbare elementen: teksten fase 1 en 2
 
-Versie 3 · 26 oktober 2026 · NL en EN. DE, ES en KO volgen later; houd voor die talen dezelfde sleutels aan.
+Versie 3 · 26 oktober 2026 · NL en EN. DE, ES en KO staan in `docs/competitie/translations/` (zelfde sleutels; `node scripts/competition-locale.mjs` bouwt de taalbestanden).
 
 **Bronnen:**
 
@@ -326,7 +326,7 @@ Deze tekst toont de app als de atleet overstapt van Privé naar Gym en vrienden.
 
 ---
 
-## 5. Gym-ranglijst (`/gym`)
+## 5. Gym-ranglijst (`/ranglijst`)
 
 ### 5.1 Kop, tabs en filters
 
