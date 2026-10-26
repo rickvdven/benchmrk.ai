@@ -2173,7 +2173,7 @@ var require_lib2 = __commonJS({
     function isBlob(obj) {
       return typeof obj === "object" && typeof obj.arrayBuffer === "function" && typeof obj.type === "string" && typeof obj.stream === "function" && typeof obj.constructor === "function" && typeof obj.constructor.name === "string" && /^(Blob|File)$/.test(obj.constructor.name) && /^(Blob|File)$/.test(obj[Symbol.toStringTag]);
     }
-    function clone(instance) {
+    function clone2(instance) {
       let p1, p2;
       let body = instance.body;
       if (instance.bodyUsed) {
@@ -2594,7 +2594,7 @@ var require_lib2 = __commonJS({
        * @return  Response
        */
       clone() {
-        return new _Response(clone(this), {
+        return new _Response(clone2(this), {
           url: this.url,
           status: this.status,
           statusText: this.statusText,
@@ -2657,7 +2657,7 @@ var require_lib2 = __commonJS({
         if ((init.body != null || isRequest(input) && input.body !== null) && (method === "GET" || method === "HEAD")) {
           throw new TypeError("Request with GET/HEAD method cannot have body");
         }
-        let inputBody = init.body != null ? init.body : isRequest(input) && input.body !== null ? clone(input) : null;
+        let inputBody = init.body != null ? init.body : isRequest(input) && input.body !== null ? clone2(input) : null;
         Body.call(this, inputBody, {
           timeout: init.timeout || input.timeout || 0,
           size: init.size || input.size || 0
@@ -14468,8 +14468,8 @@ var dowOf = (s) => (fromISO(s).getDay() + 6) % 7;
 var todayISO = () => toISO(/* @__PURE__ */ new Date());
 
 // src/engine/zones.ts
-var z2Cap = (lthr, maxHr) => Math.min(Math.round(0.89 * lthr), maxHr);
-var z1Cap = (lthr, maxHr) => Math.min(Math.round(0.84 * lthr), maxHr);
+var z2Cap = (lthr, maxHr, pct = 0.89) => Math.min(Math.round(pct * lthr), maxHr);
+var z1Cap = (lthr, maxHr, pct = 0.84) => Math.min(Math.round(pct * lthr), maxHr);
 
 // src/engine/injury.ts
 var RUN_AREAS = ["achilles", "plantar", "shin", "knee", "hamstring", "hip"];
@@ -14596,7 +14596,79 @@ var NOTES = {
 var prehabLine = (lang, a) => (PREHAB[lang] ?? PREHAB.en)[a];
 var injuryNote = (lang, k) => (NOTES[lang] ?? NOTES.en)[k];
 
+// src/engine/rules/v1.ts
+var V1_PARAMS = {
+  ...DEFAULT_RULES,
+  forecast: {
+    freqAerobic: { "1": 0.25, "2": 0.7, "3": 0.85 },
+    freqAerobicFit2: 0.6,
+    freqStation: { "1": 0.69, "2": 0.76, "3": 0.86 },
+    injuryGain: { now: 0.6, recent: 0.85 },
+    stationGain: { capLow: 0.1, capMid: 0.06, capHigh: 0.03, perWeek: 6e-3 }
+  },
+  zones: {
+    z1CapPct: 0.84,
+    z2CapPct: 0.89,
+    defs: [
+      { id: "Z1", lo: 0.65, hi: 0.84 },
+      { id: "Z2", lo: 0.85, hi: 0.89 },
+      { id: "Z3", lo: 0.9, hi: 0.94 },
+      { id: "Z4", lo: 0.95, hi: 0.99 },
+      { id: "Z5a", lo: 1, hi: 1.02 },
+      { id: "Z5b", lo: 1.03, hi: 1.06 },
+      { id: "Z5c", lo: 1.07, hi: null }
+    ]
+  },
+  threshold: {
+    table: {
+      prep: [
+        { n: 4, d: 1e3, off: 5, rest: 120 },
+        { n: 5, d: 1e3, off: 5, rest: 120 },
+        { n: 6, d: 1e3, off: 3, rest: 120 },
+        { n: 4, d: 1e3, off: 3, rest: 90 }
+      ],
+      base: [
+        { n: 5, d: 1e3, off: 0, rest: 90 },
+        { n: 6, d: 800, off: -5, rest: 90 },
+        { n: 5, d: 1e3, off: -3, rest: 90 },
+        { n: 4, d: 1e3, off: -4, rest: 90 }
+      ],
+      threshold: [
+        { n: 5, d: 1e3, off: -5, rest: 90 },
+        { n: 4, d: 1600, off: -3, rest: 120 },
+        { n: 3, d: 2e3, off: 0, rest: 120 },
+        { n: 4, d: 1e3, off: -4, rest: 90 }
+      ],
+      compromised: [
+        { n: 4, d: 1500, off: -3, rest: 90 },
+        { n: 5, d: 1e3, off: -5, rest: 60 },
+        { n: 2, d: 3e3, off: 0, rest: 180 },
+        { n: 6, d: 1e3, off: -6, rest: 60 }
+      ],
+      peak: [
+        { n: 3, d: 2e3, off: -3, rest: 120 },
+        { n: 4, d: 1e3, off: -5, rest: 90 },
+        { n: 3, d: 2e3, off: -3, rest: 120 },
+        { n: 4, d: 1e3, off: -5, rest: 90 }
+      ],
+      taper: [
+        { n: 4, d: 1e3, off: -3, rest: 120 },
+        { n: 4, d: 1e3, off: -3, rest: 120 },
+        { n: 4, d: 400, off: -15, rest: 120 },
+        { n: 4, d: 400, off: -15, rest: 120 }
+      ]
+    },
+    deload: { n: 4, d: 1e3, off: -3, rest: 90 },
+    raceWeek: { n: 4, d: 400, off: -15, rest: 120 }
+  },
+  volume: { peakFactor: 1.4, peakFactorStrength: 1.6, rampShare: 0.6, deloadFactor: 0.7, taperFactor: 0.65, raceWeekFactor: 0.4 },
+  longRun: { maxKmMan: 18, maxKmWoman: 16, weekShare: 0.32, heavySimFactor: 0.75 },
+  sim: { baseOffsetSec: 15, thresholdOffsetSec: 5, compromisedEarlyOffsetSec: 5 },
+  taper: { lastSimDays: 10, lastStrengthDays: 7, raceWeekDays: 6 }
+};
+
 // src/engine/raceModel.ts
+var F1 = V1_PARAMS.forecast;
 var isDoubles = (c) => c.startsWith("doubles");
 var isPro = (c) => c.endsWith("_pro");
 var isRelay = (c) => c.startsWith("relay");
@@ -14652,9 +14724,10 @@ function thresholdGain(thresholdPaceSec, weeks) {
   const cap = thresholdPaceSec >= 285 ? 15 : thresholdPaceSec >= 240 ? 10 : 6;
   return Math.min(cap, g0 * w * (1 - w / 60));
 }
-function stationGainPct(stars, weeks) {
-  const cap = stars <= 2 ? 0.1 : stars === 3 ? 0.06 : 0.03;
-  return Math.min(cap, 6e-3 * Math.max(0, weeks));
+function stationGainPct(stars, weeks, f = F1) {
+  const g = f.stationGain;
+  const cap = stars <= 2 ? g.capLow : stars === 3 ? g.capMid : g.capHigh;
+  return Math.min(cap, g.perWeek * Math.max(0, weeks));
 }
 var RACE_DAY_MARGIN_SEC = 30;
 function goalChance(currentSec, projectedSec, goalSec, o = {}) {
@@ -14672,13 +14745,13 @@ function goalChance(currentSec, projectedSec, goalSec, o = {}) {
   return Math.round(Math.max(2, Math.min(97, c)));
 }
 var statusOf = (chance) => chance >= 85 ? "on_track" : chance >= 60 ? "realistic" : chance >= 25 ? "ambitious" : "out_of_reach";
-function breakdown(a, category, thresholdSec, weeks, base, gains, gainFactor = 1) {
+function breakdown(a, category, thresholdSec, weeks, base, gains, gainFactor = 1, f = F1) {
   const doubles = isDoubles(category);
   const runPaceSec = Math.round(thresholdSec / compromisedRatio(a, category));
   const stations = {};
   for (const s of STATIONS) {
     let t = soloStationTime(a, category, s, base);
-    if (gains) t *= 1 - stationGainPct(a.stationStars?.[s] ?? 3, weeks) * gainFactor;
+    if (gains) t *= 1 - stationGainPct(a.stationStars?.[s] ?? 3, weeks, f) * gainFactor;
     if (doubles) t *= DOUBLES_STATION_FACTOR;
     stations[s] = Math.round(t);
   }
@@ -14694,31 +14767,32 @@ function weakestStations(a, category, base = DEFAULT_BASELINES, n = 2) {
 function trainingDays(p) {
   return (p.weekSchedule ?? []).filter((d) => d !== "rest" && d !== "recovery").length;
 }
-var FREQ_AEROBIC = { 1: 0.25, 2: 0.7, 3: 0.85 };
-var FREQ_AEROBIC_FIT2 = 0.6;
-var FREQ_STATION = { 1: 0.69, 2: 0.76, 3: 0.86 };
-function frequencyGainFactor(p) {
+var FREQ_AEROBIC = { 1: F1.freqAerobic["1"], 2: F1.freqAerobic["2"], 3: F1.freqAerobic["3"] };
+var FREQ_AEROBIC_FIT2 = F1.freqAerobicFit2;
+var FREQ_STATION = { 1: F1.freqStation["1"], 2: F1.freqStation["2"], 3: F1.freqStation["3"] };
+function frequencyGainFactor(p, f = F1) {
   if (!p.weekSchedule?.length) return { aerobic: 1, station: 1 };
   const n = trainingDays(p);
   if (n >= 4) return { aerobic: 1, station: 1 };
   if (n <= 0) return { aerobic: 0, station: 0 };
   const fit = (p.athlete.vo2max ?? 0) > 50 || p.athlete.thresholdPaceSec < 240;
-  return { aerobic: n === 2 && fit ? FREQ_AEROBIC_FIT2 : FREQ_AEROBIC[n], station: FREQ_STATION[n] };
+  const k = String(n);
+  return { aerobic: n === 2 && fit ? f.freqAerobicFit2 : f.freqAerobic[k], station: f.freqStation[k] };
 }
-function injuryGainFactor(a) {
+function injuryGainFactor(a, f = F1) {
   const r = injuryProfile(a.flags).runLoad;
-  return r === "now" ? 0.6 : r === "recent" ? 0.85 : 1;
+  return r === "now" ? f.injuryGain.now : r === "recent" ? f.injuryGain.recent : 1;
 }
 function effectiveThreshold(p) {
   return p.athlete.thresholdPaceSec + (p.paceAdjustSec ?? 0);
 }
-function raceModel(p, today, base = DEFAULT_BASELINES) {
+function raceModel(p, today, base = DEFAULT_BASELINES, f = F1) {
   const a = p.athlete;
   const T5 = effectiveThreshold(p);
   const weeksLeft = Math.max(0, Math.floor(daysBetween(today, p.raceDate) / 7));
   const current = breakdown(a, p.category, T5, weeksLeft, base, false);
-  const freq = frequencyGainFactor(p);
-  const projected = breakdown(a, p.category, T5 - thresholdGain(T5, weeksLeft) * injuryGainFactor(a) * freq.aerobic, weeksLeft, base, true, freq.station);
+  const freq = frequencyGainFactor(p, f);
+  const projected = breakdown(a, p.category, T5 - thresholdGain(T5, weeksLeft) * injuryGainFactor(a, f) * freq.aerobic, weeksLeft, base, true, freq.station, f);
   const requiredRunPaceSec = Math.round((p.goalSec - projected.stationTotalSec - projected.roxzoneSec) / 8);
   const chance = goalChance(current.finishSec, projected.finishSec, p.goalSec, { adherence: p.adherence, execution: p.execution });
   return {
@@ -16793,6 +16867,58 @@ var STATION_NAMES = {
 var EXTRA_LOCALES = { de: de_default, es: es_default, ko: ko_default };
 var fillTpl = (tpl, p) => tpl.replace(/\{(\w+)\}/g, (_, k) => p[k] !== void 0 ? String(p[k]) : `{${k}}`);
 
+// src/engine/rules/index.ts
+var same = (t) => ({ en: t, nl: t, de: t, es: t, ko: t });
+var DEFS = [{ version: 1, date: "2026-10-26", title: same("Start: the engine as it was"), changes: [] }];
+var clone = (x) => JSON.parse(JSON.stringify(x));
+function getPath(o, key) {
+  return key.split(".").reduce((acc, k) => acc == null ? void 0 : acc[k], o);
+}
+function setPath(o, key, value) {
+  const parts = key.split(".");
+  const last = parts.pop();
+  const parent = parts.reduce((acc, k) => acc[k], o);
+  if (parent == null || !(last in parent)) throw new Error(`rule key does not exist: ${key}`);
+  parent[last] = value;
+}
+function applyChanges(params, changes) {
+  const next = clone(params);
+  for (const c of changes) {
+    const cur = getPath(next, c.key);
+    if (JSON.stringify(cur) !== JSON.stringify(c.before)) throw new Error(`rule change ${c.key}: before ${JSON.stringify(c.before)} does not match ${JSON.stringify(cur)}`);
+    setPath(next, c.key, c.after);
+  }
+  return next;
+}
+var cache = /* @__PURE__ */ new Map();
+function build(version) {
+  let params = clone(V1_PARAMS);
+  let last = DEFS[0];
+  for (const d of DEFS) {
+    if (d.version > version) break;
+    if (d.version > 1) params = applyChanges(params, d.changes);
+    last = d;
+  }
+  return { ...last, params };
+}
+function ruleSet(version) {
+  const v = Math.max(1, Math.floor(version ?? 1));
+  const known = [...DEFS].reverse().find((d) => d.version <= v)?.version ?? 1;
+  let rs = cache.get(known);
+  if (!rs) {
+    rs = build(known);
+    cache.set(known, rs);
+  }
+  return rs;
+}
+var LEGACY_KEYS = Object.keys(DEFAULT_RULES);
+function withAdminRules(rs, admin2) {
+  if (!admin2) return rs.params;
+  const p = clone(rs.params);
+  for (const k of LEGACY_KEYS) if (admin2[k] !== DEFAULT_RULES[k]) p[k] = admin2[k];
+  return p;
+}
+
 // src/engine/rehab.ts
 var T = {
   en: {
@@ -17489,49 +17615,9 @@ function restLabel(lang, s) {
 function thresholdSession(c, phase, st, deload, raceWeek) {
   const { T: T5 } = c;
   let rx;
-  if (raceWeek) rx = { n: 4, d: 400, off: -15, rest: 120 };
-  else if (deload) rx = { n: 4, d: 1e3, off: -3, rest: 90 };
-  else {
-    const table = {
-      prep: [
-        { n: 4, d: 1e3, off: 5, rest: 120 },
-        { n: 5, d: 1e3, off: 5, rest: 120 },
-        { n: 6, d: 1e3, off: 3, rest: 120 },
-        { n: 4, d: 1e3, off: 3, rest: 90 }
-      ],
-      base: [
-        { n: 5, d: 1e3, off: 0, rest: 90 },
-        { n: 6, d: 800, off: -5, rest: 90 },
-        { n: 5, d: 1e3, off: -3, rest: 90 },
-        { n: 4, d: 1e3, off: -4, rest: 90 }
-      ],
-      threshold: [
-        { n: 5, d: 1e3, off: -5, rest: 90 },
-        { n: 4, d: 1600, off: -3, rest: 120 },
-        { n: 3, d: 2e3, off: 0, rest: 120 },
-        { n: 4, d: 1e3, off: -4, rest: 90 }
-      ],
-      compromised: [
-        { n: 4, d: 1500, off: -3, rest: 90 },
-        { n: 5, d: 1e3, off: -5, rest: 60 },
-        { n: 2, d: 3e3, off: 0, rest: 180 },
-        { n: 6, d: 1e3, off: -6, rest: 60 }
-      ],
-      peak: [
-        { n: 3, d: 2e3, off: -3, rest: 120 },
-        { n: 4, d: 1e3, off: -5, rest: 90 },
-        { n: 3, d: 2e3, off: -3, rest: 120 },
-        { n: 4, d: 1e3, off: -5, rest: 90 }
-      ],
-      taper: [
-        { n: 4, d: 1e3, off: -3, rest: 120 },
-        { n: 4, d: 1e3, off: -3, rest: 120 },
-        { n: 4, d: 400, off: -15, rest: 120 },
-        { n: 4, d: 400, off: -15, rest: 120 }
-      ]
-    };
-    rx = table[phase === "recovery" ? "base" : phase][st - 1];
-  }
+  if (raceWeek) rx = c.rules.threshold.raceWeek;
+  else if (deload) rx = c.rules.threshold.deload;
+  else rx = c.rules.threshold.table[phase === "recovery" ? "base" : phase][st - 1];
   const pace = T5 + rx.off;
   const reps = `${rx.n} \xD7 ${rx.d} m @ ${fmtMmss(pace)}/km`;
   const fast = rx.off < -6;
@@ -17562,7 +17648,7 @@ function intervalSession(c, phase, raceWeek) {
   };
 }
 function easySession(c, km) {
-  const cap = z2Cap(c.lthr, c.maxHr);
+  const cap = z2Cap(c.lthr, c.maxHr, c.rules.zones.z2CapPct);
   return {
     type: "easy",
     title: tx(c.lang, "easy.title", { km }),
@@ -17573,7 +17659,7 @@ function easySession(c, km) {
   };
 }
 function longSession(c, km, phase) {
-  const cap = z2Cap(c.lthr, c.maxHr);
+  const cap = z2Cap(c.lthr, c.maxHr, c.rules.zones.z2CapPct);
   const rp = phase === "compromised" || phase === "peak";
   return {
     type: "long",
@@ -17635,13 +17721,13 @@ function simSession(c, phase, st, full) {
   let body;
   let pace;
   if (phase === "prep" || phase === "base") {
-    pace = c.simBasePace + 15;
+    pace = c.simBasePace + c.rules.sim.baseOffsetSec;
     body = tx(c.lang, "sim.base", { pace: fmtMmss(pace) });
   } else if (phase === "threshold") {
-    pace = c.simBasePace + 5;
+    pace = c.simBasePace + c.rules.sim.thresholdOffsetSec;
     body = tx(c.lang, "sim.threshold", { pace: fmtMmss(pace) });
   } else if (phase === "compromised") {
-    pace = st <= 2 ? c.racePace + 5 : c.racePace;
+    pace = st <= 2 ? c.racePace + c.rules.sim.compromisedEarlyOffsetSec : c.racePace;
     body = tx(c.lang, "sim.compromised", { pace: fmtMmss(pace), decay });
   } else if (phase === "peak") {
     pace = c.racePace;
@@ -17678,13 +17764,13 @@ function simSession(c, phase, st, full) {
 var IMPACT = ["threshold", "intervals", "easy", "long", "sim", "wod"];
 function generatePlan(p, opts = {}) {
   const lang = opts.lang ?? "en";
-  const rules = opts.rules ?? DEFAULT_RULES;
+  const rules = withAdminRules(opts.ruleSet ?? ruleSet(1), opts.rules);
   const today = opts.today ?? p.planStart;
   const start = mondayOf(p.planStart);
   const raceWeekStart = mondayOf(p.raceDate);
   const n = Math.floor(daysBetween(start, raceWeekStart) / 7) + 1;
   if (n < 1 || daysBetween(start, p.raceDate) < 0) return [];
-  const model = raceModel(p, today, opts.baselines ?? DEFAULT_BASELINES);
+  const model = raceModel(p, today, opts.baselines ?? DEFAULT_BASELINES, rules.forecast);
   const a = p.athlete;
   const T5 = effectiveThreshold(p);
   const c = {
@@ -17709,7 +17795,7 @@ function generatePlan(p, opts = {}) {
   c.noSim = !schedule.includes("sim");
   const noStrength = !schedule.includes("strength");
   const startKm = a.weeklyKm && a.weeklyKm > 0 ? a.weeklyKm : T5 >= 330 ? 15 : T5 >= 285 ? 22 : T5 >= 240 ? 32 : 42;
-  const peakKm = startKm * Math.min(a.archetype === "strength" ? 1.6 : 1.4, c.inj.peakCap);
+  const peakKm = startKm * Math.min(a.archetype === "strength" ? rules.volume.peakFactorStrength : rules.volume.peakFactor, c.inj.peakCap);
   let km = startKm;
   const lastIdx = (ph) => phases.lastIndexOf(ph);
   const firstIdx = (ph) => phases.indexOf(ph);
@@ -17734,10 +17820,10 @@ function generatePlan(p, opts = {}) {
     const raceWeek = wi === n - 1;
     c.simStep = p.simProtocol ? protocolStep(p.simProtocol, n - 1 - wi) : null;
     const heavySim = !!c.simStep && simLoad(c.simStep) >= 1 && schedule.includes("sim");
-    if (wi > 0 && !deload && phase !== "taper") km = Math.min(peakKm, km * (1 + rules.maxWeeklyVolumeIncrease * 0.6 * c.inj.rampFactor));
+    if (wi > 0 && !deload && phase !== "taper") km = Math.min(peakKm, km * (1 + rules.maxWeeklyVolumeIncrease * rules.volume.rampShare * c.inj.rampFactor));
     let weekKm = km;
-    if (deload) weekKm = km * 0.7;
-    if (phase === "taper") weekKm = raceWeek ? km * 0.4 : km * 0.65;
+    if (deload) weekKm = km * rules.volume.deloadFactor;
+    if (phase === "taper") weekKm = raceWeek ? km * rules.volume.raceWeekFactor : km * rules.volume.taperFactor;
     c.weekKm = weekKm;
     const weekStart = addDays(start, wi * 7);
     const sessions = [];
@@ -17763,12 +17849,12 @@ function generatePlan(p, opts = {}) {
       let type = schedule[d];
       if (toRace === 1) {
         if (type !== "rest") {
-          sessions.push({ ...base, type: "easy", title: tx(lang, "shake.title"), description: tx(lang, "shake.desc") + "\n" + carbText(c), hrCap: z1Cap(a.lthr, a.maxHr), km: 3, sourceKey: "Harrison" });
+          sessions.push({ ...base, type: "easy", title: tx(lang, "shake.title"), description: tx(lang, "shake.desc") + "\n" + carbText(c), hrCap: z1Cap(a.lthr, a.maxHr, rules.zones.z1CapPct), km: 3, sourceKey: "Harrison" });
         } else sessions.push({ ...base, type: "rest", title: tx(lang, "rest.title"), description: tx(lang, "rest.desc") + "\n" + carbText(c), sourceKey: "Thomas" });
         continue;
       }
       if (toRace === 2) type = "rest";
-      const raceWeekEasy = toRace <= 6 && (type === "sim" || type === "long" || type === "intervals");
+      const raceWeekEasy = toRace <= rules.taper.raceWeekDays && (type === "sim" || type === "long" || type === "intervals");
       if (raceWeekEasy) type = "easy";
       let s;
       switch (type) {
@@ -17809,14 +17895,14 @@ function generatePlan(p, opts = {}) {
           }
           break;
         case "long":
-          s = longSession(c, Math.max(6, Math.min(a.sex === "woman" ? 16 : 18, Math.round(weekKm * 0.32 * (heavySim ? 0.75 : 1)))), phase);
+          s = longSession(c, Math.max(6, Math.min(a.sex === "woman" ? rules.longRun.maxKmWoman : rules.longRun.maxKmMan, Math.round(weekKm * rules.longRun.weekShare * (heavySim ? rules.longRun.heavySimFactor : 1)))), phase);
           break;
         case "strength":
-          if (phase === "taper" && toRace >= 7) {
+          if (phase === "taper" && toRace >= rules.taper.lastStrengthDays) {
             s = strengthSession(c, "peak");
             s.description = tx(lang, "str.taper.last") + "\n" + s.description;
             s.sourceKey = "Travis et al. (2020)";
-          } else if (toRace <= 6) {
+          } else if (toRace <= rules.taper.raceWeekDays) {
             s = strengthSession(c, "taper");
             s.description = tx(lang, "str.taper.light") + "\n" + s.description;
             s.sourceKey = "Travis et al. (2020)";
@@ -17824,7 +17910,7 @@ function generatePlan(p, opts = {}) {
           break;
         case "sim": {
           const full = bWeek[5] === wi;
-          if (phase === "taper" && toRace >= 10 && !c.simStep) {
+          if (phase === "taper" && toRace >= rules.taper.lastSimDays && !c.simStep) {
             s = simSession(c, "peak", st, false);
             s.description = tx(lang, "sim.taper.last") + "\n" + s.description;
           } else {
@@ -17858,8 +17944,8 @@ function generatePlan(p, opts = {}) {
           s = {
             type: "recovery",
             title: tx(lang, "rec.title"),
-            description: tx(lang, "rec.desc", { cap: z1Cap(a.lthr, a.maxHr) }) + (a.flags.achilles ? tx(lang, "rec.achilles") : ""),
-            hrCap: z1Cap(a.lthr, a.maxHr)
+            description: tx(lang, "rec.desc", { cap: z1Cap(a.lthr, a.maxHr, rules.zones.z1CapPct) }) + (a.flags.achilles ? tx(lang, "rec.achilles") : ""),
+            hrCap: z1Cap(a.lthr, a.maxHr, rules.zones.z1CapPct)
           };
           break;
         default:
@@ -17868,7 +17954,7 @@ function generatePlan(p, opts = {}) {
       const inj = adaptForInjury({ lang, flags: a.flags, lthr: a.lthr, maxHr: a.maxHr, T: T5 }, s, date, today, { taper: phase === "taper" });
       if (inj) s = { ...s, ...inj };
       if (c.place && s.type !== "rest") {
-        const run = adaptRunToPlace(lang, s, c.place, { lthr: a.lthr, maxHr: a.maxHr, T: T5, z2: z2Cap(a.lthr, a.maxHr) });
+        const run = adaptRunToPlace(lang, s, c.place, { lthr: a.lthr, maxHr: a.maxHr, T: T5, z2: z2Cap(a.lthr, a.maxHr, rules.zones.z2CapPct) });
         if (run) s = { ...s, ...run };
         s.placeName = c.place.name;
         s.placeChosen = !!opts.placeByDate?.[date];
@@ -17884,7 +17970,7 @@ function generatePlan(p, opts = {}) {
           type: "recovery",
           title: tx(lang, "guard.title"),
           description: tx(lang, "guard.desc", { score, orig: session.title }),
-          hrCap: z2Cap(a.lthr, a.maxHr),
+          hrCap: z2Cap(a.lthr, a.maxHr, rules.zones.z2CapPct),
           guard: true
         };
       }
@@ -17963,6 +18049,7 @@ function targets(p) {
 }
 function generateSeason(p, opts = {}) {
   const lang = opts.lang ?? "en";
+  const zp = withAdminRules(opts.ruleSet ?? ruleSet(1), opts.rules).zones;
   const tg = targets(p);
   if (!tg.length) return [];
   const weeks = [];
@@ -17980,12 +18067,12 @@ function generateSeason(p, opts = {}) {
     if (!next) return;
     const last = weeks[weeks.length - 1];
     for (let d = addDays(race.date, 1); d < addDays(mondayOf(race.date), 7); d = addDays(d, 1)) {
-      last.sessions.push(afterRace(d, daysBetween(race.date, d), schedule, p, lang));
+      last.sessions.push(afterRace(d, daysBetween(race.date, d), schedule, p, lang, zp));
     }
     start = addDays(mondayOf(race.date), 7);
     if (daysBetween(start, next.date) >= 28) {
       const sessions = [];
-      for (let k = 0; k < 7; k++) sessions.push(afterRace(addDays(start, k), daysBetween(race.date, addDays(start, k)), schedule, p, lang, race.name));
+      for (let k = 0; k < 7; k++) sessions.push(afterRace(addDays(start, k), daysBetween(race.date, addDays(start, k)), schedule, p, lang, zp, race.name));
       weeks.push({ index: 0, start, phase: "recovery", phaseWeek: 1, phaseLen: 1, deload: true, sessions });
       start = addDays(start, 7);
     }
@@ -17997,7 +18084,7 @@ function generateSeason(p, opts = {}) {
     if (!day) continue;
     const nextA = tg.find((x) => x.date > r.date);
     const wk = weeks.find((w) => w.sessions.includes(day));
-    for (const s of wk.sessions) if (s.type === "sim" && s.date !== r.date) Object.assign(s, easy(s, p, lang));
+    for (const s of wk.sessions) if (s.type === "sim" && s.date !== r.date) Object.assign(s, easy(s, p, lang, zp));
     const segCat = nextA?.category ?? tg[tg.length - 1]?.category ?? p.category;
     const rCat = r.category ?? p.category;
     if (rCat !== segCat) {
@@ -18027,30 +18114,54 @@ ${sim.description ?? ""}`;
       benchmarkText: void 0
     });
     const before = byDate.get(addDays(r.date, -1));
-    if (before && before.type !== "rest") Object.assign(before, { type: "easy", title: tx(lang, "shake.title"), description: tx(lang, "shake.desc"), hrCap: z1Cap(a.lthr, a.maxHr), km: 3, targetPaceSec: null, benchmark: void 0, benchmarkText: void 0 });
+    if (before && before.type !== "rest") Object.assign(before, { type: "easy", title: tx(lang, "shake.title"), description: tx(lang, "shake.desc"), hrCap: z1Cap(a.lthr, a.maxHr, zp.z1CapPct), km: 3, targetPaceSec: null, benchmark: void 0, benchmarkText: void 0 });
     const before2 = byDate.get(addDays(r.date, -2));
-    if (r.priority === "B" && before2 && HARD2.includes(before2.type)) Object.assign(before2, easy(before2, p, lang));
+    if (r.priority === "B" && before2 && HARD2.includes(before2.type)) Object.assign(before2, easy(before2, p, lang, zp));
     const after = byDate.get(addDays(r.date, 1));
-    if (after && after.type !== "rest") Object.assign(after, { type: "recovery", title: tx(lang, "rec.title"), description: tx(lang, "race.after"), hrCap: z1Cap(a.lthr, a.maxHr), km: void 0, targetPaceSec: null, benchmark: void 0, benchmarkText: void 0 });
+    if (after && after.type !== "rest") Object.assign(after, { type: "recovery", title: tx(lang, "rec.title"), description: tx(lang, "race.after"), hrCap: z1Cap(a.lthr, a.maxHr, zp.z1CapPct), km: void 0, targetPaceSec: null, benchmark: void 0, benchmarkText: void 0 });
     const after2 = byDate.get(addDays(r.date, 2));
-    if (r.priority === "B" && after2 && HARD2.includes(after2.type)) Object.assign(after2, easy(after2, p, lang));
+    if (r.priority === "B" && after2 && HARD2.includes(after2.type)) Object.assign(after2, easy(after2, p, lang, zp));
   }
   return weeks.map((w, i) => ({ ...w, index: i + 1 }));
 }
-function easy(_s, p, lang) {
-  const cap = z2Cap(p.athlete.lthr, p.athlete.maxHr);
+function easy(_s, p, lang, zp) {
+  const cap = z2Cap(p.athlete.lthr, p.athlete.maxHr, zp.z2CapPct);
   const km = 5;
   return { type: "easy", title: tx(lang, "easy.title", { km }), description: tx(lang, "easy.desc", { km, cap }), hrCap: cap, km, targetPaceSec: Math.round(p.athlete.thresholdPaceSec * 1.22), rpe: null, benchmark: void 0, benchmarkText: void 0, focusStations: void 0 };
 }
-function afterRace(date, daysAfter, schedule, p, lang, raceName) {
+function afterRace(date, daysAfter, schedule, p, lang, zp, raceName) {
   const dow = ((/* @__PURE__ */ new Date(date + "T00:00:00Z")).getUTCDay() + 6) % 7;
   const base = { id: date, date, dow };
   const planned = schedule[dow];
   const a = p.athlete;
   if (planned === "rest") return { ...base, type: "rest", title: tx(lang, "rest.title"), description: tx(lang, "rest.desc") };
-  if (daysAfter <= 2) return { ...base, type: "recovery", title: tx(lang, "rec.title"), description: tx(lang, "race.after"), hrCap: z1Cap(a.lthr, a.maxHr) };
-  const e = easy(base, p, lang);
+  if (daysAfter <= 2) return { ...base, type: "recovery", title: tx(lang, "rec.title"), description: tx(lang, "race.after"), hrCap: z1Cap(a.lthr, a.maxHr, zp.z1CapPct) };
+  const e = easy(base, p, lang, zp);
   return { ...base, ...e, description: (raceName ? tx(lang, "rec.week", { name: raceName }) + "\n" : "") + e.description };
+}
+
+// src/engine/planUpdate.ts
+var ERA_START = "0000-00-00";
+function erasFromVersions(versions, pin) {
+  if (!versions?.length) return [{ from: ERA_START, ruleSet: ruleSet(pin) }];
+  const eras = versions.map((v) => ({ from: v.effective_from, ruleSet: ruleSet(v.rule_set_version) }));
+  const last = versions[versions.length - 1];
+  if (last.rule_set_version !== pin) eras.push({ from: last.effective_from, ruleSet: ruleSet(pin) });
+  eras[0] = { ...eras[0], from: ERA_START };
+  return eras;
+}
+function generateVersionedSeason(p, opts, eras) {
+  const list = eras.length ? [...eras].sort((a, b) => a.from.localeCompare(b.from)) : [{ from: ERA_START, ruleSet: ruleSet(1) }];
+  const plans = list.map((e) => generateSeason(p, { ...opts, ruleSet: e.ruleSet }));
+  const last = plans.length - 1;
+  if (last === 0) return plans[0];
+  const byDate = plans.map((pl) => new Map(pl.flatMap((w) => w.sessions.map((s) => [s.date, s]))));
+  const eraAt = (date) => {
+    let i = 0;
+    for (let k = 0; k < list.length; k++) if (list[k].from <= date) i = k;
+    return i;
+  };
+  return plans[last].map((w) => ({ ...w, sessions: w.sessions.map((s) => eraAt(s.date) === last ? s : byDate[eraAt(s.date)].get(s.date) ?? s) }));
 }
 
 // src/data/mapping.ts
@@ -18187,7 +18298,7 @@ function planFor(c) {
   const lang = langOf(c.row);
   const p = toProfile(c.row);
   const today = c.today ?? todayISO();
-  const weeks = generateSeason(p, { lang, flare: c.morning, today });
+  const weeks = generateVersionedSeason(p, { lang, flare: c.morning, today }, erasFromVersions(c.versions, c.row.rule_set_version ?? 1));
   return { lang, p: currentProfile(p, today), today, weeks };
 }
 function weeklyMail(c) {
@@ -18282,15 +18393,17 @@ async function handler(req, res) {
     if (!isComplete(row) || !row.email || row.race_date < today) continue;
     const gid = row.gym_id;
     if (!row.sim_protocol && gid && gymProto.get(gid)) row.sim_protocol = gymProto.get(gid);
-    const [{ data: entries }, { data: morning }] = await Promise.all([
+    const [{ data: entries }, { data: morning }, { data: versions }] = await Promise.all([
       s.from("session_entries").select("date,completed").eq("user_id", row.id),
-      s.from("morning_checks").select("date,score").eq("user_id", row.id)
+      s.from("morning_checks").select("date,score").eq("user_id", row.id),
+      s.from("user_plan_versions").select("rule_set_version,effective_from").eq("user_id", row.id).order("version_no")
     ]);
     const ctx = {
       row,
       completed: Object.fromEntries((entries ?? []).filter((e) => e.completed).map((e) => [e.date, true])),
       morning: Object.fromEntries((morning ?? []).map((m) => [m.date, m.score])),
-      today
+      today,
+      versions
     };
     try {
       if (dowOf(today) === 0 || req.query.force === "weekly") {

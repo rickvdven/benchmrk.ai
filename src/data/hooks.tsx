@@ -9,13 +9,16 @@ import {
   compliance,
   currentProfile,
   evaluate,
-  generateSeason,
+  erasFromVersions,
+  generateVersionedSeason,
   raceModel,
   replay,
   teamModel,
   daysBetween,
   executionOf,
   isDoubles,
+  ruleSet,
+  withAdminRules,
   todayISO,
   type BenchmarkEntry,
   type Calibration,
@@ -34,6 +37,7 @@ import {
   type ProfileRow,
   type TeamRow,
 } from './mapping';
+import { usePlanVersions } from './planUpdates';
 
 // ---------------- auth ----------------
 interface AuthCtx {
@@ -358,6 +362,7 @@ export function useCoach(lang: import('../engine').Lang) {
   }, [prof.data, today]);
   const team = useTeam(targetTeamId);
   const gym = useMyGym();
+  const versions = usePlanVersions();
   return useMemo(() => {
     const raw = prof.data;
     // follow the gym's sim template unless the athlete saved an own build-up
@@ -367,7 +372,9 @@ export function useCoach(lang: import('../engine').Lang) {
     const rules = rb.data?.rules;
     const baselines = rb.data?.baselines;
     const flare = morning.data ?? {};
-    const plan = generateSeason(profile, {
+    const pin = row.rule_set_version ?? 1;
+    const eras = erasFromVersions(versions.data, pin);
+    const planOpts = {
       lang,
       rules,
       baselines,
@@ -375,7 +382,9 @@ export function useCoach(lang: import('../engine').Lang) {
       today,
       sharedSimDow: team.team?.shared_sim_dow ?? null,
       placeByDate: Object.fromEntries((entries.data ?? []).filter((e) => e.place).map((e) => [e.date, e.place!])),
-    });
+    };
+    // every day follows the rule set that was pinned on that day (see engine/planUpdate.ts)
+    const plan = generateVersionedSeason(profile, planOpts, eras);
     const byDate: Record<string, EntryRow> = Object.fromEntries((entries.data ?? []).map((e) => [e.date, e]));
     // completed sessions show their frozen snapshot, so history is never rewritten
     const weeks = plan.map((w) => ({
@@ -393,7 +402,7 @@ export function useCoach(lang: import('../engine').Lang) {
     const comp = compliance(weeks, completed, today, row.created_at.slice(0, 10));
     // the log feeds the chance: skipped sessions and missed target paces lower it, hitting them raises it
     const cur = { ...currentProfile(profile, today), adherence: comp == null || daysBetween(row.created_at.slice(0, 10), today) < 14 ? null : comp / 100, execution: executionOf(logs, today) };
-    const model = raceModel(cur, today, baselines);
+    const model = raceModel(cur, today, baselines, withAdminRules(ruleSet(pin), rules).forecast);
     const adjust = evaluate(logs, flare, today, rules?.achillesStiffnessCeiling ?? 4);
     const tm =
       team.partner && isComplete(team.partner) && isDoubles(cur.category)
@@ -412,13 +421,16 @@ export function useCoach(lang: import('../engine').Lang) {
       teamModel: tm,
       rules: rules!,
       baselines: baselines!,
+      pin,
+      eras,
+      planOpts,
       morning: flare,
       today,
       team,
       logs,
       adjust,
     } as const;
-  }, [prof.data, prof.isLoading, entries.data, morning.data, rb.data, team, gym.data, lang, today]);
+  }, [prof.data, prof.isLoading, entries.data, morning.data, rb.data, team, gym.data, versions.data, lang, today]);
 }
 
 // ---------------- mutations ----------------

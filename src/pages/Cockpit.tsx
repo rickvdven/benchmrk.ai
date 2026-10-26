@@ -22,6 +22,7 @@ import { InviteCard } from '../components/Invite';
 import { FrequencyNote } from '../components/Frequency';
 import { DISCLAIMER } from '../components/Disclaimer';
 import { isComplete, toAthlete } from '../data/mapping';
+import { PlanUpdateBanner } from '../components/PlanUpdateBanner';
 
 export default function Cockpit() {
   const { t, lang, pace } = useI18n();
@@ -108,6 +109,7 @@ export default function Cockpit() {
       </PageHeader>
 
       <div className="space-y-4">
+        <PlanUpdateBanner pin={c.pin} />
         {(profile.goalSec < 1800 || profile.goalSec > 14400) && <Notice tone="bad">{t('ck.goalInvalid')}</Notice>}
 
         {adjust && adjustKey !== dismissed && !deloadApplied && (

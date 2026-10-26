@@ -3,6 +3,9 @@ import { GROESBEEK, injuriesOf, type SimProtocol } from '../../engine';
 import { ProtocolFields } from '../../components/SimProtocolEditor';
 import { GymManager } from '../../components/GymManager';
 import { Roadmap } from './Roadmap';
+import { SourcesAdmin } from './SourcesAdmin';
+import { PlanUpdatesAdmin } from './PlanUpdatesAdmin';
+import { pt } from '../../lib/planupdate';
 import { NavLink, Route, Routes, useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -347,71 +350,6 @@ function AthleteDetail() {
           </tbody>
         </table>
         {plan.length > 0 && <p className="mt-3 text-xs text-muted">Plan: {plan.length} weeks · {plan.map((w) => w.phase[0].toUpperCase()).join('')}</p>}
-      </section>
-    </div>
-  );
-}
-
-function Knowledge() {
-  const qc = useQueryClient();
-  const q = useQuery({ queryKey: ['admin', 'knowledge'], queryFn: async () => (await supabase.from('knowledge_sources').select('*').order('created_at')).data ?? [] });
-  const [draft, setDraft] = useState({ title: '', category: 'science', author: '', source_url: '', summary: '', takeaways: '' });
-  if (!q.data) return <Spinner />;
-  return (
-    <div className="space-y-4">
-      {q.data.map((k: { id: string; title: string; author: string; source_url: string; summary: string; takeaways: string[]; category: string }) => (
-        <section key={k.id} className="panel p-4 text-sm">
-          <div className="flex justify-between gap-2">
-            <div>
-              <span className="chip mr-2">{k.category}</span>
-              <span className="font-semibold">{k.title}</span>
-              <div className="text-xs text-muted">{k.author}</div>
-            </div>
-            <button
-              className="text-xs text-bad"
-              onClick={async () => {
-                if (!confirm('Delete?')) return;
-                await supabase.from('knowledge_sources').delete().eq('id', k.id);
-                qc.invalidateQueries({ queryKey: ['admin', 'knowledge'] });
-              }}
-            >
-              Delete
-            </button>
-          </div>
-          <p className="mt-2 text-muted">{k.summary}</p>
-          {k.takeaways?.length > 0 && (
-            <ul className="mt-1 list-disc pl-5 text-xs text-muted">
-              {k.takeaways.map((x) => (
-                <li key={x}>{x}</li>
-              ))}
-            </ul>
-          )}
-          {k.source_url && (
-            <a className="mt-1 inline-block break-all text-xs text-volt underline" href={k.source_url} target="_blank" rel="noreferrer">
-              {k.source_url}
-            </a>
-          )}
-        </section>
-      ))}
-      <section className="panel space-y-2 p-4">
-        <h3 className="font-bold">New source</h3>
-        {(['title', 'author', 'source_url', 'category'] as const).map((f) => (
-          <input key={f} className="input" placeholder={f} value={draft[f]} onChange={(e) => setDraft({ ...draft, [f]: e.target.value })} />
-        ))}
-        <textarea className="input h-20 py-2" placeholder="summary" value={draft.summary} onChange={(e) => setDraft({ ...draft, summary: e.target.value })} />
-        <textarea className="input h-20 py-2" placeholder="takeaways (one per line)" value={draft.takeaways} onChange={(e) => setDraft({ ...draft, takeaways: e.target.value })} />
-        <button
-          className="btn-primary"
-          disabled={!draft.title}
-          onClick={async () => {
-            const { error } = await supabase.from('knowledge_sources').insert({ ...draft, takeaways: draft.takeaways.split('\n').map((s) => s.trim()).filter(Boolean) });
-            if (error) return toast.error(error.message);
-            setDraft({ title: '', category: 'science', author: '', source_url: '', summary: '', takeaways: '' });
-            qc.invalidateQueries({ queryKey: ['admin', 'knowledge'] });
-          }}
-        >
-          Add
-        </button>
       </section>
     </div>
   );
@@ -878,7 +816,7 @@ function TtsTest() {
 }
 
 export default function Admin() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const links: [string, I18nKey][] = [
     ['/admin', 'ad.overview'],
     ['/admin/roadmap', 'ad.roadmap'],
@@ -902,6 +840,9 @@ export default function Admin() {
             {t(k)}
           </NavLink>
         ))}
+        <NavLink to="/admin/planupdates" className={({ isActive }) => clsx('whitespace-nowrap rounded-lg px-3 py-1.5 text-sm', isActive ? 'bg-volt text-black' : 'text-muted hover:bg-panel2 hover:text-fg')}>
+          {pt(lang, 'pu.admin.title')}
+        </NavLink>
       </nav>
       <Routes>
         <Route index element={<Overview />} />
@@ -913,7 +854,8 @@ export default function Admin() {
         <Route path="sims" element={<SimTemplates />} />
         <Route path="gyms" element={<Gyms />} />
         <Route path="tts" element={<TtsTest />} />
-        <Route path="knowledge" element={<Knowledge />} />
+        <Route path="knowledge" element={<SourcesAdmin />} />
+        <Route path="planupdates" element={<PlanUpdatesAdmin />} />
         <Route path="rules" element={<Rules />} />
         <Route path="baselines" element={<Baselines />} />
         <Route path="settings" element={<AppSettings />} />
