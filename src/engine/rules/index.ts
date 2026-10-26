@@ -37,7 +37,11 @@ export function buildRuleSet(versions: RuleSetVersion[], version: number, base: 
   const rs = structuredClone(base) as RuleSet;
   for (const v of versions) {
     if (v.version > version) break;
-    for (const c of v.changes) setRule(rs, c.key, c.after);
+    for (const c of v.changes) {
+      if (c.key === 'version' || c.key === 'changedKeys') throw new Error(`Not a rule: ${c.key}`);
+      setRule(rs, c.key, c.after);
+      if (!rs.changedKeys.includes(c.key)) rs.changedKeys.push(c.key);
+    }
     rs.version = v.version;
   }
   return deepFreeze(rs);
@@ -72,18 +76,6 @@ export function changesBetween(from: number, to: number, versions: RuleSetVersio
   return to > from ? list : [...list].reverse().map((c) => ({ ...c, before: c.after, after: c.before }));
 }
 
-/** coaching.* keys a version changed since v1. */
-function coachingKeysSinceV1(version: number): (keyof CoachingRules)[] {
-  return [
-    ...new Set(
-      VERSIONS.filter((v) => v.version <= version)
-        .flatMap((v) => v.changes)
-        .filter((c) => c.key.startsWith('coaching.'))
-        .map((c) => c.key.slice('coaching.'.length) as keyof CoachingRules),
-    ),
-  ];
-}
-
 /**
  * Coaching rules in force: the admin-editable values from the database (coaching_rules), except keys a rule-set
  * version after v1 changed – those follow the member's pinned version, so a research change never reaches a plan silently.
@@ -91,6 +83,10 @@ function coachingKeysSinceV1(version: number): (keyof CoachingRules)[] {
 export function effectiveCoaching(rs: RuleSet, db?: CoachingRules | null): CoachingRules {
   if (!db) return rs.coaching;
   const out = { ...db };
-  for (const k of coachingKeysSinceV1(rs.version)) (out as Record<string, number>)[k] = rs.coaching[k];
+  for (const key of rs.changedKeys) {
+    if (!key.startsWith('coaching.')) continue;
+    const k = key.slice('coaching.'.length) as keyof CoachingRules;
+    out[k] = rs.coaching[k];
+  }
   return out;
 }

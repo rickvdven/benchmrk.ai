@@ -6,12 +6,14 @@ import { PlacesEditor } from '../components/Places';
 import { SimProtocolEditor } from '../components/SimProtocolEditor';
 import { GymField } from '../components/Gym';
 import { PrivacySettings } from '../components/PrivacySettings';
+import { PlanHistory } from '../components/PlanUpdates';
+import { pt } from '../lib/planupdates';
 import { ct } from '../lib/competition';
 import { toast } from 'sonner';
 import clsx from 'clsx';
 import { useQueryClient } from '@tanstack/react-query';
 import { calibrationOf, fmtHms, fmtMmss, mondayOf, parseMmss, parseRaceTime, todayISO, type Category, type DayType, type StationMap } from '../engine';
-import { useMutations, useMyGym, useProfileRow, useSubscription, useTeam } from '../data/hooks';
+import { useMutations, useMyGym, usePlanVersions, useProfileRow, useSubscription, useTeam } from '../data/hooks';
 import { toAthlete, type ProfileRow } from '../data/mapping';
 import { supabase } from '../lib/supabase';
 import { LANGS, useI18n, type I18nKey } from '../lib/i18n';
@@ -20,7 +22,7 @@ import { ScheduleEditor, StationEditor } from '../components/editors';
 import { PayPanel } from '../components/Paywall';
 
 const CATS: Category[] = ['solo_open', 'solo_pro', 'doubles_open', 'doubles_pro', 'doubles_mixed', 'relay_open'];
-type Tab = 'profile' | 'races' | 'physio' | 'stations' | 'schedule' | 'privacy' | 'gym' | 'account';
+type Tab = 'profile' | 'races' | 'physio' | 'stations' | 'schedule' | 'history' | 'privacy' | 'gym' | 'account';
 
 export default function SettingsPage() {
   const { t, lang, setLang, units, setUnits } = useI18n();
@@ -28,12 +30,13 @@ export default function SettingsPage() {
   const team = useTeam();
   const sub = useSubscription();
   const gym = useMyGym();
+  const versions = usePlanVersions();
   const qc = useQueryClient();
   const { updateProfile } = useMutations();
   if (new URLSearchParams(window.location.search).get('tab') === 'invite') window.history.replaceState(null, '', '/invite');
   const [tab, setTab] = useState<Tab>(() => {
     const q = new URLSearchParams(window.location.search).get('tab');
-    return (['profile', 'races', 'physio', 'stations', 'schedule', 'privacy', 'gym', 'account'].includes(q ?? '') ? q : 'profile') as Tab;
+    return (['profile', 'races', 'physio', 'stations', 'schedule', 'history', 'privacy', 'gym', 'account'].includes(q ?? '') ? q : 'profile') as Tab;
   });
   const [d, setD] = useState<ProfileRow | null>(null);
   const [goalOk, setGoalOk] = useState(true);
@@ -73,6 +76,7 @@ export default function SettingsPage() {
     { k: 'physio', l: t('st.physio') },
     { k: 'stations', l: t('st.stations') },
     { k: 'schedule', l: t('st.schedule') },
+    { k: 'history', l: pt(lang, 'history.tab') },
     { k: 'privacy', l: ct(lang, 'st.privacy') },
     { k: 'gym', l: t('st.gym') },
     { k: 'account', l: t('st.account') },
@@ -201,6 +205,7 @@ export default function SettingsPage() {
           </>
         )}
 
+        {tab === 'history' && <PlanHistory versions={versions.data ?? null} pinned={prof.data.rule_set_version ?? 1} />}
         {tab === 'privacy' && <PrivacySettings />}
         {tab === 'gym' && (
           <>

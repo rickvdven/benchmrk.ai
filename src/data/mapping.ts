@@ -4,6 +4,7 @@ import {
   STATIONS,
   defaultSchedule,
   mondayOf,
+  ruleSet,
   todayISO,
   type Athlete,
   type BaselineTable,
@@ -55,6 +56,8 @@ export interface ProfileRow {
   disclaimer_accepted_at?: string | null;
   pace_adjust_sec: number;
   baseline: Record<string, unknown> | null;
+  /** pinned rule-set version (src/engine/rules); changes only through plan_apply_update / plan_rollback */
+  rule_set_version?: number;
   /** Shown on cards and leaderboards instead of the name; set through set_nickname(). */
   nickname?: string | null;
   /** 'private' (default) or 'gym'; set through set_visibility(). */
@@ -152,6 +155,7 @@ export function toProfile(r: ProfileRow): Profile {
     places: Array.isArray(r.places) ? r.places : [],
     placeByDow: Array.isArray(r.place_by_dow) ? r.place_by_dow : [],
     simProtocol: r.sim_protocol ?? null,
+    ruleSet: ruleSet(r.rule_set_version ?? 1),
   };
 }
 

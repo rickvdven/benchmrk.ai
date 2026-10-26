@@ -1,6 +1,11 @@
-import { ShieldAlert, ExternalLink } from 'lucide-react';
+import { useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { ShieldAlert, ExternalLink, Archive } from 'lucide-react';
 import type { Lang } from '../engine';
 import { useI18n } from '../lib/i18n';
+import { usePlanUpdates } from '../data/hooks';
+import { useSources, sourceAnchor, SourceLink, type SourceRow } from '../components/PlanUpdates';
+import { fmtDay, loc, pt, ruleLabel } from '../lib/planupdates';
 import { DISCLAIMER } from '../components/Disclaimer';
 
 type Ref = { cite: string; url: string };
@@ -209,7 +214,108 @@ export default function Science() {
           </section>
         );
       })}
+      <PlanUpdateLog />
+      <SourceBase />
       <p className="text-xs text-muted">{x.note}</p>
     </div>
+  );
+}
+
+/** One line per published plan update: "Plan update 12 Nov: taper adjusted based on …". */
+function PlanUpdateLog() {
+  const { lang } = useI18n();
+  const ups = usePlanUpdates();
+  if (ups.isError) return null;
+  const list = (ups.data ?? []).filter((u) => u.status === 'published');
+  return (
+    <section id="changelog" className="panel scroll-mt-20 p-5">
+      <h2 className="text-lg font-bold">{pt(lang, 'sci.changelog')}</h2>
+      <p className="mt-1 text-sm text-muted">{pt(lang, 'sci.changelogIntro')}</p>
+      {list.length ? (
+        <ul className="mt-3 space-y-1.5 text-sm">
+          {list.map((u) => (
+            <li key={u.id}>{pt(lang, 'page.change', { date: fmtDay(lang, u.published_at ?? u.created_at, true), title: loc(u.title, lang) })}</li>
+          ))}
+        </ul>
+      ) : (
+        <p className="mt-3 text-sm text-muted">{pt(lang, 'sci.noUpdates')}</p>
+      )}
+    </section>
+  );
+}
+
+function SourceItem({ s, byId }: { s: SourceRow; byId: Map<string, SourceRow> }) {
+  const { lang } = useI18n();
+  const rep = s.replaced_by ? byId.get(s.replaced_by) : null;
+  return (
+    <li id={sourceAnchor(s)} className="scroll-mt-20 rounded-lg px-2 py-2 text-sm target:bg-volt/15">
+      <SourceLink s={s} />
+      <div className="mt-1 flex flex-wrap gap-1.5 text-xs text-muted">
+        {s.level ? <span className="chip">{pt(lang, 'sci.level', { l: s.level })}</span> : <span className="chip">{pt(lang, 'sci.noLevel')}</span>}
+        {s.checked_at && <span>{pt(lang, 'sci.checked', { date: fmtDay(lang, s.checked_at, true) })}</span>}
+      </div>
+      {!!s.rule_keys?.length && (
+        <p className="mt-1 text-xs">
+          <span className="label mr-1">{pt(lang, 'sci.rules')}:</span>
+          {s.rule_keys.map((k) => ruleLabel(lang, k)).join(' · ')}
+        </p>
+      )}
+      {s.status === 'archived' && (
+        <div className="mt-1 space-y-0.5 text-xs text-muted">
+          <p>{pt(lang, 'sci.archivedOn', { date: s.archived_at ? fmtDay(lang, s.archived_at, true) : '–' })}</p>
+          {s.archived_reason && <p>{pt(lang, 'sci.reason', { r: s.archived_reason })}</p>}
+          {rep && (
+            <p>
+              {pt(lang, 'sci.replacedBy', { t: '' })}
+              <Link to={`#${sourceAnchor(rep)}`} className="underline hover:text-fg">
+                {rep.title}
+              </Link>
+            </p>
+          )}
+        </div>
+      )}
+    </li>
+  );
+}
+
+/** Every source in the database with its level and the rules it supports; archived sources at the bottom. */
+function SourceBase() {
+  const { lang } = useI18n();
+  const q = useSources();
+  const all = q.data ?? [];
+  useEffect(() => {
+    const h = decodeURIComponent(window.location.hash.slice(1));
+    if (h.startsWith('src-') && all.length) document.getElementById(h)?.scrollIntoView({ block: 'center' });
+  }, [all.length]);
+  if (!all.length || all[0].status === undefined) return null; // before migration 022 there are no levels or rule keys
+  const byId = new Map(all.map((s) => [s.id, s]));
+  const active = all.filter((s) => s.status !== 'archived').sort((a, b) => Number(!a.rule_keys?.length) - Number(!b.rule_keys?.length) || a.title.localeCompare(b.title));
+  const archived = all.filter((s) => s.status === 'archived').sort((a, b) => (b.archived_at ?? '').localeCompare(a.archived_at ?? ''));
+  return (
+    <>
+      <section id="sources" className="panel scroll-mt-20 p-5">
+        <h2 className="text-lg font-bold">{pt(lang, 'sci.sources')}</h2>
+        <p className="mt-1 text-sm text-muted">{pt(lang, 'sci.sourcesIntro')}</p>
+        <p className="mt-2 text-xs text-muted">{pt(lang, 'sci.levels')}</p>
+        <ul className="mt-3 divide-y divide-line">
+          {active.map((s) => (
+            <SourceItem key={s.id} s={s} byId={byId} />
+          ))}
+        </ul>
+      </section>
+      {archived.length > 0 && (
+        <section id="archived" className="panel scroll-mt-20 p-5">
+          <h2 className="flex items-center gap-2 text-lg font-bold">
+            <Archive className="h-4 w-4 text-muted" aria-hidden />
+            {pt(lang, 'sci.archived')}
+          </h2>
+          <ul className="mt-3 divide-y divide-line">
+            {archived.map((s) => (
+              <SourceItem key={s.id} s={s} byId={byId} />
+            ))}
+          </ul>
+        </section>
+      )}
+    </>
   );
 }

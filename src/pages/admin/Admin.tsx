@@ -3,6 +3,7 @@ import { GROESBEEK, injuriesOf, type SimProtocol } from '../../engine';
 import { ProtocolFields } from '../../components/SimProtocolEditor';
 import { GymManager } from '../../components/GymManager';
 import { Roadmap } from './Roadmap';
+import { PlanUpdatesAdmin } from './PlanUpdatesAdmin';
 import { NavLink, Route, Routes, useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -352,31 +353,112 @@ function AthleteDetail() {
   );
 }
 
+type KnowledgeAdminRow = {
+  id: string;
+  title: string;
+  author: string;
+  source_url: string;
+  summary: string;
+  takeaways: string[];
+  category: string;
+  slug?: string | null;
+  level?: string | null;
+  status?: 'active' | 'archived';
+  archived_at?: string | null;
+  archived_reason?: string | null;
+  replaced_by?: string | null;
+  checked_at?: string | null;
+  rule_keys?: string[];
+};
+
+/** Level, slug, check date and supported rule keys of a source (migration 022). */
+function SourceMeta({ k, all, onSaved }: { k: KnowledgeAdminRow; all: KnowledgeAdminRow[]; onSaved: () => void }) {
+  const [m, setM] = useState({ slug: k.slug ?? '', level: k.level ?? '', checked_at: k.checked_at ?? '', rule_keys: (k.rule_keys ?? []).join(', ') });
+  const save = async (patch: Record<string, unknown>) => {
+    const { error } = await supabase.from('knowledge_sources').update(patch).eq('id', k.id);
+    if (error) return toast.error(error.message);
+    toast.success('Saved');
+    onSaved();
+  };
+  if (k.status === undefined) return null; // migration 022 not applied yet
+  return (
+    <div className="mt-3 space-y-2 border-t border-line pt-3">
+      <div className="grid gap-2 sm:grid-cols-[1fr_6rem_10rem]">
+        <input className="input h-9" placeholder="slug (cited by rule-set changes)" value={m.slug} onChange={(e) => setM({ ...m, slug: e.target.value })} />
+        <select className="input h-9" value={m.level} onChange={(e) => setM({ ...m, level: e.target.value })}>
+          <option value="">level –</option>
+          {['A', 'B', 'C', 'D'].map((l) => (
+            <option key={l} value={l}>
+              level {l}
+            </option>
+          ))}
+        </select>
+        <input className="input h-9" type="date" value={m.checked_at} onChange={(e) => setM({ ...m, checked_at: e.target.value })} />
+      </div>
+      <input className="input h-9" placeholder="rule keys, e.g. taper.volumeRaceWeek, taper.volumeWeek1" value={m.rule_keys} onChange={(e) => setM({ ...m, rule_keys: e.target.value })} />
+      <div className="flex flex-wrap gap-2">
+        <button
+          className="btn-ghost btn-sm"
+          onClick={() =>
+            save({
+              slug: m.slug.trim() || null,
+              level: m.level || null,
+              checked_at: m.checked_at || null,
+              rule_keys: m.rule_keys.split(',').map((x) => x.trim()).filter(Boolean),
+            })
+          }
+        >
+          Save
+        </button>
+        {k.status === 'archived' ? (
+          <button className="btn-ghost btn-sm" onClick={() => save({ status: 'active', archived_at: null, archived_reason: null, replaced_by: null })}>
+            Reactivate
+          </button>
+        ) : (
+          <button
+            className="btn-ghost btn-sm text-bad"
+            onClick={() => {
+              const reason = prompt('Why is this source archived? (shown on /science)');
+              if (!reason) return;
+              const others = all.filter((x) => x.id !== k.id && x.status !== 'archived');
+              const rep = prompt(`Replaced by (optional): type the start of the title of the new source.\n${others.slice(0, 8).map((x) => x.title).join('\n')}`);
+              const replaced = rep ? (others.find((x) => x.title.toLowerCase().startsWith(rep.toLowerCase())) ?? null) : null;
+              if (rep && !replaced) toast.error('No matching source – archived without replacement');
+              void save({ status: 'archived', archived_at: new Date().toISOString(), archived_reason: reason, replaced_by: replaced?.id ?? null });
+            }}
+          >
+            Archive
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function Knowledge() {
   const qc = useQueryClient();
-  const q = useQuery({ queryKey: ['admin', 'knowledge'], queryFn: async () => (await supabase.from('knowledge_sources').select('*').order('created_at')).data ?? [] });
+  const q = useQuery({ queryKey: ['admin', 'knowledge'], queryFn: async () => ((await supabase.from('knowledge_sources').select('*').order('created_at')).data ?? []) as KnowledgeAdminRow[] });
   const [draft, setDraft] = useState({ title: '', category: 'science', author: '', source_url: '', summary: '', takeaways: '' });
   if (!q.data) return <Spinner />;
+  const refresh = () => {
+    qc.invalidateQueries({ queryKey: ['admin', 'knowledge'] });
+    qc.invalidateQueries({ queryKey: ['sources'] });
+  };
+  const rows = [...q.data].sort((a, b) => Number(a.status === 'archived') - Number(b.status === 'archived'));
   return (
     <div className="space-y-4">
-      {q.data.map((k: { id: string; title: string; author: string; source_url: string; summary: string; takeaways: string[]; category: string }) => (
-        <section key={k.id} className="panel p-4 text-sm">
+      <Notice>Sources are never deleted: archive them with a reason (and the source that replaces it). Archived sources stay listed on /science.</Notice>
+      {rows.map((k) => (
+        <section key={k.id} className={clsx('panel p-4 text-sm', k.status === 'archived' && 'opacity-70')}>
           <div className="flex justify-between gap-2">
             <div>
               <span className="chip mr-2">{k.category}</span>
+              {k.level && <span className="chip mr-2">level {k.level}</span>}
+              {k.status === 'archived' && <span className="chip mr-2 bg-warn/15 text-warn">archived {k.archived_at?.slice(0, 10)}</span>}
               <span className="font-semibold">{k.title}</span>
               <div className="text-xs text-muted">{k.author}</div>
+              {k.archived_reason && <div className="text-xs text-warn">{k.archived_reason}</div>}
             </div>
-            <button
-              className="text-xs text-bad"
-              onClick={async () => {
-                if (!confirm('Delete?')) return;
-                await supabase.from('knowledge_sources').delete().eq('id', k.id);
-                qc.invalidateQueries({ queryKey: ['admin', 'knowledge'] });
-              }}
-            >
-              Delete
-            </button>
           </div>
           <p className="mt-2 text-muted">{k.summary}</p>
           {k.takeaways?.length > 0 && (
@@ -391,6 +473,7 @@ function Knowledge() {
               {k.source_url}
             </a>
           )}
+          <SourceMeta k={k} all={q.data} onSaved={refresh} />
         </section>
       ))}
       <section className="panel space-y-2 p-4">
@@ -407,7 +490,7 @@ function Knowledge() {
             const { error } = await supabase.from('knowledge_sources').insert({ ...draft, takeaways: draft.takeaways.split('\n').map((s) => s.trim()).filter(Boolean) });
             if (error) return toast.error(error.message);
             setDraft({ title: '', category: 'science', author: '', source_url: '', summary: '', takeaways: '' });
-            qc.invalidateQueries({ queryKey: ['admin', 'knowledge'] });
+            refresh();
           }}
         >
           Add
@@ -424,7 +507,7 @@ function Rules() {
   if (!q.data) return <Spinner />;
   return (
     <div className="space-y-3">
-      <Notice>Rules are relative (e.g. × LTHR) and apply to every athlete. Changes take effect on the next page load for everyone.</Notice>
+      <Notice>Rules are relative (e.g. × LTHR) and apply to every athlete. Changes take effect on the next page load for everyone. A change based on new research belongs in a new rule set (src/engine/rules) and a plan update, so members see a before/after and choose; once a rule-set version changes a key, this value no longer applies to members on that version.</Notice>
       <div className="panel overflow-x-auto">
         <table className="w-full min-w-[640px] text-sm">
           <tbody>
@@ -889,6 +972,7 @@ export default function Admin() {
     ['/admin/sims', 'ad.sims'],
     ['/admin/tts', 'ad.tts'],
     ['/admin/knowledge', 'ad.knowledge'],
+    ['/admin/planupdates', 'ad.planUpdates'],
     ['/admin/rules', 'ad.rules'],
     ['/admin/baselines', 'ad.baselines'],
     ['/admin/settings', 'ad.settings'],
@@ -914,6 +998,7 @@ export default function Admin() {
         <Route path="gyms" element={<Gyms />} />
         <Route path="tts" element={<TtsTest />} />
         <Route path="knowledge" element={<Knowledge />} />
+        <Route path="planupdates" element={<PlanUpdatesAdmin />} />
         <Route path="rules" element={<Rules />} />
         <Route path="baselines" element={<Baselines />} />
         <Route path="settings" element={<AppSettings />} />

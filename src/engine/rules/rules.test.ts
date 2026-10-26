@@ -59,7 +59,8 @@ describe('rule sets', () => {
     const v2 = resolve(2);
     expect(v2.version).toBe(2);
     expect(v2.volume.easyShare).toBe(0.25);
-    expect({ ...v2, version: 1, volume: { ...v2.volume, easyShare: 0.2 }, sim: { ...v2.sim, kmShort: 4 } }).toEqual(V1);
+    expect(v2.changedKeys).toEqual(['volume.easyShare', 'sim.kmShort']);
+    expect({ ...v2, version: 1, changedKeys: [], volume: { ...v2.volume, easyShare: 0.2 }, sim: { ...v2.sim, kmShort: 4 } }).toEqual(V1);
     const opts = { today: FIXTURE_TODAY };
     expect(generateSeason({ ...omen.profile, ruleSet: v2 }, opts)).not.toEqual(generateSeason(omen.profile, opts));
     expect(() => buildRuleSet([{ ...TEST[0], changes: [{ key: 'volume.nope', before: 1, after: 2, sourceIds: [], why }] }], 2)).toThrow();
@@ -82,9 +83,23 @@ describe('rule sets', () => {
   });
 
   it('admin coaching_rules apply, except keys a later version changed', () => {
-    const db = { ...V1.coaching, eliteMaxDecaySec: 15 };
+    const db = { ...V1.coaching, eliteMaxDecaySec: 15, wallBallSet: 12 };
     expect(effectiveCoaching(ruleSet(1), db).eliteMaxDecaySec).toBe(15);
     expect(effectiveCoaching(ruleSet(1), null)).toEqual(V1.coaching);
+    const cv: RuleSetVersion[] = [{ ...TEST[0], changes: [{ key: 'coaching.eliteMaxDecaySec', before: 12, after: 10, sourceIds: [], why }] }];
+    const v2 = buildRuleSet(cv, 2);
+    expect(effectiveCoaching(v2, db)).toEqual({ ...db, eliteMaxDecaySec: 10 });
+  });
+
+  it('rolling back restores the coaching value of the old version, also with database rules', () => {
+    const cv: RuleSetVersion[] = [{ ...TEST[0], changes: [{ key: 'coaching.eliteMaxDecaySec', before: 12, after: 10, sourceIds: [], why }] }];
+    const res = (v: number) => buildRuleSet(cv, v);
+    const opts = { lang: 'en' as const, today: FIXTURE_TODAY, rules: { ...V1.coaching, eliteMaxDecaySec: 14 } };
+    const start: RulePin[] = [{ from: null, version: 1 }];
+    const original = seasonWithPins(omen.profile, opts, start, res);
+    const applied = seasonWithPins(omen.profile, opts, [...start, { from: FIXTURE_TODAY, version: 2 }], res);
+    expect(applied).not.toEqual(original);
+    expect(seasonWithPins(omen.profile, opts, [...start, { from: FIXTURE_TODAY, version: 2 }, { from: FIXTURE_TODAY, version: 1 }], res)).toEqual(original);
   });
 });
 

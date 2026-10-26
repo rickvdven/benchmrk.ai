@@ -7,6 +7,8 @@ import type { CoachingRules, Lang, Phase } from '../types';
  */
 export interface RuleSet {
   version: number;
+  /** keys changed since v1 (filled by buildRuleSet) */
+  changedKeys: string[];
   /** Joe Friel run zones as fractions of LTHR */
   zones: {
     /** easy / long runs are capped at the top of Z2, recovery and shake-outs at the top of Z1 */

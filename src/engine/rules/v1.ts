@@ -3,6 +3,7 @@ import type { RuleSet } from './types';
 /** Rule set 1: exactly the engine as it was before rule sets existed (Oct 2026). Never edit; add a new version instead. */
 export const V1: RuleSet = {
   version: 1,
+  changedKeys: [],
   zones: {
     table: [
       { id: 'Z1', lo: 0.65, hi: 0.84 },

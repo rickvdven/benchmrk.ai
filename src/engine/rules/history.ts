@@ -64,3 +64,28 @@ export function seasonWithPins(p: Profile, opts: PlanOptions, pins: RulePin[], r
     }),
   }));
 }
+
+/** One day of a stored plan version (user_plan_versions.plan_snapshot): only what the history needs to show. */
+export interface SnapshotDay {
+  date: string;
+  type: Session['type'];
+  title: string;
+  km?: number;
+  pace?: number;
+  hr?: number;
+}
+
+/** The future part of a plan (today and later), compact, for user_plan_versions.plan_snapshot. */
+export function planSnapshot(weeks: Week[], today: string): SnapshotDay[] {
+  return weeks
+    .flatMap((w) => w.sessions)
+    .filter((s) => s.date >= today)
+    .map((s) => ({
+      date: s.date,
+      type: s.type,
+      title: s.title,
+      ...(s.km != null ? { km: s.km } : {}),
+      ...(s.targetPaceSec != null ? { pace: s.targetPaceSec } : {}),
+      ...(s.hrCap != null ? { hr: s.hrCap } : {}),
+    }));
+}

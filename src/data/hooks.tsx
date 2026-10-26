@@ -8,9 +8,14 @@ import {
   calibrationOf,
   compliance,
   currentProfile,
+  effectiveCoaching,
   evaluate,
-  generateSeason,
+  freezeLogged,
+  pinsOf,
+  planSnapshot,
   raceModel,
+  rulesOf,
+  seasonWithPins,
   replay,
   teamModel,
   daysBetween,
@@ -20,7 +25,11 @@ import {
   type BenchmarkEntry,
   type Calibration,
   type LoggedSession,
-  type Session,
+  type Localized,
+  type PlanOptions,
+  type RuleChange,
+  type RulePin,
+  type Week,
 } from '../engine';
 import {
   baselinesFrom,
@@ -128,6 +137,86 @@ export function usePlanChanges() {
       return data ?? [];
     },
   });
+}
+
+// ---------------- plan updates ----------------
+export interface PlanUpdateRow {
+  id: string;
+  rule_set_version: number;
+  title: Partial<Localized>;
+  summary: Partial<Localized>;
+  changes: RuleChange[];
+  status: 'draft' | 'published';
+  published_at: string | null;
+  created_at: string;
+}
+export interface PlanVersionRow {
+  id: string;
+  user_id: string;
+  version_no: number;
+  rule_set_version: number;
+  plan_snapshot: import('../engine').SnapshotDay[] | null;
+  reason: 'start' | 'update' | 'rollback';
+  plan_update_id: string | null;
+  effective_from: string | null;
+  restored_version_no: number | null;
+  created_at: string;
+}
+export interface PlanChoiceRow {
+  plan_update_id: string;
+  choice: 'applied' | 'dismissed' | 'rolled_back';
+  at: string;
+}
+
+/** Published plan updates (admins also get drafts), newest first. */
+export function usePlanUpdates() {
+  return useQuery({
+    queryKey: ['plan-updates'],
+    staleTime: 5 * 60_000,
+    queryFn: async () => {
+      const { data, error } = await supabase.from('plan_updates').select('*').order('rule_set_version', { ascending: false });
+      if (error) throw error;
+      return (data ?? []) as PlanUpdateRow[];
+    },
+  });
+}
+
+export function usePlanVersions(userId?: string | null) {
+  const { user } = useAuth();
+  const uid = userId ?? user?.id;
+  return useQuery({
+    queryKey: ['plan-versions', uid],
+    enabled: !!uid,
+    queryFn: async () => {
+      const { data, error } = await supabase.from('user_plan_versions').select('*').eq('user_id', uid!).order('version_no');
+      if (error) throw error;
+      return (data ?? []) as PlanVersionRow[];
+    },
+  });
+}
+
+export function usePlanChoices() {
+  const { user } = useAuth();
+  return useQuery({
+    queryKey: ['plan-choices', user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const { data, error } = await supabase.from('user_plan_update_choices').select('plan_update_id,choice,at').eq('user_id', user!.id);
+      if (error) throw error;
+      return (data ?? []) as PlanChoiceRow[];
+    },
+  });
+}
+
+/** Published updates newer than the member's pin that the member has not chosen on yet (the cockpit notice). */
+export function useOpenPlanUpdates(pinned: number | null | undefined) {
+  const ups = usePlanUpdates();
+  const choices = usePlanChoices();
+  return useMemo(() => {
+    if (pinned == null || !ups.data || !choices.data) return [];
+    const chosen = new Set(choices.data.map((c) => c.plan_update_id));
+    return ups.data.filter((u) => u.status === 'published' && u.rule_set_version > pinned && !chosen.has(u.id));
+  }, [pinned, ups.data, choices.data]);
 }
 
 export function useRulesAndBaselines() {
@@ -262,6 +351,7 @@ export function useRealtime() {
       })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'teams' }, inv('team'))
       .on('postgres_changes', { event: '*', schema: 'public', table: 'plan_changes', filter: `user_id=eq.${user.id}` }, inv('changes'))
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'plan_updates' }, inv('plan-updates'))
       .subscribe();
     return () => {
       supabase.removeChannel(ch);
@@ -358,35 +448,34 @@ export function useCoach(lang: import('../engine').Lang) {
   }, [prof.data, today]);
   const team = useTeam(targetTeamId);
   const gym = useMyGym();
+  const versions = usePlanVersions();
   return useMemo(() => {
     const raw = prof.data;
     // follow the gym's sim template unless the athlete saved an own build-up
     const row = raw && !raw.sim_protocol && gym.data?.protocol ? { ...raw, sim_protocol: gym.data.protocol } : raw;
     if (!isComplete(row)) return { ready: !prof.isLoading, row, profile: null } as const;
+    // the member's pinned rule set; coaching_rules from the database apply where no later version changed them
     const profile = toProfile(row);
-    const rules = rb.data?.rules;
+    const rs = rulesOf(profile);
+    const rules = rb.data ? effectiveCoaching(rs, rb.data.rules) : undefined;
     const baselines = rb.data?.baselines;
     const flare = morning.data ?? {};
-    const plan = generateSeason(profile, {
+    const planOpts: PlanOptions = {
       lang,
-      rules,
+      // the raw database values: generatePlan mixes them with the rule set of each day's version
+      rules: rb.data?.rules,
       baselines,
       flare,
       today,
       sharedSimDow: team.team?.shared_sim_dow ?? null,
       placeByDate: Object.fromEntries((entries.data ?? []).filter((e) => e.place).map((e) => [e.date, e.place!])),
-    });
+    };
+    // every day follows the rule set that was pinned on that date: an applied update never rewrites the past
+    const pins: RulePin[] = pinsOf(versions.data, row.rule_set_version ?? 1);
+    const plan = seasonWithPins(profile, planOpts, pins);
     const byDate: Record<string, EntryRow> = Object.fromEntries((entries.data ?? []).map((e) => [e.date, e]));
     // completed sessions show their frozen snapshot, so history is never rewritten
-    const weeks = plan.map((w) => ({
-      ...w,
-      sessions: w.sessions.map((s) => {
-        const e = byDate[s.date];
-        if (e?.planned && (e.completed || (e.planned as { extra?: boolean }).extra || (e.planned as { alt?: boolean }).alt))
-          return { ...(e.planned as unknown as Session), id: s.id, date: s.date, dow: s.dow, frozen: !!e.completed } as Session & { frozen?: boolean };
-        return s;
-      }),
-    }));
+    const weeks = freezeLogged(plan, byDate);
     const completed = Object.fromEntries((entries.data ?? []).filter((e) => e.completed).map((e) => [e.date, true]));
     // forecast and countdown follow the next A race once the main race is behind you
     const logs = logsOf(byDate);
@@ -394,10 +483,10 @@ export function useCoach(lang: import('../engine').Lang) {
     // the log feeds the chance: skipped sessions and missed target paces lower it, hitting them raises it
     const cur = { ...currentProfile(profile, today), adherence: comp == null || daysBetween(row.created_at.slice(0, 10), today) < 14 ? null : comp / 100, execution: executionOf(logs, today) };
     const model = raceModel(cur, today, baselines);
-    const adjust = evaluate(logs, flare, today, rules?.achillesStiffnessCeiling ?? 4);
+    const adjust = evaluate(logs, flare, today, (rules ?? rs.coaching).achillesStiffnessCeiling);
     const tm =
       team.partner && isComplete(team.partner) && isDoubles(cur.category)
-        ? teamModel(toAthlete(row), toAthlete(team.partner), cur.category, cur.goalSec, cur.raceDate, today, baselines)
+        ? teamModel(toAthlete(row), toAthlete(team.partner), cur.category, cur.goalSec, cur.raceDate, today, baselines, rs)
         : null;
     return {
       ready: true,
@@ -417,8 +506,11 @@ export function useCoach(lang: import('../engine').Lang) {
       team,
       logs,
       adjust,
+      planOpts,
+      pins,
+      versions: versions.data ?? null,
     } as const;
-  }, [prof.data, prof.isLoading, entries.data, morning.data, rb.data, team, gym.data, lang, today]);
+  }, [prof.data, prof.isLoading, entries.data, morning.data, rb.data, team, gym.data, versions.data, lang, today]);
 }
 
 // ---------------- mutations ----------------
@@ -434,6 +526,11 @@ export function useMutations() {
       const next = { ...(i >= 0 ? old[i] : base), ...patch };
       return i >= 0 ? old.map((e, k) => (k === i ? next : e)) : [...old, next];
     });
+
+  const afterPinChange = async (message: string, payload: Record<string, unknown>) => {
+    await supabase.from('plan_changes').insert({ user_id: uid, kind: 'plan_update', message, payload });
+    await Promise.all(['profile', 'plan-versions', 'plan-choices', 'changes'].map((k) => qc.invalidateQueries({ queryKey: [k] })));
+  };
 
   const api = {
     async saveEntry(date: string, patch: Partial<EntryRow>) {
@@ -494,6 +591,30 @@ export function useMutations() {
       });
       qc.invalidateQueries({ queryKey: ['benchmarks'] });
       return effect;
+    },
+    /** "Apply": store the current plan, pin the update's rule set from today, store the new plan, register the choice. */
+    async applyPlanUpdate(update: PlanUpdateRow, today: string, before: Week[], after: Week[], message: string) {
+      const { error } = await supabase.rpc('plan_apply_update', { _update: update.id, _from: today, _before: planSnapshot(before, today), _after: planSnapshot(after, today) });
+      if (error) throw error;
+      await afterPinChange(message, { plan_update_id: update.id, rule_set_version: update.rule_set_version });
+    },
+    /** "Roll back": a new plan version with the rule set of an earlier version, from today. */
+    async rollbackPlan(version: PlanVersionRow, today: string, before: Week[], after: Week[], message: string) {
+      const { error } = await supabase.rpc('plan_rollback', { _version: version.id, _from: today, _before: planSnapshot(before, today), _after: planSnapshot(after, today) });
+      if (error) throw error;
+      await afterPinChange(message, { restored_version_no: version.version_no, rule_set_version: version.rule_set_version });
+    },
+    /** "Not now": the plan stays as it is; the update stays available on its page. */
+    async dismissPlanUpdate(update: PlanUpdateRow) {
+      const { error } = await supabase.rpc('plan_dismiss_update', { _update: update.id });
+      if (error) throw error;
+      qc.invalidateQueries({ queryKey: ['plan-choices'] });
+    },
+    /** Stores the future plan with the newest plan version once (the start version of existing members has none). */
+    async recordPlanSnapshot(weeks: Week[], today: string) {
+      const { error } = await supabase.rpc('plan_record_snapshot', { _snapshot: planSnapshot(weeks, today) });
+      if (error) throw error;
+      qc.invalidateQueries({ queryKey: ['plan-versions'] });
     },
     async deleteBenchmark(row: ProfileRow, id: string, allRows: BenchmarkRow[]) {
       const baseline = (row.baseline as Calibration | null) ?? calibrationOf(toAthlete(row));
