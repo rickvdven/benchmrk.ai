@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { toast } from 'sonner';
 import { fmtHms } from '../engine';
 import { useProfileRow } from '../data/hooks';
-import { absoluteCardLink, createCard, deleteCard, downloadBlob, fetchCardImage, shareCardFile } from '../lib/cardApi';
+import { absoluteCardLink, createCard, deleteCard, downloadBlob, fetchCardImage, shareCardFile, warmCard } from '../lib/cardApi';
 import type { OfferSpec } from '../lib/cardOffers';
 import { captionsFor, whatsappFor } from '../lib/cardTexts';
 import { CARD_SIZE, fmtDelta, cardImageUrl, type CardData, type CardFormat } from '../lib/cards';
@@ -110,6 +110,7 @@ function OfferDialog({ spec, onClose }: { spec: OfferSpec; onClose: () => void }
   const ready = state === 'ready' && !!code;
 
   const act = async (fn: () => Promise<void> | void) => {
+    if (!acted.current && codeRef.current) warmCard(codeRef.current);
     acted.current = true;
     setBusy(true);
     try {

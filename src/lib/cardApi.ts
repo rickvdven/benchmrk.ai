@@ -33,6 +33,14 @@ export async function fetchCardImage(code: string, format: CardFormat): Promise<
   return r.blob();
 }
 
+/**
+ * Draws the link preview (og) and the feed card once the owner shares, so the CDN has them before a crawler or a friend asks.
+ * A cold render takes a few seconds; link previews (WhatsApp, LinkedIn) give up sooner than that.
+ */
+export function warmCard(code: string) {
+  for (const f of ['og', 'square'] as const) void fetch(cardImageUrl(code, f)).catch(() => {});
+}
+
 export function downloadBlob(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');

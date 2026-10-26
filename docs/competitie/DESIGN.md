@@ -81,7 +81,7 @@ Er zijn vier typen, elk in drie formaten: de drie uit fase 1 plus de challengeka
 
 ## 2. Gym-ranglijst (desktop en mobiel)
 
-Route in de app: `/gym`. Zichtbaar voor leden en beheerders van die gym. Wie in de stand "Privé" staat, ziet de lijst wel maar staat er niet op.
+Route in de app: `/ranglijst` (`/gym` is de openbare marketingpagina voor gyms en PT's). Zichtbaar voor leden en beheerders van die gym. Wie in de stand "Privé" staat, ziet de lijst wel maar staat er niet op.
 
 ### Opbouw
 

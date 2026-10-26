@@ -5,6 +5,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const out = process.argv[2];
+const lang = process.argv[3] ?? 'nl';
 const bundle = join(root, 'node_modules/.cache/card-render/cardImage.mjs'); // inside the repo so the external resvg package resolves
 if (!out) throw new Error('usage: node scripts/render-sample-cards.mjs <output dir>');
 mkdirSync(out, { recursive: true });
@@ -14,6 +15,7 @@ const f = (n) => readFileSync(`${root}/server/fonts/${n}`);
 const fonts = [
   { name: 'Archivo', data: f('archivo-400.ttf'), weight: 400, style: 'normal' }, { name: 'Archivo', data: f('archivo-700.ttf'), weight: 700, style: 'normal' },
   { name: 'Archivo', data: f('archivo-800.ttf'), weight: 800, style: 'normal' }, { name: 'Archivo Cond', data: f('archivo-800-cond.ttf'), weight: 800, style: 'normal' },
+  { name: 'Noto Sans KR', data: f('noto-sans-kr-700.ttf'), weight: 700, style: 'normal' },
   { name: 'IBM Plex Mono', data: f('plex-mono-400.woff'), weight: 400, style: 'normal' }, { name: 'IBM Plex Mono', data: f('plex-mono-600.woff'), weight: 600, style: 'normal' },
 ];
 const cards = {
@@ -24,7 +26,7 @@ const cards = {
 mkdirSync(`${out}/png`, { recursive: true });
 for (const [k, c] of Object.entries(cards)) for (const fmt of ['story', 'square', 'og']) {
   const t0 = Date.now();
-  const png = await renderCardPng(c, fmt, fonts);
+  const png = await renderCardPng({ ...c, data: { ...c.data, lang } }, fmt, fonts);
   writeFileSync(`${out}/png/${k}-${fmt}.png`, png);
   console.log(k, fmt, png.length, Date.now() - t0 + 'ms');
 }
