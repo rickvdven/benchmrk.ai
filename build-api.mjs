@@ -17,7 +17,9 @@ await build({
   outbase: 'server',
   outExtension: { '.js': '.mjs' },
   banner: { js: "import { createRequire as __cr } from 'module'; const require = __cr(import.meta.url);" },
-  external: ['@vercel/node'],
+  // resvg is a native package: it stays external and Vercel installs it; fonts are embedded as binary data
+  external: ['@vercel/node', '@resvg/resvg-js'],
+  loader: { '.ttf': 'binary', '.woff': 'binary' },
   logLevel: 'warning',
 });
 console.log('api bundled:', entries.join(', '));

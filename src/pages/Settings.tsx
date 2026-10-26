@@ -5,6 +5,8 @@ import { RaceEditor } from '../components/Season';
 import { PlacesEditor } from '../components/Places';
 import { SimProtocolEditor } from '../components/SimProtocolEditor';
 import { GymField } from '../components/Gym';
+import { PrivacySettings } from '../components/PrivacySettings';
+import { ct } from '../lib/competition';
 import { toast } from 'sonner';
 import clsx from 'clsx';
 import { useQueryClient } from '@tanstack/react-query';
@@ -18,7 +20,7 @@ import { ScheduleEditor, StationEditor } from '../components/editors';
 import { PayPanel } from '../components/Paywall';
 
 const CATS: Category[] = ['solo_open', 'solo_pro', 'doubles_open', 'doubles_pro', 'doubles_mixed', 'relay_open'];
-type Tab = 'profile' | 'races' | 'physio' | 'stations' | 'schedule' | 'gym' | 'account';
+type Tab = 'profile' | 'races' | 'physio' | 'stations' | 'schedule' | 'privacy' | 'gym' | 'account';
 
 export default function SettingsPage() {
   const { t, lang, setLang, units, setUnits } = useI18n();
@@ -31,7 +33,7 @@ export default function SettingsPage() {
   if (new URLSearchParams(window.location.search).get('tab') === 'invite') window.history.replaceState(null, '', '/invite');
   const [tab, setTab] = useState<Tab>(() => {
     const q = new URLSearchParams(window.location.search).get('tab');
-    return (['profile', 'races', 'physio', 'stations', 'schedule', 'gym', 'account'].includes(q ?? '') ? q : 'profile') as Tab;
+    return (['profile', 'races', 'physio', 'stations', 'schedule', 'privacy', 'gym', 'account'].includes(q ?? '') ? q : 'profile') as Tab;
   });
   const [d, setD] = useState<ProfileRow | null>(null);
   const [goalOk, setGoalOk] = useState(true);
@@ -71,6 +73,7 @@ export default function SettingsPage() {
     { k: 'physio', l: t('st.physio') },
     { k: 'stations', l: t('st.stations') },
     { k: 'schedule', l: t('st.schedule') },
+    { k: 'privacy', l: ct(lang, 'st.privacy') },
     { k: 'gym', l: t('st.gym') },
     { k: 'account', l: t('st.account') },
   ];
@@ -198,6 +201,7 @@ export default function SettingsPage() {
           </>
         )}
 
+        {tab === 'privacy' && <PrivacySettings />}
         {tab === 'gym' && (
           <>
             <p className="text-sm text-muted">{t('st.gymIntro')}</p>

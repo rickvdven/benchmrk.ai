@@ -41,7 +41,7 @@ export function SiteHeader({ items }: { items: NavItem[] }) {
 }
 
 /** Footer of the public pages: disclaimer, "not affiliated with HYROX", guides and sources. */
-export function SiteFooter({ guides, notAffiliated }: { guides: string; notAffiliated: string }) {
+export function SiteFooter({ guides, notAffiliated }: { guides?: string; notAffiliated: string }) {
   const { lang } = useI18n();
   const disclaimer = DISCLAIMER[lang] ?? DISCLAIMER.en;
   return (
@@ -52,9 +52,11 @@ export function SiteFooter({ guides, notAffiliated }: { guides: string; notAffil
           <p>{notAffiliated}</p>
         </div>
         <div className="flex gap-5">
-          <a href="/nl/gids" className="text-ink-3 underline">
-            {guides}
-          </a>
+          {guides && (
+            <a href="/nl/gids" className="text-ink-3 underline">
+              {guides}
+            </a>
+          )}
           <Link to="/science" className="text-ink-3 underline">
             {disclaimer.sources}
           </Link>

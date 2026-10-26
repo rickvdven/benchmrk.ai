@@ -1,6 +1,7 @@
 import { lazy, Suspense, type ComponentType, type ReactNode } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { Layout } from './components/Layout';
+import { CardOfferProvider } from './components/CardOffer';
 import { Spinner } from './components/ui';
 import { useAdminQuery, useAuth, useIsAdmin, useIsGymAccount, useProfileRow, useSubscription } from './data/hooks';
 import { membershipOk, PaywallScreen } from './components/Paywall';
@@ -38,6 +39,7 @@ const Science = lazyRetry(() => import('./pages/Science'));
 const InvitePage = lazyRetry(() => import('./pages/Invite'));
 const MyGym = lazyRetry(() => import('./pages/MyGym'));
 const Gym = lazyRetry(() => import('./pages/Gym'));
+const CardPage = lazyRetry(() => import('./pages/CardPage'));
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { user, ready } = useAuth();
@@ -80,7 +82,7 @@ function Home() {
   return user ? <Navigate to="/cockpit" replace /> : <Landing />;
 }
 
-export default function App() {
+function AppRoutes() {
   if (!configured)
     return <div className="p-8 text-center text-muted">Missing VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY.</div>;
   const app = (el: ReactNode) => (
@@ -102,6 +104,7 @@ export default function App() {
           <Route path="/recovery" element={<Recovery />} />
           <Route path="/science" element={<Science />} />
           <Route path="/gym" element={<Gym />} />
+          <Route path="/k/:code" element={<CardPage />} />
           <Route path="/settings" element={app(<SettingsPage />)} />
           <Route path="/invite" element={app(<InvitePage />)} />
           <Route path="/my-gym" element={<RequireAuth><MyGym /></RequireAuth>} />
@@ -110,5 +113,14 @@ export default function App() {
         </Routes>
       </Suspense>
     </Layout>
+  );
+}
+
+/** Any screen can offer a shareable card through the provider; it renders the dialog above the routes. */
+export default function App() {
+  return (
+    <CardOfferProvider>
+      <AppRoutes />
+    </CardOfferProvider>
   );
 }

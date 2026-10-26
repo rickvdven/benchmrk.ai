@@ -10,15 +10,18 @@ import {
   fmtMmss,
   parseMmss,
   replay,
+  todayISO,
   type BenchmarkEntry,
   type Calibration,
   type Session,
 } from '../engine';
 import { useI18n, type I18nKey } from '../lib/i18n';
 import { supabase } from '../lib/supabase';
-import { useAuth, useBenchmarks, useKnowledge, useMutations, useMyGym, useProfileRow } from '../data/hooks';
+import { useAuth, useBenchmarks, useKnowledge, useMutations, useMyGym, useProfileRow, useRulesAndBaselines } from '../data/hooks';
+import { useCardOffer } from './CardOffer';
+import { benchmarkPr } from '../lib/cardOffers';
 import { Link } from 'react-router-dom';
-import { toAthlete, toBenchmark, type EntryRow, type ProfileRow } from '../data/mapping';
+import { toAthlete, toBenchmark, toProfile, type EntryRow, type ProfileRow } from '../data/mapping';
 import { Field, Modal, NumInput, TimeInput } from './ui';
 import { AnalysisPanel } from './Analysis';
 import { PlacePicker } from './Places';
@@ -368,6 +371,8 @@ export function BenchmarkDialog({
 }) {
   const { t, lang } = useI18n();
   const bms = useBenchmarks();
+  const rb = useRulesAndBaselines();
+  const { offer } = useCardOffer();
   const { saveBenchmark, saveEntry } = useMutations();
   const [pace, setPace] = useState<number | null>(existing?.paceSec ?? null);
   const [hr, setHr] = useState<number | null>(existing?.avgHr ?? null);
@@ -469,7 +474,7 @@ export function BenchmarkDialog({
             if (!entry) return toast.error(t('bm.errPace'));
             setBusy(true);
             try {
-              await saveBenchmark(row, entry, bms.data ?? []);
+              const effect = await saveBenchmark(row, entry, bms.data ?? []);
               const { frozen: _f, ...planned } = (session ?? {}) as Session & { frozen?: boolean };
               await saveEntry(date, {
                 completed: true,
@@ -481,6 +486,12 @@ export function BenchmarkDialog({
               toast.success(t('common.saved'));
               onClose();
               onSaved?.();
+              // a faster threshold than before is a personal record: offer a card (not when an old result was edited)
+              if (!existing) {
+                const previous = (bms.data ?? []).filter((x) => x.id !== entry.id && x.date < entry.date).map((x) => x.date).sort().pop() ?? null;
+                const pr = benchmarkPr({ full: toProfile(row), effect, n: number, date: entry.date, today: todayISO(), lang, base: rb.data?.baselines, previousDate: previous });
+                if (pr) offer(pr);
+              }
             } catch (e) {
               toast.error((e as Error).message);
             } finally {
