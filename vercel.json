@@ -5,6 +5,14 @@
       "destination": "/demo.html"
     },
     {
+      "source": "/api/card/:code.png",
+      "destination": "/api/card?code=:code"
+    },
+    {
+      "source": "/k/:code",
+      "destination": "/api/k?code=:code"
+    },
+    {
       "source": "/nl/gids",
       "destination": "/nl/gids/index.html"
     },
@@ -129,5 +137,10 @@
       "destination": "/demo/benchmrk-demo-nl.vtt",
       "permanent": true
     }
-  ]
+  ],
+  "functions": {
+    "api/k.mjs": {
+      "includeFiles": "dist/index.html"
+    }
+  }
 }

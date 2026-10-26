@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { chanceTone } from '../engine';
 import { ChanceInfo, GoalGap, GoalSuggestion, gapTone } from '../components/Chance';
 import { chanceBoosters } from '../engine';
@@ -7,7 +7,10 @@ import clsx from 'clsx';
 import { toast } from 'sonner';
 import { Award, ShieldAlert } from 'lucide-react';
 import { STATIONS, stationLabel, goalStationTargets, radarScores, weekMilestone, daysBetween, fmtHms, fmtMmss, mondayOf, phaseLabel, weekOf, zones, type Session } from '../engine';
-import { useCoach, useMutations, usePlanChanges, useTeam } from '../data/hooks';
+import { useAuth, useBenchmarks, useCoach, useMutations, usePlanChanges, useTeam } from '../data/hooks';
+import { toBenchmark } from '../data/mapping';
+import { useCardOffer } from '../components/CardOffer';
+import { markSeen, predictionData, predictionDue, progressDue, progressOffer, readSeen } from '../lib/cardOffers';
 import { useI18n, type I18nKey } from '../lib/i18n';
 import { Notice, PageHeader, Spinner, Stat } from '../components/ui';
 import { SessionChips, SessionDialog, BenchmarkDialog } from '../components/session';
@@ -29,6 +32,42 @@ export default function Cockpit() {
   const [open, setOpen] = useState<Session | null>(null);
   const [bench, setBench] = useState(false);
   const [editMorning, setEditMorning] = useState(false);
+  const { user } = useAuth();
+  const { offer } = useCardOffer();
+  const bms = useBenchmarks();
+  const offered = useRef(false);
+  // offer a shareable card: the first prediction after the intake, and a progress card every 4 weeks
+  useEffect(() => {
+    if (offered.current || !user || !c.profile || !bms.data) return;
+    try {
+      if (sessionStorage.getItem('rox:card-offered')) return;
+    } catch {
+      /* ignore */
+    }
+    const seen = readSeen(user.id);
+    let spec = null;
+    if (predictionDue({ createdAt: c.row.created_at, today: c.today, seen })) {
+      spec = predictionData(c.profile, c.model, lang);
+      markSeen(user.id, { pred: c.today });
+      offered.current = true;
+      offer({ type: 'prediction', data: spec });
+    } else if (progressDue({ planStart: c.fullProfile.planStart, today: c.today, seen })) {
+      const o = progressOffer({ full: c.fullProfile, row: c.row, benchmarks: bms.data.map(toBenchmark), today: c.today, lang, liveFinishSec: c.model.projected.finishSec, base: c.baselines });
+      if (o) {
+        markSeen(user.id, { prog: c.today });
+        offered.current = true;
+        offer(o);
+      }
+    }
+    if (offered.current) {
+      try {
+        sessionStorage.setItem('rox:card-offered', '1');
+      } catch {
+        /* ignore */
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id, c.profile, bms.data]);
   const [dismissed, setDismissed] = useState<string | null>(() => {
     try {
       return localStorage.getItem('rox:dismiss-adjust');
