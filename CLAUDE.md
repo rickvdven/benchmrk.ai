@@ -32,17 +32,19 @@ Deploy: Merge naar main = automatisch live via Vercel; elke andere branch krijgt
   - `raceModel.ts` kansmodel (`goalChance`) · `adaptive.ts` uitvoering/compliance · `boost.ts` kansverhogers
   - `notes.ts` notities lezen · `injury.ts` + `rehab.ts` blessures en return-to-run
   - `places.ts` trainingsplekken en materiaal · `extra.ts` extra training met belastingsbudget
+  - `rules/` regelsets: `v1.ts` = huidig gedrag, `versions.ts` latere versies (alleen verschillen), `history.ts` versie per datum, `preview.ts` voor/na. Uitleg: `docs/planupdates/README.md`
 - `src/data/hooks.tsx` – data ophalen + `useCoach` (combineert profiel, logs en engine)
 - `src/pages/` – Landing, Cockpit, Plan, Settings, Science, admin/* · `src/components/` – UI-onderdelen
 - `src/lib/i18n.tsx` + `src/locales/*.json` – talen EN/NL/DE/ES/KO. Taal: `?lang=` > eigen keuze > IP-land (`/api/geo`) > browser
 - `server/` – API-routes (notes, whiteboard, notify, tts, geo, unsubscribe, cron) · `server/_lib/` – mail, templates, Supabase-client
 - `content/` – gidsen en website-pagina's in Markdown (zie `content/README.md`, instructie in `COPY_AGENT.md`); bij de build gerenderd tot statische HTML onder `/nl/…`, `/en/…`, `/de/…`, `/es/…` en `/ko/…` (vertalingen via `translationOf`, met hreflang), plus `sitemap.xml` en `robots.txt`
-- `supabase/migrations/` – 001–020, alle toegepast (020 = gym self-service: `gym_managers` en de `gym_*`-RPC's draaien op productie). Nieuwe migratie = volgend nummer; toepassen via Supabase SQL-editor of Management API
+- `supabase/migrations/` – 001–020 toegepast (020 = gym self-service: `gym_managers` en de `gym_*`-RPC's draaien op productie); 022 = planupdates (nieuw, nog toe te passen). Nieuwe migratie = volgend nummer; toepassen via Supabase SQL-editor of Management API. `npm run test:db` draait alle migraties plus `supabase/tests/*.test.sql` op een lokale Postgres
 - Gyms: een account met rol `gym` (tabel `user_roles`) beheert via `/my-gym` zijn eigen gym en simprogramma's (`gym_managers`, `sim_protocols.gym_id`, RPC's `gym_*`). Admins doen hetzelfde via Admin → Gyms → Beheren (`src/components/GymManager.tsx`). Openbare pagina `/gym` (`src/pages/Gym.tsx`, teksten in `src/locales/gym.<taal>.json`) voor gyms en PT's; commissie en prijs komen uit `app_settings`
 
 ## Afspraken
 - Alle UI-teksten in 5 talen (minimaal EN + NL volledig; NL is de hoofdtaal van de gebruikers)
 - Merk: "Benchmrk" in tekst, wordmark BENCH**MRK** (accentkleur `volt` #d4ff3a). Gebruik **geen** "ROX"/"HYROX" in merk- of productnamen (HYROX-merkrichtlijnen); "HYROX" alleen beschrijvend
 - Wetenschappelijke claims horen bij een bron op `/science` (tabel met bronnen via migraties)
+- Een regelwijziging op basis van onderzoek = nieuwe regelset + planupdate; nooit stil het plan van een lid wijzigen. Bronnen archiveren, nooit wissen
 - Geen geheimen in de code. Sleutels staan in Vercel env vars en lokaal in `.env.local` (git-ignored)
 - Na wijzigingen: typecheck + tests groen, `build:api` als server/ is aangepast

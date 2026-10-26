@@ -46,7 +46,7 @@ function Body({ intro, changes, changesTitle, preview, actions }: { intro: React
         <h2 className="mb-3 text-lg font-bold">{pt(lang, 'page.forecast')}</h2>
         <ForecastCompare preview={preview} />
       </section>
-      <div className="sticky bottom-3 z-10 flex flex-wrap gap-2 rounded-xl border border-line bg-panel/95 p-3 shadow-paper backdrop-blur">{actions}</div>
+      <div className="sticky bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-10 flex flex-wrap gap-2 md:bottom-3 rounded-xl border border-line bg-panel/95 p-3 shadow-paper backdrop-blur">{actions}</div>
     </div>
   );
 }
