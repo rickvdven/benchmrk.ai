@@ -1,7 +1,8 @@
 // Builds src/locales/competition.<taal>.json from the key tables in docs/competitie/COPY.md.
 // COPY.md is leading: change the text there, then run `node scripts/competition-locale.mjs`.
-// NL and EN come from COPY.md. DE, ES and KO follow later: until then they carry the English text, so no key is missing.
-import { readFileSync, writeFileSync } from 'node:fs';
+// NL and EN come from COPY.md. DE, ES and KO come from docs/competitie/translations/<taal>.json; a key missing there
+// carries the English text, so no key is ever missing in the app (the test in competition.test.ts flags such keys).
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -27,7 +28,12 @@ export function build(prefixes = PREFIXES) {
   const rows = parseCopy(readFileSync(join(root, 'docs/competitie/COPY.md'), 'utf8'));
   const keys = Object.keys(rows).filter((k) => prefixes.some((p) => k.startsWith(p)));
   const pick = (lang) => Object.fromEntries(keys.sort().map((k) => [k, rows[k][lang === 'nl' ? 'nl' : 'en']]));
-  return { keys, files: { nl: pick('nl'), en: pick('en'), de: pick('en'), es: pick('en'), ko: pick('en') } };
+  const tr = (lang) => {
+    const f = join(root, `docs/competitie/translations/${lang}.json`);
+    const t = existsSync(f) ? JSON.parse(readFileSync(f, 'utf8')) : {};
+    return Object.fromEntries(keys.sort().map((k) => [k, t[k] ?? rows[k].en]));
+  };
+  return { keys, files: { nl: pick('nl'), en: pick('en'), de: tr('de'), es: tr('es'), ko: tr('ko') } };
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

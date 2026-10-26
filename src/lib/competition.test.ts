@@ -12,8 +12,15 @@ describe('competition texts', () => {
     const keys = Object.keys(files.en).sort();
     for (const l of ['nl', 'de', 'es', 'ko'] as const) expect(Object.keys(files[l]).sort()).toEqual(keys);
   });
-  it('uses the same placeholders in NL and EN for every key', () => {
-    for (const k of Object.keys(files.en)) expect(placeholders(files.nl[k]), k).toEqual(placeholders(files.en[k]));
+  it('uses the same placeholders in every language for every key', () => {
+    for (const l of ['nl', 'de', 'es', 'ko'] as const) for (const k of Object.keys(files.en)) expect(placeholders(files[l][k]), `${l} ${k}`).toEqual(placeholders(files.en[k]));
+  });
+  it('has real DE, ES and KO translations, not the English text', () => {
+    for (const l of ['de', 'es', 'ko'] as const) {
+      const same = Object.keys(files.en).filter((k) => files[l][k] === files.en[k] && /[a-z]{4}/i.test(files.en[k]));
+      // a few texts are the same word in another language (brand, division names, "Story", "Roxzone"); more than that means a missing translation
+      expect(same.length, `${l}: ${same.join(', ')}`).toBeLessThan(60);
+    }
   });
   it('has no empty text', () => {
     for (const l of Object.values(files)) for (const [k, v] of Object.entries(l)) expect(v.trim().length, k).toBeGreaterThan(0);
@@ -33,7 +40,7 @@ describe('competition texts', () => {
   });
   it('fills placeholders and falls back to English, then to the key', () => {
     expect(ct('nl', 'card.pred.goal', { goal: '1:20:00' })).toBe('doel 1:20:00');
-    expect(ct('de', 'card.pred.goal', { goal: '1:20:00' })).toBe('goal 1:20:00');
+    expect(ct('de', 'card.pred.goal', { goal: '1:20:00' })).toBe(files.de['card.pred.goal'].replace('{goal}', '1:20:00'));
     expect(ct('xx', 'card.pred.goal', { goal: '1:20:00' })).toBe('goal 1:20:00');
     expect(ct('en', 'no.such.key')).toBe('no.such.key');
     expect(ct('en', 'card.pred.goal')).toBe('goal {goal}');

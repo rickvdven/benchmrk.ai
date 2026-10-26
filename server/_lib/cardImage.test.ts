@@ -42,3 +42,39 @@ describe('card images', () => {
     expect(dims(png)).toEqual({ w: 1200, h: 630 });
   }, 60_000);
 });
+
+/** The code points a TTF covers, read from its cmap (formats 4 and 12 are all a subset needs). */
+function coveredCodePoints(buf: Buffer): Set<number> {
+  const out = new Set<number>();
+  const n = buf.readUInt16BE(4);
+  let cmapAt = 0;
+  for (let i = 0; i < n; i++) if (buf.toString('ascii', 12 + i * 16, 16 + i * 16) === 'cmap') cmapAt = buf.readUInt32BE(20 + i * 16);
+  const subs = buf.readUInt16BE(cmapAt + 2);
+  for (let i = 0; i < subs; i++) {
+    const t = cmapAt + buf.readUInt32BE(cmapAt + 8 + i * 8);
+    const fmt = buf.readUInt16BE(t);
+    if (fmt === 12) {
+      for (let g = 0, ng = buf.readUInt32BE(t + 12); g < ng; g++) {
+        const a = t + 16 + g * 12;
+        for (let c = buf.readUInt32BE(a); c <= buf.readUInt32BE(a + 4); c++) out.add(c);
+      }
+    } else if (fmt === 4) {
+      const sc = buf.readUInt16BE(t + 6) / 2;
+      for (let g = 0; g < sc; g++) {
+        const end = buf.readUInt16BE(t + 14 + g * 2);
+        const start = buf.readUInt16BE(t + 16 + sc * 2 + g * 2);
+        for (let c = start; c <= end && c < 0xffff; c++) out.add(c);
+      }
+    }
+  }
+  return out;
+}
+
+describe('korean card font', () => {
+  it('has every Hangul syllable of the Korean texts (rebuild with scripts/korean-card-font.py when this fails)', () => {
+    const texts = JSON.parse(readFileSync(new URL('../../src/locales/competition.ko.json', import.meta.url), 'utf8')) as Record<string, string>;
+    const covered = coveredCodePoints(f('noto-sans-kr-700.ttf'));
+    const missing = [...new Set(Object.values(texts).join(''))].filter((c) => c.charCodeAt(0) > 0x2e80 && !covered.has(c.charCodeAt(0)));
+    expect(missing).toEqual([]);
+  });
+});
