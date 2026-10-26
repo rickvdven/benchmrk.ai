@@ -20,3 +20,7 @@ export * from './boost';
 export * from './notes';
 export * from './rehab';
 export * from './places';
+export * from './rules';
+export * from './rules/history';
+export * from './rules/preview';
+export { demoAthletes } from './rules/demo';

@@ -1,3 +1,4 @@
+import { rulesOf } from './rules';
 import { addDays, daysBetween } from './time';
 import { z1Cap, z2Cap } from './zones';
 import { injuryProfile, prehabLine } from './injury';
@@ -207,7 +208,7 @@ export interface ExtraContext {
 }
 
 /** Rough load of a session: minutes × intensity (session-RPE style), for the weekly budget. */
-function sessionLoad(x: Session, T: number): number {
+export function sessionLoad(x: Session, T: number): number {
   const runMin = (km?: number, f = 1.22) => ((km ?? 6) * T * f) / 60;
   switch (x.type) {
     case 'threshold':
@@ -263,9 +264,10 @@ export function suggestExtra(date: string, focusIn: ExtraFocus, c: ExtraContext)
   const extrasThisWeek = (week?.sessions ?? []).filter((x) => x.extra && x.date !== date && x.type !== 'recovery').length;
   if (extrasThisWeek >= 2 && focusIn !== 'recovery' && focusIn !== 'mobility') rest.push(tr(lang, 'budgetOut', { n: extrasThisWeek }));
 
-  const inj = injuryProfile(a.flags);
-  const z2 = z2Cap(a.lthr, a.maxHr);
-  const z1 = z1Cap(a.lthr, a.maxHr);
+  const rs = rulesOf(p);
+  const inj = injuryProfile(a.flags, rs);
+  const z2 = z2Cap(a.lthr, a.maxHr, rs);
+  const z1 = z1Cap(a.lthr, a.maxHr, rs);
   const weekKm = week ? week.sessions.reduce((n, s) => n + (s.km ?? 0), 0) : 25;
 
   // ---- "let the coach choose": where is the biggest gain, given today's state?
@@ -330,7 +332,7 @@ export function suggestExtra(date: string, focusIn: ExtraFocus, c: ExtraContext)
       session = { ...base, type: 'easy', title: tr(lang, 'ergTitle'), description: tr(lang, 'ergDesc', { cap: z2 }), hrCap: z2 };
     } else {
       const km = Math.max(5, Math.min(12, Math.round(weekKm * 0.18)));
-      session = { ...base, type: 'easy', title: tr(lang, 'cardioTitle', { km }), description: tr(lang, 'cardioDesc', { km, cap: z2 }), hrCap: z2, km, targetPaceSec: Math.round(a.thresholdPaceSec * 1.22) };
+      session = { ...base, type: 'easy', title: tr(lang, 'cardioTitle', { km }), description: tr(lang, 'cardioDesc', { km, cap: z2 }), hrCap: z2, km, targetPaceSec: Math.round(a.thresholdPaceSec * rs.pace.easyFactor) };
     }
     if (c.place && session.type === 'easy' && session.km) {
       const adapted = adaptRunToPlace(lang, session, c.place, { lthr: a.lthr, maxHr: a.maxHr, T: a.thresholdPaceSec, z2 });

@@ -5,6 +5,7 @@ import { generatePlan, applySharedSimDay, defaultSchedule, type PlanOptions } fr
 import { resolveSchedule } from './schedule';
 import { isDoubles, isPro } from './raceModel';
 import type { Category, Profile, RaceEvent, Session, Week } from './types';
+import { rulesOf } from './rules';
 
 const HARD: Session['type'][] = ['threshold', 'intervals', 'sim', 'long'];
 
@@ -113,11 +114,11 @@ export function generateSeason(p: Profile, opts: PlanOptions = {}): Week[] {
       benchmarkText: undefined,
     } as Partial<Session>);
     const before = byDate.get(addDays(r.date, -1));
-    if (before && before.type !== 'rest') Object.assign(before, { type: 'easy', title: tx(lang, 'shake.title'), description: tx(lang, 'shake.desc'), hrCap: z1Cap(a.lthr, a.maxHr), km: 3, targetPaceSec: null, benchmark: undefined, benchmarkText: undefined });
+    if (before && before.type !== 'rest') Object.assign(before, { type: 'easy', title: tx(lang, 'shake.title'), description: tx(lang, 'shake.desc'), hrCap: z1Cap(a.lthr, a.maxHr, rulesOf(p)), km: 3, targetPaceSec: null, benchmark: undefined, benchmarkText: undefined });
     const before2 = byDate.get(addDays(r.date, -2));
     if (r.priority === 'B' && before2 && HARD.includes(before2.type)) Object.assign(before2, easy(before2, p, lang));
     const after = byDate.get(addDays(r.date, 1));
-    if (after && after.type !== 'rest') Object.assign(after, { type: 'recovery', title: tx(lang, 'rec.title'), description: tx(lang, 'race.after'), hrCap: z1Cap(a.lthr, a.maxHr), km: undefined, targetPaceSec: null, benchmark: undefined, benchmarkText: undefined });
+    if (after && after.type !== 'rest') Object.assign(after, { type: 'recovery', title: tx(lang, 'rec.title'), description: tx(lang, 'race.after'), hrCap: z1Cap(a.lthr, a.maxHr, rulesOf(p)), km: undefined, targetPaceSec: null, benchmark: undefined, benchmarkText: undefined });
     const after2 = byDate.get(addDays(r.date, 2));
     if (r.priority === 'B' && after2 && HARD.includes(after2.type)) Object.assign(after2, easy(after2, p, lang));
   }
@@ -125,9 +126,9 @@ export function generateSeason(p: Profile, opts: PlanOptions = {}): Week[] {
 }
 
 function easy(_s: Session, p: Profile, lang: Parameters<typeof tx>[0]): Partial<Session> {
-  const cap = z2Cap(p.athlete.lthr, p.athlete.maxHr);
+  const cap = z2Cap(p.athlete.lthr, p.athlete.maxHr, rulesOf(p));
   const km = 5;
-  return { type: 'easy', title: tx(lang, 'easy.title', { km }), description: tx(lang, 'easy.desc', { km, cap }), hrCap: cap, km, targetPaceSec: Math.round(p.athlete.thresholdPaceSec * 1.22), rpe: null, benchmark: undefined, benchmarkText: undefined, focusStations: undefined };
+  return { type: 'easy', title: tx(lang, 'easy.title', { km }), description: tx(lang, 'easy.desc', { km, cap }), hrCap: cap, km, targetPaceSec: Math.round(p.athlete.thresholdPaceSec * rulesOf(p).pace.easyFactor), rpe: null, benchmark: undefined, benchmarkText: undefined, focusStations: undefined };
 }
 
 function afterRace(date: string, daysAfter: number, schedule: Session['type'][], p: Profile, lang: Parameters<typeof tx>[0], raceName?: string): Session {
@@ -136,7 +137,7 @@ function afterRace(date: string, daysAfter: number, schedule: Session['type'][],
   const planned = schedule[dow];
   const a = p.athlete;
   if (planned === 'rest') return { ...base, type: 'rest', title: tx(lang, 'rest.title'), description: tx(lang, 'rest.desc') };
-  if (daysAfter <= 2) return { ...base, type: 'recovery', title: tx(lang, 'rec.title'), description: tx(lang, 'race.after'), hrCap: z1Cap(a.lthr, a.maxHr) };
+  if (daysAfter <= 2) return { ...base, type: 'recovery', title: tx(lang, 'rec.title'), description: tx(lang, 'race.after'), hrCap: z1Cap(a.lthr, a.maxHr, rulesOf(p)) };
   const e = easy(base, p, lang);
   return { ...base, ...e, description: (raceName ? tx(lang, 'rec.week', { name: raceName }) + '\n' : '') + e.description } as Session;
 }

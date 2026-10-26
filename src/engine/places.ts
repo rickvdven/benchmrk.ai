@@ -135,7 +135,7 @@ export function adaptRunToPlace(
   lang: Lang,
   s: Partial<Session>,
   place: Place,
-  hr: { lthr: number; maxHr: number; T: number; z2: number },
+  hr: { lthr: number; maxHr: number; T: number; z2: number; easyFactor?: number },
 ): Partial<Session> | null {
   if (!s.type || !RUN_TYPES.includes(s.type) || s.cross) return null;
   const has = (i: Item) => place.items.includes(i);
@@ -151,6 +151,6 @@ export function adaptRunToPlace(
     const n = 5;
     return { ...s, type: 'threshold', title: fill(L(lang).noRunT, { n }), description: [here, fill(L(lang).noRunD, { n, kit, lo, hi, place: place.name })].join('\n'), targetPaceSec: null, km: undefined, hrCap: hi, cross: true, benchmark: undefined, benchmarkText: undefined };
   }
-  const min = Math.max(25, Math.min(90, Math.round(((s.km ?? 6) * hr.T * 1.22) / 60 / 5) * 5));
+  const min = Math.max(25, Math.min(90, Math.round(((s.km ?? 6) * hr.T * (hr.easyFactor ?? 1.22)) / 60 / 5) * 5));
   return { ...s, title: fill(L(lang).noRunZ2T, { kit, min }), description: [here, fill(L(lang).noRunZ2D, { kit, min, cap: hr.z2, place: place.name })].join('\n'), targetPaceSec: null, km: undefined, hrCap: hr.z2, cross: true };
 }

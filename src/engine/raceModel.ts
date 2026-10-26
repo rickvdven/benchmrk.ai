@@ -2,6 +2,7 @@ import { daysBetween } from './time';
 import type { Athlete, Category, Profile, Sex, Station, StationMap, Execution } from './types';
 import { STATIONS } from './types';
 import { injuryProfile } from './injury';
+import { rulesOf, V1, type RuleSet } from './rules';
 
 export const isDoubles = (c: Category) => c.startsWith('doubles');
 export const isPro = (c: Category) => c.endsWith('_pro');
@@ -34,27 +35,27 @@ export function weightClass(category: Category, sex: Sex): 'light' | 'medium' | 
 }
 
 /** Factor applied to the mid-pack baseline for a 1–5 star self rating. */
-export const STAR_FACTOR: Record<number, number> = { 1: 1.32, 2: 1.15, 3: 1.0, 4: 0.88, 5: 0.78 };
+export const STAR_FACTOR: Record<number, number> = V1.prediction.starFactor;
 
-export const DOUBLES_STATION_FACTOR = 0.82; // alternating work: each segment done fresher
-export const DOUBLES_RUN_RATIO = 0.94;
+export const DOUBLES_STATION_FACTOR = V1.prediction.doublesStationFactor; // alternating work: each segment done fresher
+export const DOUBLES_RUN_RATIO = V1.pace.compromisedRatioTeam;
 
-export function soloStationTime(a: Athlete, category: Category, s: Station, base: BaselineTable = DEFAULT_BASELINES) {
+export function soloStationTime(a: Athlete, category: Category, s: Station, base: BaselineTable = DEFAULT_BASELINES, rs: RuleSet = V1) {
   const known = a.stationTimes?.[s];
   if (known && known > 0) return known;
   const cls = weightClass(category, a.sex);
   const b = base[cls][s];
   // women lifting the "medium" class (Pro women, mixed doubles) are slower than the men the baseline describes
-  const sexFactor = a.sex === 'woman' && cls !== 'light' ? 1.12 : 1;
-  return Math.round(b * sexFactor * (STAR_FACTOR[a.stationStars?.[s] ?? 3] ?? 1));
+  const sexFactor = a.sex === 'woman' && cls !== 'light' ? rs.prediction.womanMediumFactor : 1;
+  return Math.round(b * sexFactor * (rs.prediction.starFactor[a.stationStars?.[s] ?? 3] ?? 1));
 }
 
 /** Clean threshold speed -> race run speed ratio. Personal value from benchmarks wins. */
-export function compromisedRatio(a: Athlete, category: Category) {
+export function compromisedRatio(a: Athlete, category: Category, rs: RuleSet = V1) {
   if (a.compromisedRatio && a.compromisedRatio > 0.75 && a.compromisedRatio < 1) {
     return isDoubles(category) ? Math.min(0.97, a.compromisedRatio + 0.06) : a.compromisedRatio;
   }
-  let r = isDoubles(category) || isRelay(category) ? DOUBLES_RUN_RATIO : 0.87;
+  let r = isDoubles(category) || isRelay(category) ? rs.pace.compromisedRatioTeam : rs.pace.compromisedRatioSolo;
   if (a.archetype === 'fast_runner') r -= 0.01; // loses more after heavy stations
   if (a.archetype === 'diesel') r += 0.01;
   if (a.archetype === 'strength') r += 0.015; // stations cost them less, so runs suffer less after them
@@ -90,12 +91,12 @@ export function stationGainPct(stars: number, weeks: number) {
  * The log then moves it: skipped sessions shrink the expected gain, hitting (or missing) the target paces of the
  * key sessions pushes the chance up (or down).
  */
-export const RACE_DAY_MARGIN_SEC = 30;
-export function goalChance(currentSec: number, projectedSec: number, goalSec: number, o: { adherence?: number | null; execution?: Execution | null } = {}) {
+export const RACE_DAY_MARGIN_SEC = V1.prediction.raceDayMarginSec;
+export function goalChance(currentSec: number, projectedSec: number, goalSec: number, o: { adherence?: number | null; execution?: Execution | null; marginSec?: number } = {}) {
   const adherence = o.adherence == null ? 1 : Math.max(0.4, Math.min(1, o.adherence / 0.9));
   const expected = Math.max(0, currentSec - projectedSec) * adherence;
   const needed = currentSec - goalSec;
-  const r = needed <= 0 ? 0 : needed / (expected + RACE_DAY_MARGIN_SEC);
+  const r = needed <= 0 ? 0 : needed / (expected + (o.marginSec ?? RACE_DAY_MARGIN_SEC));
   let c = 97 / (1 + Math.exp(4.5 * (r - 1.6)));
   const e = o.execution;
   if (e && e.n >= 2) {
@@ -138,14 +139,14 @@ export interface RaceModel {
   weakestStations: Station[];
 }
 
-function breakdown(a: Athlete, category: Category, thresholdSec: number, weeks: number, base: BaselineTable, gains: boolean, gainFactor = 1): RaceBreakdown {
+function breakdown(a: Athlete, category: Category, thresholdSec: number, weeks: number, base: BaselineTable, gains: boolean, gainFactor = 1, rs: RuleSet = V1): RaceBreakdown {
   const doubles = isDoubles(category);
-  const runPaceSec = Math.round(thresholdSec / compromisedRatio(a, category));
+  const runPaceSec = Math.round(thresholdSec / compromisedRatio(a, category, rs));
   const stations = {} as StationMap<number>;
   for (const s of STATIONS) {
-    let t = soloStationTime(a, category, s, base);
+    let t = soloStationTime(a, category, s, base, rs);
     if (gains) t *= 1 - stationGainPct(a.stationStars?.[s] ?? 3, weeks) * gainFactor;
-    if (doubles) t *= DOUBLES_STATION_FACTOR;
+    if (doubles) t *= rs.prediction.doublesStationFactor;
     stations[s] = Math.round(t);
   }
   const stationTotalSec = STATIONS.reduce((n, s) => n + stations[s], 0);
@@ -154,10 +155,10 @@ function breakdown(a: Athlete, category: Category, thresholdSec: number, weeks: 
   return { runPaceSec, runTotalSec, stations, stationTotalSec, roxzoneSec, finishSec: runTotalSec + stationTotalSec + roxzoneSec };
 }
 
-export function weakestStations(a: Athlete, category: Category, base: BaselineTable = DEFAULT_BASELINES, n = 2): Station[] {
+export function weakestStations(a: Athlete, category: Category, base: BaselineTable = DEFAULT_BASELINES, n = 2, rs: RuleSet = V1): Station[] {
   const cls = weightClass(category, a.sex);
   return [...STATIONS]
-    .map((s) => ({ s, r: soloStationTime(a, category, s, base) / base[cls][s] }))
+    .map((s) => ({ s, r: soloStationTime(a, category, s, base, rs) / base[cls][s] }))
     .sort((x, y) => y.r - x.r)
     .slice(0, n)
     .map((x) => x.s);
@@ -175,9 +176,9 @@ export function trainingDays(p: Profile) {
  * Fox 1975 / Tripp 2025 (2 vs 4 d/wk similar when volume is matched). Stations: Grgic et al. 2018 effect sizes 0.74/0.82/0.93/1.08.
  * 1 day/week is the least studied → treat as extrapolation.
  */
-export const FREQ_AEROBIC: Record<number, number> = { 1: 0.25, 2: 0.7, 3: 0.85 };
-export const FREQ_AEROBIC_FIT2 = 0.6; // 2 d/wk for already fit athletes (VO2max > 50 / threshold < 4:00/km)
-export const FREQ_STATION: Record<number, number> = { 1: 0.69, 2: 0.76, 3: 0.86 };
+export const FREQ_AEROBIC: Record<number, number> = V1.prediction.freqAerobic;
+export const FREQ_AEROBIC_FIT2 = V1.prediction.freqAerobicFit2; // 2 d/wk for already fit athletes (VO2max > 50 / threshold < 4:00/km)
+export const FREQ_STATION: Record<number, number> = V1.prediction.freqStation;
 
 export function frequencyGainFactor(p: Profile): { aerobic: number; station: number } {
   if (!p.weekSchedule?.length) return { aerobic: 1, station: 1 };
@@ -185,12 +186,13 @@ export function frequencyGainFactor(p: Profile): { aerobic: number; station: num
   if (n >= 4) return { aerobic: 1, station: 1 };
   if (n <= 0) return { aerobic: 0, station: 0 };
   const fit = (p.athlete.vo2max ?? 0) > 50 || p.athlete.thresholdPaceSec < 240;
-  return { aerobic: n === 2 && fit ? FREQ_AEROBIC_FIT2 : FREQ_AEROBIC[n], station: FREQ_STATION[n] };
+  const f = rulesOf(p).prediction;
+  return { aerobic: n === 2 && fit ? f.freqAerobicFit2 : f.freqAerobic[n], station: f.freqStation[n] };
 }
 
-export function injuryGainFactor(a: Athlete) {
+export function injuryGainFactor(a: Athlete, rs: RuleSet = V1) {
   const r = injuryProfile(a.flags).runLoad;
-  return r === 'now' ? 0.6 : r === 'recent' ? 0.85 : 1;
+  return r === 'now' ? rs.prediction.injuryGainNow : r === 'recent' ? rs.prediction.injuryGainRecent : 1;
 }
 
 export function effectiveThreshold(p: Profile) {
@@ -199,15 +201,16 @@ export function effectiveThreshold(p: Profile) {
 
 export function raceModel(p: Profile, today: string, base: BaselineTable = DEFAULT_BASELINES): RaceModel {
   const a = p.athlete;
+  const rs = rulesOf(p);
   const T = effectiveThreshold(p);
   const weeksLeft = Math.max(0, Math.floor(daysBetween(today, p.raceDate) / 7));
-  const current = breakdown(a, p.category, T, weeksLeft, base, false);
+  const current = breakdown(a, p.category, T, weeksLeft, base, false, 1, rs);
   // a current / recent running injury means less running → less aerobic gain by race day
   // fewer training days per week → less expected improvement
   const freq = frequencyGainFactor(p);
-  const projected = breakdown(a, p.category, T - thresholdGain(T, weeksLeft) * injuryGainFactor(a) * freq.aerobic, weeksLeft, base, true, freq.station);
+  const projected = breakdown(a, p.category, T - thresholdGain(T, weeksLeft) * injuryGainFactor(a, rs) * freq.aerobic, weeksLeft, base, true, freq.station, rs);
   const requiredRunPaceSec = Math.round((p.goalSec - projected.stationTotalSec - projected.roxzoneSec) / 8);
-  const chance = goalChance(current.finishSec, projected.finishSec, p.goalSec, { adherence: p.adherence, execution: p.execution });
+  const chance = goalChance(current.finishSec, projected.finishSec, p.goalSec, { adherence: p.adherence, execution: p.execution, marginSec: rs.prediction.raceDayMarginSec });
   return {
     weeksLeft,
     current,
@@ -217,11 +220,11 @@ export function raceModel(p: Profile, today: string, base: BaselineTable = DEFAU
     runGapSecPerKm: projected.runPaceSec - requiredRunPaceSec,
     chance,
     status: statusOf(chance),
-    weakestStations: weakestStations(a, p.category, base),
+    weakestStations: weakestStations(a, p.category, base, 2, rs),
   };
 }
 
-/** Race pace used for training targets: the goal run pace, but never more than 12 s/km faster than projected. */
-export function trainingRacePace(m: RaceModel) {
-  return Math.max(m.requiredRunPaceSec, m.projected.runPaceSec - 12);
+/** Race pace used for training targets: the goal run pace, but never more than 12 s/km (v1) faster than projected. */
+export function trainingRacePace(m: RaceModel, rs: RuleSet = V1) {
+  return Math.max(m.requiredRunPaceSec, m.projected.runPaceSec - rs.pace.raceVsProjectedMaxSec);
 }

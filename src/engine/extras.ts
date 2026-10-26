@@ -1,3 +1,4 @@
+import { rulesOf } from './rules';
 import { fmtHms, fmtMmss, addDays, daysBetween } from './time';
 import { tx, STATION_NAMES, EXTRA_LOCALES, fillTpl } from './text';
 import {
@@ -6,7 +7,6 @@ import {
   raceModel,
   soloStationTime,
   weightClass,
-  DOUBLES_STATION_FACTOR,
   type BaselineTable,
 } from './raceModel';
 import type { Athlete, Category, Lang, Profile, Station, StationMap, Week } from './types';
@@ -46,7 +46,8 @@ export function radarScores(a: Athlete, c: Category, base: BaselineTable = DEFAU
 export function goalStationTargets(p: Profile, today: string, base: BaselineTable = DEFAULT_BASELINES): { budgetSec: number; targets: StationMap<number> } {
   const m = raceModel(p, today, base);
   const budgetSec = Math.max(8 * 45, p.goalSec - m.projected.runTotalSec - m.projected.roxzoneSec);
-  const own = STATIONS.map((s) => soloStationTime(p.athlete, p.category, s, base) * (isDoubles(p.category) ? DOUBLES_STATION_FACTOR : 1));
+  const rs = rulesOf(p);
+  const own = STATIONS.map((s) => soloStationTime(p.athlete, p.category, s, base, rs) * (isDoubles(p.category) ? rs.prediction.doublesStationFactor : 1));
   const tot = own.reduce((x, y) => x + y, 0);
   const targets = {} as StationMap<number>;
   STATIONS.forEach((s, i) => (targets[s] = Math.round((own[i] / tot) * budgetSec)));

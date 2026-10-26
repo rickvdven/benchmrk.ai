@@ -1,3 +1,4 @@
+import { rulesOf } from './rules';
 import { addDays, fmtMmss } from './time';
 import { z2Cap } from './zones';
 import { injuryProfile } from './injury';
@@ -212,15 +213,16 @@ const tr = (l: Lang, k: string, p: Record<string, string | number> = {}) => ((T[
 
 export function alternativesFor(s: Session, p: Profile, weeks: Week[], lang: Lang): Alternatives | null {
   const a = p.athlete;
-  const cap = z2Cap(a.lthr, a.maxHr);
-  const inj = injuryProfile(a.flags);
+  const rs = rulesOf(p);
+  const cap = z2Cap(a.lthr, a.maxHr, rs);
+  const inj = injuryProfile(a.flags, rs);
   const injured = inj.runLoad === 'now';
   const week = weekOf(weeks, s.date);
   const phase = week?.phase ?? 'base';
   const specific = phase === 'compromised' || phase === 'peak';
   const all = weeks.flatMap((w) => w.sessions);
   const base = { id: s.date, date: s.date, dow: s.dow, alt: true, altOf: s.title } as Partial<Session>;
-  const easyPace = Math.round(a.thresholdPaceSec * 1.22);
+  const easyPace = Math.round(a.thresholdPaceSec * rs.pace.easyFactor);
   const mk = (o: Partial<Session>) => ({ ...base, ...o }) as Session;
 
   if (s.type === 'sim') {

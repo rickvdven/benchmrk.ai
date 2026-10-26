@@ -1,0 +1,91 @@
+import type { RuleSet } from './types';
+
+/** Rule set 1: exactly the engine as it was before rule sets existed (Oct 2026). Never edit; add a new version instead. */
+export const V1: RuleSet = {
+  version: 1,
+  zones: {
+    table: [
+      { id: 'Z1', lo: 0.65, hi: 0.84 },
+      { id: 'Z2', lo: 0.85, hi: 0.89 },
+      { id: 'Z3', lo: 0.9, hi: 0.94 },
+      { id: 'Z4', lo: 0.95, hi: 0.99 },
+      { id: 'Z5a', lo: 1.0, hi: 1.02 },
+      { id: 'Z5b', lo: 1.03, hi: 1.06 },
+      { id: 'Z5c', lo: 1.07, hi: null },
+    ],
+  },
+  pace: {
+    easyFactor: 1.22,
+    longFactor: 1.25,
+    raceVsProjectedMaxSec: 12,
+    compromisedRatioSolo: 0.87,
+    compromisedRatioTeam: 0.94,
+  },
+  volume: {
+    startKm: [15, 22, 32, 42],
+    rampShare: 0.6,
+    peakFactor: 1.4,
+    peakFactorStrength: 1.6,
+    deloadFactor: 0.7,
+    easyShare: 0.2,
+    longShare: 0.32,
+    longMinKm: 6,
+    longMaxKmWoman: 16,
+    longMaxKmMan: 18,
+    longHeavySimFactor: 0.75,
+  },
+  sim: {
+    basePaceAddSec: 15,
+    thresholdPaceAddSec: 5,
+    compromisedEarlyAddSec: 5,
+    kmShort: 4,
+    kmCompromised: 6,
+    kmPeakFull: 8,
+  },
+  compromised: {
+    addonPhases: ['compromised', 'peak'],
+  },
+  strength: {
+    lastHeavyMinDaysOut: 7,
+  },
+  taper: {
+    volumeWeek1: 0.65,
+    volumeRaceWeek: 0.4,
+    raceWeekEasyShare: 0.15,
+    raceWeekEasyDays: 6,
+    lastBigSimMinDaysOut: 10,
+  },
+  tendon: {
+    rampNow: 0.4,
+    rampRecent: 0.7,
+    peakCapNow: 1.15,
+    peakCapRecent: 1.3,
+  },
+  returnToRun: {
+    days: 21,
+    crossMinMinutes: 25,
+    crossMaxMinutes: 90,
+    crossThresholdReps: 5,
+    crossThresholdRepsTaper: 3,
+  },
+  prediction: {
+    raceDayMarginSec: 30,
+    starFactor: { 1: 1.32, 2: 1.15, 3: 1.0, 4: 0.88, 5: 0.78 },
+    womanMediumFactor: 1.12,
+    doublesStationFactor: 0.82,
+    injuryGainNow: 0.6,
+    injuryGainRecent: 0.85,
+    freqAerobic: { 1: 0.25, 2: 0.7, 3: 0.85 },
+    freqAerobicFit2: 0.6,
+    freqStation: { 1: 0.69, 2: 0.76, 3: 0.86 },
+  },
+  coaching: {
+    thresholdCapPctLthr: 1.0,
+    achillesStiffnessCeiling: 4,
+    maxWeeklyVolumeIncrease: 0.1,
+    skiShiftM: 125,
+    sledShiftM: 12.5,
+    wallBallSet: 10,
+    eliteMaxDecaySec: 12,
+  },
+};

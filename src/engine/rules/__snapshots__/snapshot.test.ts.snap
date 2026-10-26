@@ -1,0 +1,17 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`rule set v1 = engine before rule sets (snapshot) > doubles-achilles-now 1`] = `"3b580de62cbd1c1c"`;
+
+exports[`rule set v1 = engine before rule sets (snapshot) > long-prep-pro-women 1`] = `"36b4b9fd5145f207"`;
+
+exports[`rule set v1 = engine before rule sets (snapshot) > open-men-120 1`] = `"d2586812202b27e0"`;
+
+exports[`rule set v1 = engine before rule sets (snapshot) > open-women-135 1`] = `"d0d167de11ba9ce9"`;
+
+exports[`rule set v1 = engine before rule sets (snapshot) > pro-men-110 1`] = `"4ea134679a714ce4"`;
+
+exports[`rule set v1 = engine before rule sets (snapshot) > relay-hamstring-7days 1`] = `"d9517561d09d3f02"`;
+
+exports[`rule set v1 = engine before rule sets (snapshot) > short-wod-1day 1`] = `"3d84ce24b1ec364a"`;
+
+exports[`rule set v1 = engine before rule sets (snapshot) > strength-return-season-protocol 1`] = `"df70e4279c06944b"`;

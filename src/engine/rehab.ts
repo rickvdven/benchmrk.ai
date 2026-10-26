@@ -2,6 +2,8 @@ import { injuriesOf, RUN_AREAS, type InjuryArea } from './injury';
 import { daysBetween } from './time';
 import { z2Cap } from './zones';
 import type { Flags, Lang, Session } from './types';
+import { V1 } from './rules/v1';
+import type { RuleSet } from './rules/types';
 
 /**
  * Injury mode for the plan.
@@ -16,6 +18,7 @@ export interface RehabCtx {
   lthr: number;
   maxHr: number;
   T: number; // threshold pace s/km
+  rs?: RuleSet;
 }
 
 type K =
@@ -164,11 +167,11 @@ export function runInjury(f: Flags | null | undefined, today: string) {
 }
 
 /** Walk-run return: week 1–3 after passing the return test, else null. */
-export function returnWeek(f: Flags | null | undefined, date: string) {
+export function returnWeek(f: Flags | null | undefined, date: string, rs: RuleSet = V1) {
   const inj = injuriesOf(f);
   if (!f?.returnSince || !RUN_AREAS.some((a) => inj[a] === 'recent') || RUN_AREAS.some((a) => inj[a] === 'now')) return null;
   const d = daysBetween(f.returnSince, date);
-  if (d < 0 || d >= 21) return null;
+  if (d < 0 || d >= rs.returnToRun.days) return null;
   return Math.floor(d / 7) + 1;
 }
 
@@ -180,12 +183,14 @@ function rehabLine(lang: Lang, day: number) {
 export function adaptForInjury(c: RehabCtx, s: Partial<Session>, date: string, today: string, opts: { taper?: boolean } = {}): Partial<Session> | null {
   if (date < today || !s.type || s.type === 'rest' || s.type === 'race') return null;
   const lang = c.lang;
+  const rs = c.rs ?? V1;
   const ri = runInjury(c.flags, today);
   const area = tr(lang, 'area');
   const lo = Math.round(c.lthr * 0.95);
   const hi = Math.min(c.lthr, c.maxHr);
-  const cap = z2Cap(c.lthr, c.maxHr);
-  const minutesFor = (km?: number) => Math.max(25, Math.min(90, Math.round(((km ?? 6) * c.T * 1.22) / 60 / 5) * 5));
+  const cap = z2Cap(c.lthr, c.maxHr, rs);
+  const minutesFor = (km?: number) =>
+    Math.max(rs.returnToRun.crossMinMinutes, Math.min(rs.returnToRun.crossMaxMinutes, Math.round(((km ?? 6) * c.T * rs.pace.easyFactor) / 60 / 5) * 5));
 
   if (ri) {
     const day = Math.max(0, daysBetween(ri.since, date));
@@ -195,7 +200,7 @@ export function adaptForInjury(c: RehabCtx, s: Partial<Session>, date: string, t
     switch (s.type) {
       case 'threshold':
       case 'intervals': {
-        const n = opts.taper ? 3 : 5;
+        const n = opts.taper ? rs.returnToRun.crossThresholdRepsTaper : rs.returnToRun.crossThresholdReps;
         return wrap({ type: 'threshold', title: tr(lang, 'xThrT', { n }), targetPaceSec: null, km: undefined, hrCap: hi, rpe: '7–8/10', benchmark: undefined, benchmarkText: undefined }, [
           tr(lang, 'xThrD', { n, lo, hi, area }),
           tr(lang, 'mod') + ' ' + tr(lang, 'rowNote'),
@@ -219,7 +224,7 @@ export function adaptForInjury(c: RehabCtx, s: Partial<Session>, date: string, t
     }
   }
 
-  const w = returnWeek(c.flags, date);
+  const w = returnWeek(c.flags, date, rs);
   if (!w) return null;
   const hsr = tr(lang, 'hsr', { d: daysBetween(c.flags.returnSince!, date) + 1 });
   const gate = tr(lang, 'gate');

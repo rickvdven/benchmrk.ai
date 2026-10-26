@@ -1,7 +1,8 @@
+import { V1 } from './rules/v1';
+import type { RuleSet } from './rules/types';
 import { daysBetween } from './time';
 import {
   DEFAULT_BASELINES,
-  DOUBLES_STATION_FACTOR,
   compromisedRatio,
   roxzoneBudget,
   soloStationTime,
@@ -37,10 +38,10 @@ export interface StationSplit {
   teamSec: number;
 }
 
-export function splitStations(a: Athlete, b: Athlete, category: Category, base: BaselineTable = DEFAULT_BASELINES): StationSplit[] {
+export function splitStations(a: Athlete, b: Athlete, category: Category, base: BaselineTable = DEFAULT_BASELINES, rs: RuleSet = V1): StationSplit[] {
   return STATIONS.map((s) => {
-    const ta = soloStationTime(a, category, s, base);
-    const tb = soloStationTime(b, category, s, base);
+    const ta = soloStationTime(a, category, s, base, rs);
+    const tb = soloStationTime(b, category, s, base, rs);
     const diff = (tb - ta) / Math.min(ta, tb);
     const lead: StationSplit['lead'] = Math.abs(diff) < 0.06 ? 'even' : diff > 0 ? 'A' : 'B';
     const shareA = lead === 'even' ? 0.5 : lead === 'A' ? (Math.abs(diff) > 0.2 ? 0.7 : 0.6) : Math.abs(diff) > 0.2 ? 0.3 : 0.4;
@@ -48,7 +49,7 @@ export function splitStations(a: Athlete, b: Athlete, category: Category, base: 
     const aSegments = Math.round(seg.n * shareA);
     const bSegments = seg.n - aSegments;
     const sa = aSegments / seg.n;
-    const teamSec = Math.round((sa * ta + (1 - sa) * tb) * DOUBLES_STATION_FACTOR);
+    const teamSec = Math.round((sa * ta + (1 - sa) * tb) * rs.prediction.doublesStationFactor);
     const finalLead: StationSplit['lead'] = aSegments === bSegments ? 'even' : aSegments > bSegments ? 'A' : 'B';
     return { station: s, aSec: ta, bSec: tb, lead: finalLead, aSegments, bSegments, teamSec };
   });
@@ -78,17 +79,18 @@ export function teamModel(
   raceDate: string,
   today: string,
   base: BaselineTable = DEFAULT_BASELINES,
+  rs: RuleSet = V1,
 ): TeamModel {
   const weeks = Math.max(0, Math.floor(daysBetween(today, raceDate) / 7));
   const pace = (x: Athlete, gain: boolean) => {
     const T = x.thresholdPaceSec - (gain ? thresholdGain(x.thresholdPaceSec, weeks) : 0);
-    return Math.round(T / compromisedRatio(x, category));
+    return Math.round(T / compromisedRatio(x, category, rs));
   };
   const aRun = pace(a, false);
   const bRun = pace(b, false);
   const pacer: 'A' | 'B' = aRun >= bRun ? 'A' : 'B';
   const runPaceSec = Math.max(aRun, bRun);
-  const splits = splitStations(a, b, category, base);
+  const splits = splitStations(a, b, category, base, rs);
   const stationTotalSec = splits.reduce((n, x) => n + x.teamSec, 0);
   const slowerT = Math.max(a.thresholdPaceSec, b.thresholdPaceSec);
   const roxzoneSec = roxzoneBudget(slowerT, category);
@@ -101,7 +103,7 @@ export function teamModel(
   }, 0);
   const projectedFinishSec = Math.round(projRun * 8 + projStations + roxzoneSec);
   const requiredRunPaceSec = Math.round((goalSec - projStations - roxzoneSec) / 8);
-  const chance = goalChance(finishSec, projectedFinishSec, goalSec);
+  const chance = goalChance(finishSec, projectedFinishSec, goalSec, { marginSec: rs.prediction.raceDayMarginSec });
   return {
     pacer,
     runPaceSec,
