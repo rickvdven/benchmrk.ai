@@ -500,14 +500,17 @@ function Knowledge() {
   );
 }
 
+/** Read-only: a rule change goes through a new rule set and a plan update, so no member's plan changes silently. */
 function Rules() {
-  const qc = useQueryClient();
   const q = useQuery({ queryKey: ['admin', 'rules'], queryFn: async () => (await supabase.from('coaching_rules').select('*').order('rule_key')).data ?? [] });
-  const [vals, setVals] = useState<Record<string, string>>({});
   if (!q.data) return <Spinner />;
   return (
     <div className="space-y-3">
-      <Notice>Rules are relative (e.g. × LTHR) and apply to every athlete. Changes take effect on the next page load for everyone. A change based on new research belongs in a new rule set (src/engine/rules) and a plan update, so members see a before/after and choose; once a rule-set version changes a key, this value no longer applies to members on that version.</Notice>
+      <Notice>
+        Locked: these values apply to every athlete, so changing them here would change plans without anyone choosing. To change a rule, add a new rule set in{' '}
+        <span className="stat">src/engine/rules/versions.ts</span> (key <span className="stat">coaching.…</span>) and publish it under Plan updates; members then see a
+        before/after and choose. See docs/planupdates/README.md.
+      </Notice>
       <div className="panel overflow-x-auto">
         <table className="w-full min-w-[640px] text-sm">
           <tbody>
@@ -517,27 +520,8 @@ function Rules() {
                   <div className="stat font-semibold">{r.rule_key}</div>
                   <div className="text-xs text-muted">{r.description}</div>
                 </td>
-                <td className="px-3 py-2">
-                  <input className="input stat h-9 w-28" value={vals[r.rule_key] ?? String(r.value)} onChange={(e) => setVals({ ...vals, [r.rule_key]: e.target.value })} />
-                </td>
+                <td className="stat px-3 py-2">{r.value}</td>
                 <td className="px-3 py-2 text-xs text-muted">{r.unit}</td>
-                <td className="px-3 py-2">
-                  <button
-                    className="btn-ghost btn-sm"
-                    disabled={vals[r.rule_key] === undefined}
-                    onClick={async () => {
-                      const v = Number(vals[r.rule_key]?.replace(',', '.'));
-                      if (!Number.isFinite(v)) return toast.error('Not a number');
-                      const { error } = await supabase.from('coaching_rules').update({ value: v, updated_at: new Date().toISOString() }).eq('rule_key', r.rule_key);
-                      if (error) return toast.error(error.message);
-                      toast.success('Saved');
-                      qc.invalidateQueries({ queryKey: ['admin', 'rules'] });
-                      qc.invalidateQueries({ queryKey: ['rules'] });
-                    }}
-                  >
-                    Save
-                  </button>
-                </td>
               </tr>
             ))}
           </tbody>

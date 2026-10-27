@@ -20,7 +20,7 @@ Een wijziging in de bronnen verandert het schema van een lid nooit stilletjes. E
 4. Na de deploy: Admin → Planupdates → "Create draft from rule set vN", preview bekijken voor de demo-atleten en een echt lid, en publiceren. Er gaat geen mail uit.
 
 ## Coachregels uit de database
-`coaching_rules` (Admin → Coachingregels) blijft werken voor iedereen, behalve voor sleutels die een latere regelset heeft veranderd: die volgen de vastgepinde versie van het lid. Een wijziging op basis van onderzoek hoort in een regelset, niet in die tabel.
+Admin → Coachingregels is alleen-lezen: een waarde daar wijzigen zou het plan van iedereen stil veranderen. Een regel aanpassen gaat via een nieuwe regelset (sleutel `coaching.…`) en een planupdate. Technisch blijven de databasewaarden de basis, en een regelset die een `coaching.`-sleutel verandert gaat daar voor leden op die versie overheen.
 
 ## Screenshots
 De screenshots in deze map zijn gemaakt met een gemockte Supabase en een **demo-regelset v2** (duurlopen 20 → 24 % van het weekvolume, korte sims 4 → 5 km). Die versie staat niet in de repo.
