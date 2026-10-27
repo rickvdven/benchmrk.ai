@@ -1,117 +1,92 @@
-import type { CoachingRules, Lang } from '../types';
-import { DEFAULT_RULES } from '../types';
-import type { RuleParams } from './params';
-import { V1_PARAMS } from './v1';
+import type { CoachingRules, Profile } from '../types';
+import type { RuleChange, RuleSet, RuleSetVersion } from './types';
+import { V1 } from './v1';
+import { VERSIONS } from './versions';
 
-export type { RuleParams, Rx } from './params';
-export { V1_PARAMS } from './v1';
+export * from './types';
+export { V1 } from './v1';
+export { VERSIONS } from './versions';
 
-/** One change in a rule set: which value, from what to what, why, and the sources (knowledge_sources.id) behind it. */
-export interface RuleChange {
-  /** dotted path into RuleParams, numbers index arrays: 'taper.lastSimDays', 'threshold.table.base.0.n' */
-  key: string;
-  before: unknown;
-  after: unknown;
-  sourceIds: string[];
-  why: Record<Lang, string>;
+/** Value at a dotted path, e.g. getRule(rs, 'taper.volumeRaceWeek'). */
+export function getRule(rs: RuleSet, key: string): unknown {
+  return key.split('.').reduce<unknown>((o, k) => (o == null ? undefined : (o as Record<string, unknown>)[k]), rs);
 }
 
-/** A published (or draft) version. Only the differences from the previous version are listed; version 1 is the base. */
-export interface RuleSetDef {
-  version: number;
-  /** ISO date the version was written */
-  date: string;
-  title: Record<Lang, string>;
-  changes: RuleChange[];
-}
-
-export interface RuleSet extends RuleSetDef {
-  params: RuleParams;
-}
-
-const same = (t: string): Record<Lang, string> => ({ en: t, nl: t, de: t, es: t, ko: t });
-
-/** Rule set definitions, oldest first. A new version = a new file `vN.ts` exporting a RuleSetDef, added here. */
-const DEFS: RuleSetDef[] = [{ version: 1, date: '2026-10-26', title: same('Start: the engine as it was'), changes: [] }];
-
-
-export const clone = <T,>(x: T): T => JSON.parse(JSON.stringify(x)) as T;
-
-export function getPath(o: unknown, key: string): unknown {
-  return key.split('.').reduce<unknown>((acc, k) => (acc == null ? undefined : (acc as Record<string, unknown>)[k]), o);
-}
-
-export function setPath(o: unknown, key: string, value: unknown) {
+function setRule(rs: RuleSet, key: string, value: unknown) {
   const parts = key.split('.');
-  const last = parts.pop()!;
-  const parent = parts.reduce<unknown>((acc, k) => (acc as Record<string, unknown>)[k], o) as Record<string, unknown>;
-  if (parent == null || !(last in parent)) throw new Error(`rule key does not exist: ${key}`);
-  parent[last] = value;
-}
-
-/** Applies a version's changes on top of the previous params. Throws when `before` does not match: a stale change list. */
-export function applyChanges(params: RuleParams, changes: RuleChange[]): RuleParams {
-  const next = clone(params);
-  for (const c of changes) {
-    const cur = getPath(next, c.key);
-    if (JSON.stringify(cur) !== JSON.stringify(c.before)) throw new Error(`rule change ${c.key}: before ${JSON.stringify(c.before)} does not match ${JSON.stringify(cur)}`);
-    setPath(next, c.key, c.after);
+  let o = rs as unknown as Record<string, unknown>;
+  for (const k of parts.slice(0, -1)) {
+    if (typeof o[k] !== 'object' || o[k] === null) throw new Error(`Unknown rule key: ${key}`);
+    o = o[k] as Record<string, unknown>;
   }
-  return next;
+  const last = parts[parts.length - 1];
+  if (!(last in o)) throw new Error(`Unknown rule key: ${key}`);
+  o[last] = structuredClone(value);
 }
 
-const cache = new Map<number, RuleSet>();
-
-function build(version: number): RuleSet {
-  let params = clone(V1_PARAMS);
-  let last = DEFS[0];
-  for (const d of DEFS) {
-    if (d.version > version) break;
-    if (d.version > 1) params = applyChanges(params, d.changes);
-    last = d;
+function deepFreeze<T>(x: T): T {
+  if (x && typeof x === 'object') {
+    for (const v of Object.values(x)) deepFreeze(v);
+    Object.freeze(x);
   }
-  return { ...last, params };
+  return x;
 }
 
-/** The rule set for a version. A version this build does not know yet resolves to the newest one it does know. */
+/** Builds a rule set from a base and a list of versions (exported for tests and previews of unreleased versions). */
+export function buildRuleSet(versions: RuleSetVersion[], version: number, base: RuleSet = V1): RuleSet {
+  const rs = structuredClone(base) as RuleSet;
+  for (const v of versions) {
+    if (v.version > version) break;
+    for (const c of v.changes) {
+      if (c.key === 'version' || c.key === 'changedKeys') throw new Error(`Not a rule: ${c.key}`);
+      setRule(rs, c.key, c.after);
+      if (!rs.changedKeys.includes(c.key)) rs.changedKeys.push(c.key);
+    }
+    rs.version = v.version;
+  }
+  return deepFreeze(rs);
+}
+
+export const LATEST_RULESET_VERSION = VERSIONS.length ? VERSIONS[VERSIONS.length - 1].version : 1;
+
+const cache = new Map<number, RuleSet>([[1, deepFreeze(structuredClone(V1))]]);
+/** The rule set for a version number. Unknown or missing numbers fall back to the nearest known version (never newer than asked). */
 export function ruleSet(version: number | null | undefined): RuleSet {
-  const v = Math.max(1, Math.floor(version ?? 1));
-  const known = [...DEFS].reverse().find((d) => d.version <= v)?.version ?? 1;
-  let rs = cache.get(known);
+  const v = Math.max(1, Math.min(LATEST_RULESET_VERSION, Math.floor(version ?? 1)));
+  let rs = cache.get(v);
   if (!rs) {
-    rs = build(known);
-    cache.set(known, rs);
+    rs = buildRuleSet(VERSIONS, v);
+    cache.set(v, rs);
   }
   return rs;
 }
 
-export const ruleSetVersions = () => DEFS.map((d) => d.version);
-export const latestRuleSetVersion = () => DEFS[DEFS.length - 1].version;
-export const ruleSetDef = (version: number) => DEFS.find((d) => d.version === version) ?? null;
+/** Rule set of a profile: the pinned one, or v1 (the engine before rule sets) when none is attached. */
+export const rulesOf = (p: Pick<Profile, 'ruleSet'> | null | undefined): RuleSet => p?.ruleSet ?? cache.get(1)!;
 
-/** Tests and the preview harness add a version here; the app registers its versions in DEFS above. */
-export function registerRuleSet(def: RuleSetDef) {
-  const i = DEFS.findIndex((d) => d.version === def.version);
-  if (i >= 0) DEFS[i] = def;
-  else DEFS.push(def);
-  DEFS.sort((a, b) => a.version - b.version);
-  cache.clear();
-}
-export function unregisterRuleSet(version: number) {
-  const i = DEFS.findIndex((d) => d.version === version && version > 1);
-  if (i >= 0) DEFS.splice(i, 1);
-  cache.clear();
-}
+/** Metadata of one version (v1 has none). */
+export const versionMeta = (version: number, versions: RuleSetVersion[] = VERSIONS) => versions.find((v) => v.version === version) ?? null;
 
-const LEGACY_KEYS = Object.keys(DEFAULT_RULES) as (keyof CoachingRules)[];
+/** All changes between two versions, in either direction (a rollback lists them reversed: before ↔ after). */
+export function changesBetween(from: number, to: number, versions: RuleSetVersion[] = VERSIONS): RuleChange[] {
+  if (from === to) return [];
+  const lo = Math.min(from, to);
+  const hi = Math.max(from, to);
+  const list = versions.filter((v) => v.version > lo && v.version <= hi).flatMap((v) => v.changes);
+  return to > from ? list : [...list].reverse().map((c) => ({ ...c, before: c.after, after: c.before }));
+}
 
 /**
- * The seven values an admin can tune in Admin → Regels sit on top of the pinned version: a value the admin changed
- * (different from the version-1 default) wins, otherwise the pinned version decides.
+ * Coaching rules in force: the admin-editable values from the database (coaching_rules), except keys a rule-set
+ * version after v1 changed – those follow the member's pinned version, so a research change never reaches a plan silently.
  */
-export function withAdminRules(rs: RuleSet, admin: CoachingRules | undefined): RuleParams {
-  if (!admin) return rs.params;
-  const p = clone(rs.params);
-  for (const k of LEGACY_KEYS) if (admin[k] !== DEFAULT_RULES[k]) p[k] = admin[k];
-  return p;
+export function effectiveCoaching(rs: RuleSet, db?: CoachingRules | null): CoachingRules {
+  if (!db) return rs.coaching;
+  const out = { ...db };
+  for (const key of rs.changedKeys) {
+    if (!key.startsWith('coaching.')) continue;
+    const k = key.slice('coaching.'.length) as keyof CoachingRules;
+    out[k] = rs.coaching[k];
+  }
+  return out;
 }

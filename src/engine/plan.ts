@@ -11,7 +11,7 @@ import {
   DEFAULT_BASELINES,
 } from './raceModel';
 import type { CoachingRules, DayType, Lang, Phase, Profile, Session, Station, Week } from './types';
-import { ruleSet, withAdminRules, type RuleParams, type RuleSet, type Rx } from './rules';
+import { effectiveCoaching, rulesOf, type RuleSet } from './rules';
 import { injuryNote, injuryProfile, prehabLine } from './injury';
 import { adaptForInjury } from './rehab';
 import { resolveSchedule } from './schedule';
@@ -97,7 +97,8 @@ const step = (phaseWeek: number, phaseLen: number, steps = 4) =>
 interface Ctx {
   p: Profile;
   lang: Lang;
-  rules: RuleParams;
+  rules: CoachingRules;
+  rs: RuleSet;
   T: number;
   lthr: number;
   maxHr: number;
@@ -146,15 +147,56 @@ function restLabel(lang: Lang, s: number) {
 
 function thresholdSession(c: Ctx, phase: Phase, st: number, deload: boolean, raceWeek: boolean): Partial<Session> {
   const { T } = c;
+  type Rx = { n: number; d: number; off: number; rest: number };
   let rx: Rx;
-  if (raceWeek) rx = c.rules.threshold.raceWeek;
-  else if (deload) rx = c.rules.threshold.deload;
-  else rx = c.rules.threshold.table[phase === 'recovery' ? 'base' : phase][st - 1];
+  if (raceWeek) rx = { n: 4, d: 400, off: -15, rest: 120 };
+  else if (deload) rx = { n: 4, d: 1000, off: -3, rest: 90 };
+  else {
+    const table: Record<Exclude<Phase, 'recovery'>, Rx[]> = {
+      prep: [
+        { n: 4, d: 1000, off: 5, rest: 120 },
+        { n: 5, d: 1000, off: 5, rest: 120 },
+        { n: 6, d: 1000, off: 3, rest: 120 },
+        { n: 4, d: 1000, off: 3, rest: 90 },
+      ],
+      base: [
+        { n: 5, d: 1000, off: 0, rest: 90 },
+        { n: 6, d: 800, off: -5, rest: 90 },
+        { n: 5, d: 1000, off: -3, rest: 90 },
+        { n: 4, d: 1000, off: -4, rest: 90 },
+      ],
+      threshold: [
+        { n: 5, d: 1000, off: -5, rest: 90 },
+        { n: 4, d: 1600, off: -3, rest: 120 },
+        { n: 3, d: 2000, off: 0, rest: 120 },
+        { n: 4, d: 1000, off: -4, rest: 90 },
+      ],
+      compromised: [
+        { n: 4, d: 1500, off: -3, rest: 90 },
+        { n: 5, d: 1000, off: -5, rest: 60 },
+        { n: 2, d: 3000, off: 0, rest: 180 },
+        { n: 6, d: 1000, off: -6, rest: 60 },
+      ],
+      peak: [
+        { n: 3, d: 2000, off: -3, rest: 120 },
+        { n: 4, d: 1000, off: -5, rest: 90 },
+        { n: 3, d: 2000, off: -3, rest: 120 },
+        { n: 4, d: 1000, off: -5, rest: 90 },
+      ],
+      taper: [
+        { n: 4, d: 1000, off: -3, rest: 120 },
+        { n: 4, d: 1000, off: -3, rest: 120 },
+        { n: 4, d: 400, off: -15, rest: 120 },
+        { n: 4, d: 400, off: -15, rest: 120 },
+      ],
+    };
+    rx = table[phase === 'recovery' ? 'base' : phase][st - 1];
+  }
   const pace = T + rx.off;
   const reps = `${rx.n} × ${rx.d} m @ ${fmtMmss(pace)}/km`;
   const fast = rx.off < -6;
   const km = Math.round((rx.n * rx.d) / 1000 + 4);
-  const addon = c.noSim && (phase === 'compromised' || phase === 'peak') && !raceWeek ? '\n' + tx(c.lang, 'thr.compAddon', { pace: fmtMmss(c.racePace) }) : '';
+  const addon = c.noSim && c.rs.compromised.addonPhases.includes(phase) && !raceWeek ? '\n' + tx(c.lang, 'thr.compAddon', { pace: fmtMmss(c.racePace) }) : '';
   return {
     type: 'threshold',
     title: tx(c.lang, 'thr.title', { reps }),
@@ -182,7 +224,7 @@ function intervalSession(c: Ctx, phase: Phase, raceWeek: boolean): Partial<Sessi
 }
 
 function easySession(c: Ctx, km: number): Partial<Session> {
-  const cap = z2Cap(c.lthr, c.maxHr, c.rules.zones.z2CapPct);
+  const cap = z2Cap(c.lthr, c.maxHr, c.rs);
   return {
     type: 'easy',
     title: tx(c.lang, 'easy.title', { km }),
@@ -191,20 +233,20 @@ function easySession(c: Ctx, km: number): Partial<Session> {
       (c.p.athlete.archetype === 'strength' ? tx(c.lang, 'easy.extra') : '') +
       (c.inj.noSpeed ? injuryNote(c.lang, 'noSpeed') : '') +
       (c.inj.runLoad === 'now' ? injuryNote(c.lang, 'pain') : ''),
-    targetPaceSec: Math.round(c.T * 1.22),
+    targetPaceSec: Math.round(c.T * c.rs.pace.easyFactor),
     hrCap: cap,
     km,
   };
 }
 
 function longSession(c: Ctx, km: number, phase: Phase): Partial<Session> {
-  const cap = z2Cap(c.lthr, c.maxHr, c.rules.zones.z2CapPct);
+  const cap = z2Cap(c.lthr, c.maxHr, c.rs);
   const rp = phase === 'compromised' || phase === 'peak';
   return {
     type: 'long',
     title: tx(c.lang, 'long.title', { km }),
     description: tx(c.lang, rp ? 'long.desc.rp' : 'long.desc', { km, cap, rp: fmtMmss(c.racePace) }) + (c.inj.runLoad === 'now' ? injuryNote(c.lang, 'pain') : ''),
-    targetPaceSec: Math.round(c.T * 1.25),
+    targetPaceSec: Math.round(c.T * c.rs.pace.longFactor),
     hrCap: cap,
     km,
   };
@@ -258,7 +300,7 @@ function strengthSession(c: Ctx, phase: Phase): Partial<Session> {
 
 /** Station strength outside the generated plan (extra session added by the athlete). */
 export function stationStrengthSession(p: Profile, lang: Lang, phase: Phase, weakest: Station[], place: Place | null = null): Partial<Session> {
-  const c = { p, lang, weakest, inj: injuryProfile(p.athlete.flags), place } as unknown as Ctx;
+  const c = { p, lang, weakest, inj: injuryProfile(p.athlete.flags, rulesOf(p)), place } as unknown as Ctx;
   return strengthSession(c, phase);
 }
 
@@ -269,13 +311,13 @@ function simSession(c: Ctx, phase: Phase, st: number, full: boolean): Partial<Se
   let body: string;
   let pace: number;
   if (phase === 'prep' || phase === 'base') {
-    pace = c.simBasePace + c.rules.sim.baseOffsetSec;
+    pace = c.simBasePace + c.rs.sim.basePaceAddSec;
     body = tx(c.lang, 'sim.base', { pace: fmtMmss(pace) });
   } else if (phase === 'threshold') {
-    pace = c.simBasePace + c.rules.sim.thresholdOffsetSec;
+    pace = c.simBasePace + c.rs.sim.thresholdPaceAddSec;
     body = tx(c.lang, 'sim.threshold', { pace: fmtMmss(pace) });
   } else if (phase === 'compromised') {
-    pace = st <= 2 ? c.racePace + c.rules.sim.compromisedEarlyOffsetSec : c.racePace;
+    pace = st <= 2 ? c.racePace + c.rs.sim.compromisedEarlyAddSec : c.racePace;
     body = tx(c.lang, 'sim.compromised', { pace: fmtMmss(pace), decay });
   } else if (phase === 'peak') {
     pace = c.racePace;
@@ -312,16 +354,13 @@ function simSession(c: Ctx, phase: Phase, st: number, full: boolean): Partial<Se
     description: [combo + body, fmtLine, ...subs].join('\n'),
     targetPaceSec: pace,
     rpe: phase === 'taper' ? '6/10' : '8/10',
-    km: phase === 'peak' && full ? 8 : phase === 'compromised' ? 6 : 4,
+    km: phase === 'peak' && full ? c.rs.sim.kmPeakFull : phase === 'compromised' ? c.rs.sim.kmCompromised : c.rs.sim.kmShort,
   };
 }
 
 export interface PlanOptions {
   lang?: Lang;
-  /** the seven values an admin tunes in Admin → Regels; they sit on top of the rule set */
   rules?: CoachingRules;
-  /** versioned rule parameters (defaults to version 1: the engine as it was) */
-  ruleSet?: RuleSet;
   baselines?: BaselineTable;
   /** dates with a morning stiffness score at/above the guard ceiling -> score */
   flare?: Record<string, number>;
@@ -337,28 +376,31 @@ const IMPACT: Session['type'][] = ['threshold', 'intervals', 'easy', 'long', 'si
 
 export function generatePlan(p: Profile, opts: PlanOptions = {}): Week[] {
   const lang = opts.lang ?? 'en';
-  const rules = withAdminRules(opts.ruleSet ?? ruleSet(1), opts.rules);
+  // the member's pinned rule set; admin-edited coaching_rules apply where no later rule-set version changed them
+  const rs = rulesOf(p);
+  const rules = opts.rules ? effectiveCoaching(rs, opts.rules) : rs.coaching;
   const today = opts.today ?? p.planStart;
   const start = mondayOf(p.planStart);
   const raceWeekStart = mondayOf(p.raceDate);
   const n = Math.floor(daysBetween(start, raceWeekStart) / 7) + 1;
   if (n < 1 || daysBetween(start, p.raceDate) < 0) return [];
 
-  const model = raceModel(p, today, opts.baselines ?? DEFAULT_BASELINES, rules.forecast);
+  const model = raceModel(p, today, opts.baselines ?? DEFAULT_BASELINES);
   const a = p.athlete;
   const T = effectiveThreshold(p);
   const c: Ctx = {
     p,
     lang,
     rules,
+    rs,
     T,
     lthr: a.lthr,
     maxHr: a.maxHr,
-    racePace: trainingRacePace(model),
+    racePace: trainingRacePace(model, rs),
     simBasePace: model.current.runPaceSec,
     weekKm: 0,
     weakest: model.weakestStations,
-    inj: injuryProfile(a.flags),
+    inj: injuryProfile(a.flags, rs),
     model,
   };
   const phases = allocatePhases(n);
@@ -370,10 +412,11 @@ export function generatePlan(p: Profile, opts: PlanOptions = {}): Week[] {
   const noStrength = !schedule.includes('strength');
 
   // running volume
-  const startKm = a.weeklyKm && a.weeklyKm > 0 ? a.weeklyKm : T >= 330 ? 15 : T >= 285 ? 22 : T >= 240 ? 32 : 42;
+  const sk = rs.volume.startKm;
+  const startKm = a.weeklyKm && a.weeklyKm > 0 ? a.weeklyKm : T >= 330 ? sk[0] : T >= 285 ? sk[1] : T >= 240 ? sk[2] : sk[3];
   // strength athletes: the running engine is the limiter → more room to build aerobic volume
   // current / recent running injuries: slower ramp and a lower ceiling
-  const peakKm = startKm * Math.min(a.archetype === 'strength' ? rules.volume.peakFactorStrength : rules.volume.peakFactor, c.inj.peakCap);
+  const peakKm = startKm * Math.min(a.archetype === 'strength' ? rs.volume.peakFactorStrength : rs.volume.peakFactor, c.inj.peakCap);
   let km = startKm;
 
   // benchmark weeks
@@ -404,10 +447,10 @@ export function generatePlan(p: Profile, opts: PlanOptions = {}): Week[] {
     c.simStep = p.simProtocol ? protocolStep(p.simProtocol, n - 1 - wi) : null;
     const heavySim = !!c.simStep && simLoad(c.simStep) >= 1 && schedule.includes('sim');
     // volume progression
-    if (wi > 0 && !deload && phase !== 'taper') km = Math.min(peakKm, km * (1 + rules.maxWeeklyVolumeIncrease * rules.volume.rampShare * c.inj.rampFactor));
+    if (wi > 0 && !deload && phase !== 'taper') km = Math.min(peakKm, km * (1 + rules.maxWeeklyVolumeIncrease * rs.volume.rampShare * c.inj.rampFactor));
     let weekKm = km;
-    if (deload) weekKm = km * rules.volume.deloadFactor;
-    if (phase === 'taper') weekKm = raceWeek ? km * rules.volume.raceWeekFactor : km * rules.volume.taperFactor;
+    if (deload) weekKm = km * rs.volume.deloadFactor;
+    if (phase === 'taper') weekKm = raceWeek ? km * rs.taper.volumeRaceWeek : km * rs.taper.volumeWeek1;
     c.weekKm = weekKm;
 
     const weekStart = addDays(start, wi * 7);
@@ -436,13 +479,13 @@ export function generatePlan(p: Profile, opts: PlanOptions = {}): Week[] {
       // race-week safety: nothing hard in the last days
       if (toRace === 1) {
         if (type !== 'rest') {
-          sessions.push({ ...base, type: 'easy', title: tx(lang, 'shake.title'), description: tx(lang, 'shake.desc') + '\n' + carbText(c), hrCap: z1Cap(a.lthr, a.maxHr, rules.zones.z1CapPct), km: 3, sourceKey: 'Harrison' });
+          sessions.push({ ...base, type: 'easy', title: tx(lang, 'shake.title'), description: tx(lang, 'shake.desc') + '\n' + carbText(c), hrCap: z1Cap(a.lthr, a.maxHr, rs), km: 3, sourceKey: 'Harrison' });
         } else sessions.push({ ...base, type: 'rest', title: tx(lang, 'rest.title'), description: tx(lang, 'rest.desc') + '\n' + carbText(c), sourceKey: 'Thomas' });
         continue;
       }
       if (toRace === 2) type = 'rest';
       // race week: no big sim, long run or heavy lifting, but keep the number of sessions (frequency cut ≤ 20 %)
-      const raceWeekEasy = toRace <= rules.taper.raceWeekDays && (type === 'sim' || type === 'long' || type === 'intervals');
+      const raceWeekEasy = toRace <= rs.taper.raceWeekEasyDays && (type === 'sim' || type === 'long' || type === 'intervals');
       if (raceWeekEasy) type = 'easy';
 
       let s: Partial<Session>;
@@ -477,7 +520,7 @@ export function generatePlan(p: Profile, opts: PlanOptions = {}): Week[] {
           } else s = intervalSession(c, phase, raceWeek);
           break;
         case 'easy':
-          s = easySession(c, Math.max(4, Math.round(weekKm * (raceWeekEasy ? 0.15 : 0.2))));
+          s = easySession(c, Math.max(4, Math.round(weekKm * (raceWeekEasy ? rs.taper.raceWeekEasyShare : rs.volume.easyShare))));
           if (raceWeekEasy) {
             s.description = tx(lang, 'taper.easy', { pace: fmtMmss(c.racePace) }) + '\n' + s.description;
             s.sourceKey = 'Mujika';
@@ -485,15 +528,19 @@ export function generatePlan(p: Profile, opts: PlanOptions = {}): Week[] {
           break;
         case 'long':
           // a race-size sim this week already carries a lot of running → shorter long run
-          s = longSession(c, Math.max(6, Math.min(a.sex === 'woman' ? rules.longRun.maxKmWoman : rules.longRun.maxKmMan, Math.round(weekKm * rules.longRun.weekShare * (heavySim ? rules.longRun.heavySimFactor : 1)))), phase);
+          s = longSession(
+            c,
+            Math.max(rs.volume.longMinKm, Math.min(a.sex === 'woman' ? rs.volume.longMaxKmWoman : rs.volume.longMaxKmMan, Math.round(weekKm * rs.volume.longShare * (heavySim ? rs.volume.longHeavySimFactor : 1)))),
+            phase,
+          );
           break;
         case 'strength':
-          if (phase === 'taper' && toRace >= rules.taper.lastStrengthDays) {
+          if (phase === 'taper' && toRace >= rs.strength.lastHeavyMinDaysOut) {
             // last heavy session 7–10 days out: same load, half the sets (Travis et al. 2020)
             s = strengthSession(c, 'peak');
             s.description = tx(lang, 'str.taper.last') + '\n' + s.description;
             s.sourceKey = 'Travis et al. (2020)';
-          } else if (toRace <= rules.taper.raceWeekDays) {
+          } else if (toRace < rs.strength.lastHeavyMinDaysOut) {
             s = strengthSession(c, 'taper');
             s.description = tx(lang, 'str.taper.light') + '\n' + s.description;
             s.sourceKey = 'Travis et al. (2020)';
@@ -501,7 +548,7 @@ export function generatePlan(p: Profile, opts: PlanOptions = {}): Week[] {
           break;
         case 'sim': {
           const full = bWeek[5] === wi;
-          if (phase === 'taper' && toRace >= rules.taper.lastSimDays && !c.simStep) {
+          if (phase === 'taper' && toRace >= rs.taper.lastBigSimMinDaysOut && !c.simStep) {
             // last big sim 10–14 days out (race-level strain, Brandt et al. 2025), then only short sharp blocks
             s = simSession(c, 'peak', st, false);
             s.description = tx(lang, 'sim.taper.last') + '\n' + s.description;
@@ -526,7 +573,7 @@ export function generatePlan(p: Profile, opts: PlanOptions = {}): Week[] {
           break;
         }
         case 'wod':
-          s = { type: 'wod', title: tx(lang, 'wod.title'), description: toRace <= 6 ? tx(lang, 'wod.raceweek') : tx(lang, 'wod.desc'), rpe: toRace <= 6 ? '5/10' : null };
+          s = { type: 'wod', title: tx(lang, 'wod.title'), description: toRace <= rs.taper.raceWeekEasyDays ? tx(lang, 'wod.raceweek') : tx(lang, 'wod.desc'), rpe: toRace <= rs.taper.raceWeekEasyDays ? '5/10' : null };
           // no strength day in the week: research says 2×/week (1× to maintain) – make this the strength moment
           if (noStrength && phase !== 'taper') {
             s.description += '\n' + tx(lang, 'str.missing');
@@ -537,18 +584,18 @@ export function generatePlan(p: Profile, opts: PlanOptions = {}): Week[] {
           s = {
             type: 'recovery',
             title: tx(lang, 'rec.title'),
-            description: tx(lang, 'rec.desc', { cap: z1Cap(a.lthr, a.maxHr, rules.zones.z1CapPct) }) + (a.flags.achilles ? tx(lang, 'rec.achilles') : ''),
-            hrCap: z1Cap(a.lthr, a.maxHr, rules.zones.z1CapPct),
+            description: tx(lang, 'rec.desc', { cap: z1Cap(a.lthr, a.maxHr, rs) }) + (a.flags.achilles ? tx(lang, 'rec.achilles') : ''),
+            hrCap: z1Cap(a.lthr, a.maxHr, rs),
           };
           break;
         default:
           s = { type: 'rest', title: tx(lang, 'rest.title'), description: tx(lang, 'rest.desc') };
       }
       // injury mode: no running while a running area is "now"; walk-run return afterwards
-      const inj = adaptForInjury({ lang, flags: a.flags, lthr: a.lthr, maxHr: a.maxHr, T }, s, date, today, { taper: phase === 'taper' });
+      const inj = adaptForInjury({ lang, flags: a.flags, lthr: a.lthr, maxHr: a.maxHr, T, rs }, s, date, today, { taper: phase === 'taper' });
       if (inj) s = { ...s, ...inj };
       if (c.place && s.type !== 'rest') {
-        const run = adaptRunToPlace(lang, s, c.place, { lthr: a.lthr, maxHr: a.maxHr, T, z2: z2Cap(a.lthr, a.maxHr, rules.zones.z2CapPct) });
+        const run = adaptRunToPlace(lang, s, c.place, { lthr: a.lthr, maxHr: a.maxHr, T, z2: z2Cap(a.lthr, a.maxHr, rs), easyFactor: rs.pace.easyFactor });
         if (run) s = { ...s, ...run };
         s.placeName = c.place.name;
         s.placeChosen = !!opts.placeByDate?.[date];
@@ -564,7 +611,7 @@ export function generatePlan(p: Profile, opts: PlanOptions = {}): Week[] {
           type: 'recovery',
           title: tx(lang, 'guard.title'),
           description: tx(lang, 'guard.desc', { score, orig: session.title }),
-          hrCap: z2Cap(a.lthr, a.maxHr, rules.zones.z2CapPct),
+          hrCap: z2Cap(a.lthr, a.maxHr, rs),
           guard: true,
         };
       }

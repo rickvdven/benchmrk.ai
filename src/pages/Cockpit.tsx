@@ -20,9 +20,9 @@ import { ReturnToRun } from '../components/ReturnToRun';
 import { SeasonCard } from '../components/Season';
 import { InviteCard } from '../components/Invite';
 import { FrequencyNote } from '../components/Frequency';
+import { PlanUpdateNotice, usePlanSnapshotBackfill } from '../components/PlanUpdates';
 import { DISCLAIMER } from '../components/Disclaimer';
 import { isComplete, toAthlete } from '../data/mapping';
-import { PlanUpdateBanner } from '../components/PlanUpdateBanner';
 
 export default function Cockpit() {
   const { t, lang, pace } = useI18n();
@@ -37,6 +37,7 @@ export default function Cockpit() {
   const { offer } = useCardOffer();
   const bms = useBenchmarks();
   const offered = useRef(false);
+  usePlanSnapshotBackfill(c.profile ? c : null);
   // offer a shareable card: the first prediction after the intake, and a progress card every 4 weeks
   useEffect(() => {
     if (offered.current || !user || !c.profile || !bms.data) return;
@@ -109,8 +110,9 @@ export default function Cockpit() {
       </PageHeader>
 
       <div className="space-y-4">
-        <PlanUpdateBanner pin={c.pin} />
         {(profile.goalSec < 1800 || profile.goalSec > 14400) && <Notice tone="bad">{t('ck.goalInvalid')}</Notice>}
+
+        <PlanUpdateNotice pinned={row.rule_set_version ?? 1} />
 
         {adjust && adjustKey !== dismissed && !deloadApplied && (
           <div className="panel border-sky/50 p-4">

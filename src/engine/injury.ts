@@ -1,3 +1,5 @@
+import { V1 } from './rules/v1';
+import type { RuleSet } from './rules/types';
 import type { Flags, Lang, Station } from './types';
 
 /** Body areas that matter for HYROX. The first six take load from running. */
@@ -61,7 +63,7 @@ export interface InjuryProfile {
   prehab: InjuryArea[];
 }
 
-export function injuryProfile(f: Flags | null | undefined): InjuryProfile {
+export function injuryProfile(f: Flags | null | undefined, rs: RuleSet = V1): InjuryProfile {
   const inj = injuriesOf(f);
   const runLoad = RUN_AREAS.reduce<InjuryStatus | null>((w, a) => {
     const s = inj[a];
@@ -79,8 +81,8 @@ export function injuryProfile(f: Flags | null | undefined): InjuryProfile {
   return {
     inj,
     runLoad,
-    rampFactor: runLoad === 'now' ? 0.4 : runLoad === 'recent' ? 0.7 : 1,
-    peakCap: runLoad === 'now' ? 1.15 : runLoad === 'recent' ? 1.3 : Infinity,
+    rampFactor: runLoad === 'now' ? rs.tendon.rampNow : runLoad === 'recent' ? rs.tendon.rampRecent : 1,
+    peakCap: runLoad === 'now' ? rs.tendon.peakCapNow : runLoad === 'recent' ? rs.tendon.peakCapRecent : Infinity,
     avoidFocus: [...avoid],
     noSpeed: inj.hamstring === 'now' || inj.hamstring === 'recent',
     prehab,

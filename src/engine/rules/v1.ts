@@ -1,20 +1,11 @@
-import { DEFAULT_RULES } from '../types';
-import type { RuleParams } from './params';
+import type { RuleSet } from './types';
 
-/** Version 1 is exactly the behaviour of the engine before rule sets existed. */
-export const V1_PARAMS: RuleParams = {
-  ...DEFAULT_RULES,
-  forecast: {
-    freqAerobic: { '1': 0.25, '2': 0.7, '3': 0.85 },
-    freqAerobicFit2: 0.6,
-    freqStation: { '1': 0.69, '2': 0.76, '3': 0.86 },
-    injuryGain: { now: 0.6, recent: 0.85 },
-    stationGain: { capLow: 0.1, capMid: 0.06, capHigh: 0.03, perWeek: 0.006 },
-  },
+/** Rule set 1: exactly the engine as it was before rule sets existed (Oct 2026). Never edit; add a new version instead. */
+export const V1: RuleSet = {
+  version: 1,
+  changedKeys: [],
   zones: {
-    z1CapPct: 0.84,
-    z2CapPct: 0.89,
-    defs: [
+    table: [
       { id: 'Z1', lo: 0.65, hi: 0.84 },
       { id: 'Z2', lo: 0.85, hi: 0.89 },
       { id: 'Z3', lo: 0.9, hi: 0.94 },
@@ -24,50 +15,78 @@ export const V1_PARAMS: RuleParams = {
       { id: 'Z5c', lo: 1.07, hi: null },
     ],
   },
-  threshold: {
-    table: {
-      prep: [
-        { n: 4, d: 1000, off: 5, rest: 120 },
-        { n: 5, d: 1000, off: 5, rest: 120 },
-        { n: 6, d: 1000, off: 3, rest: 120 },
-        { n: 4, d: 1000, off: 3, rest: 90 },
-      ],
-      base: [
-        { n: 5, d: 1000, off: 0, rest: 90 },
-        { n: 6, d: 800, off: -5, rest: 90 },
-        { n: 5, d: 1000, off: -3, rest: 90 },
-        { n: 4, d: 1000, off: -4, rest: 90 },
-      ],
-      threshold: [
-        { n: 5, d: 1000, off: -5, rest: 90 },
-        { n: 4, d: 1600, off: -3, rest: 120 },
-        { n: 3, d: 2000, off: 0, rest: 120 },
-        { n: 4, d: 1000, off: -4, rest: 90 },
-      ],
-      compromised: [
-        { n: 4, d: 1500, off: -3, rest: 90 },
-        { n: 5, d: 1000, off: -5, rest: 60 },
-        { n: 2, d: 3000, off: 0, rest: 180 },
-        { n: 6, d: 1000, off: -6, rest: 60 },
-      ],
-      peak: [
-        { n: 3, d: 2000, off: -3, rest: 120 },
-        { n: 4, d: 1000, off: -5, rest: 90 },
-        { n: 3, d: 2000, off: -3, rest: 120 },
-        { n: 4, d: 1000, off: -5, rest: 90 },
-      ],
-      taper: [
-        { n: 4, d: 1000, off: -3, rest: 120 },
-        { n: 4, d: 1000, off: -3, rest: 120 },
-        { n: 4, d: 400, off: -15, rest: 120 },
-        { n: 4, d: 400, off: -15, rest: 120 },
-      ],
-    },
-    deload: { n: 4, d: 1000, off: -3, rest: 90 },
-    raceWeek: { n: 4, d: 400, off: -15, rest: 120 },
+  pace: {
+    easyFactor: 1.22,
+    longFactor: 1.25,
+    raceVsProjectedMaxSec: 12,
+    compromisedRatioSolo: 0.87,
+    compromisedRatioTeam: 0.94,
   },
-  volume: { peakFactor: 1.4, peakFactorStrength: 1.6, rampShare: 0.6, deloadFactor: 0.7, taperFactor: 0.65, raceWeekFactor: 0.4 },
-  longRun: { maxKmMan: 18, maxKmWoman: 16, weekShare: 0.32, heavySimFactor: 0.75 },
-  sim: { baseOffsetSec: 15, thresholdOffsetSec: 5, compromisedEarlyOffsetSec: 5 },
-  taper: { lastSimDays: 10, lastStrengthDays: 7, raceWeekDays: 6 },
+  volume: {
+    startKm: [15, 22, 32, 42],
+    rampShare: 0.6,
+    peakFactor: 1.4,
+    peakFactorStrength: 1.6,
+    deloadFactor: 0.7,
+    easyShare: 0.2,
+    longShare: 0.32,
+    longMinKm: 6,
+    longMaxKmWoman: 16,
+    longMaxKmMan: 18,
+    longHeavySimFactor: 0.75,
+  },
+  sim: {
+    basePaceAddSec: 15,
+    thresholdPaceAddSec: 5,
+    compromisedEarlyAddSec: 5,
+    kmShort: 4,
+    kmCompromised: 6,
+    kmPeakFull: 8,
+  },
+  compromised: {
+    addonPhases: ['compromised', 'peak'],
+  },
+  strength: {
+    lastHeavyMinDaysOut: 7,
+  },
+  taper: {
+    volumeWeek1: 0.65,
+    volumeRaceWeek: 0.4,
+    raceWeekEasyShare: 0.15,
+    raceWeekEasyDays: 6,
+    lastBigSimMinDaysOut: 10,
+  },
+  tendon: {
+    rampNow: 0.4,
+    rampRecent: 0.7,
+    peakCapNow: 1.15,
+    peakCapRecent: 1.3,
+  },
+  returnToRun: {
+    days: 21,
+    crossMinMinutes: 25,
+    crossMaxMinutes: 90,
+    crossThresholdReps: 5,
+    crossThresholdRepsTaper: 3,
+  },
+  prediction: {
+    raceDayMarginSec: 30,
+    starFactor: { 1: 1.32, 2: 1.15, 3: 1.0, 4: 0.88, 5: 0.78 },
+    womanMediumFactor: 1.12,
+    doublesStationFactor: 0.82,
+    injuryGainNow: 0.6,
+    injuryGainRecent: 0.85,
+    freqAerobic: { 1: 0.25, 2: 0.7, 3: 0.85 },
+    freqAerobicFit2: 0.6,
+    freqStation: { 1: 0.69, 2: 0.76, 3: 0.86 },
+  },
+  coaching: {
+    thresholdCapPctLthr: 1.0,
+    achillesStiffnessCeiling: 4,
+    maxWeeklyVolumeIncrease: 0.1,
+    skiShiftM: 125,
+    sledShiftM: 12.5,
+    wallBallSet: 10,
+    eliteMaxDecaySec: 12,
+  },
 };

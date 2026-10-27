@@ -98,6 +98,8 @@ export interface Profile {
   adherence?: number | null;
   /** runtime only: key sessions logged against their target pace */
   execution?: Execution | null;
+  /** runtime only: the member's pinned rule set (src/engine/rules); missing = v1 */
+  ruleSet?: import('./rules/types').RuleSet;
 }
 
 /** Key sessions (threshold, intervals, sim, long) with pace logged vs. the target of the plan. */

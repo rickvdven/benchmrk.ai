@@ -3,8 +3,7 @@ import {
   compliance,
   fmtHms,
   fmtMmss,
-  erasFromVersions,
-  generateVersionedSeason,
+  generateSeason,
   currentProfile,
   mondayOf,
   raceModel,
@@ -120,15 +119,13 @@ export interface Ctx {
   completed: Record<string, boolean>;
   morning: Record<string, number>;
   today?: string;
-  /** user_plan_versions rows (oldest first): which rule set the plan follows from which date */
-  versions?: { rule_set_version: number; effective_from: string }[] | null;
 }
 
 function planFor(c: Ctx) {
   const lang = langOf(c.row);
   const p = toProfile(c.row);
   const today = c.today ?? todayISO();
-  const weeks = generateVersionedSeason(p, { lang, flare: c.morning, today }, erasFromVersions(c.versions, (c.row as { rule_set_version?: number }).rule_set_version ?? 1));
+  const weeks = generateSeason(p, { lang, flare: c.morning, today });
   return { lang, p: currentProfile(p, today), today, weeks };
 }
 

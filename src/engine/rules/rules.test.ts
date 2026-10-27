@@ -1,160 +1,191 @@
-import { createHash } from 'node:crypto';
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
-  applyChanges,
-  defaultSchedule,
-  generatePlan,
+  buildRuleSet,
+  changesBetween,
+  effectiveCoaching,
   generateSeason,
-  generateVersionedSeason,
-  latestRuleSetVersion,
+  getRule,
   previewPlanUpdate,
-  registerRuleSet,
   ruleSet,
-  snapshotOf,
-  unregisterRuleSet,
-  V1_PARAMS,
-  withAdminRules,
-  zones,
-  DEFAULT_RULES,
-  type Athlete,
-  type Profile,
-  type RuleChange,
-  type RuleSetDef,
+  seasonWithPins,
+  versionOn,
+  pinsOf,
+  freezeLogged,
+  V1,
+  VERSIONS,
+  LATEST_RULESET_VERSION,
+  type RuleSetVersion,
+  type RulePin,
+  type Week,
 } from '../index';
-import SNAPSHOT from './v1.snapshot.json';
+import { fixtures, FIXTURE_TODAY } from './fixtures';
 
-const stars = { skierg: 3, sledPush: 3, sledPull: 3, burpees: 3, row: 3, farmers: 3, lunges: 3, wallballs: 3 };
-const athlete = (o: Partial<Athlete>): Athlete => ({ name: 'X', sex: 'man', lthr: 170, maxHr: 190, thresholdPaceSec: 300, archetype: 'hybrid', flags: { achilles: false, quad: false, back: false, shin: false }, stationStars: stars, stationTimes: {}, ...o });
-const profile = (o: Partial<Profile>, a: Partial<Athlete> = {}): Profile => ({ athlete: athlete(a), category: 'solo_open', raceName: 'Test', raceDate: '2027-02-20', goalSec: 5100, planStart: '2026-10-12', weekSchedule: defaultSchedule(5), ...o });
-const CASES: Record<string, Profile> = {
-  a: profile({}),
-  b: profile({ category: 'solo_pro', raceDate: '2027-01-09', goalSec: 4200 }, { thresholdPaceSec: 235, archetype: 'fast_runner', flags: { achilles: true, quad: false, back: false, shin: false } }),
-  c: profile({ raceDate: '2027-06-12', weekSchedule: defaultSchedule(3) }, { sex: 'woman', archetype: 'strength', weeklyKm: 20 } as never),
-  d: profile({ raceDate: '2026-12-05', weekSchedule: defaultSchedule(7) }, { thresholdPaceSec: 340 }),
-  e: profile({ raceDate: '2027-03-06', weekSchedule: defaultSchedule(6) }, { flags: { achilles: false, quad: false, back: true, shin: true, injuries: { shin: 'now' } } as never }),
-};
-const TODAY = '2026-11-02';
-const sha = (x: unknown) => createHash('sha256').update(JSON.stringify(x)).digest('hex').slice(0, 24);
-const why = (t: string) => ({ en: t, nl: t, de: t, es: t, ko: t });
-
-/** A made-up version for the tests: it is never registered in the app. */
-const change = (key: string, before: unknown, after: unknown): RuleChange => ({ key, before, after, sourceIds: [], why: why('test') });
-const V2: RuleSetDef = {
-  version: 2,
-  date: '2026-11-12',
-  title: why('Test update'),
-  changes: [
-    change('taper.lastSimDays', 10, 14),
-    change('zones.z2CapPct', 0.89, 0.87),
-    change('volume.taperFactor', 0.65, 0.6),
-    change('threshold.table.base.0.n', 5, 4),
-    change('forecast.freqAerobic.3', 0.85, 0.8),
-  ],
-};
-const withV2 = () => registerRuleSet(V2);
-afterEach(() => unregisterRuleSet(2));
+const why = { nl: 'test', en: 'test', de: 'test', es: 'test', ko: 'test' };
+/** A made-up version 2 that only exists in the tests. */
+const TEST: RuleSetVersion[] = [
+  {
+    version: 2,
+    date: '2026-11-12',
+    title: { nl: 'Testupdate', en: 'Test update', de: 'Test', es: 'Test', ko: 'Test' },
+    changes: [
+      { key: 'volume.easyShare', before: 0.2, after: 0.25, sourceIds: ['Bosquet'], why },
+      { key: 'sim.kmShort', before: 4, after: 5, sourceIds: [], why },
+    ],
+  },
+];
+const resolve = (v: number) => buildRuleSet(TEST, v);
+const omen = fixtures()[0];
+const flat = (w: Week[]) => w.flatMap((x) => x.sessions);
 
 describe('rule sets', () => {
-  it('version 1 is exactly the engine as it was: the same input gives the same plan (snapshot)', () => {
-    const got: Record<string, string> = {};
-    for (const [k, p] of Object.entries(CASES))
-      for (const lang of ['en', 'nl'] as const) {
-        got[`${k}-${lang}-plan`] = sha(generatePlan(p, { lang, today: TODAY }));
-        got[`${k}-${lang}-season`] = sha(generateSeason(p, { lang, today: TODAY, flare: { '2026-11-03': 6 } }));
-      }
-    got.zones = sha(zones(170, 190));
-    expect(got).toEqual(SNAPSHOT);
-  });
-  it('generating twice with the same version gives exactly the same plan', () => {
-    withV2();
-    const p = CASES.a;
-    expect(generateSeason(p, { lang: 'nl', today: TODAY, ruleSet: ruleSet(2) })).toEqual(generateSeason(p, { lang: 'nl', today: TODAY, ruleSet: ruleSet(2) }));
-  });
-  it('applies a version as differences on the previous one and refuses a stale change list', () => {
-    withV2();
-    const rs = ruleSet(2);
-    expect(rs.params.taper.lastSimDays).toBe(14);
-    expect(rs.params.threshold.table.base[0].n).toBe(4);
-    expect(rs.params.threshold.table.base[1]).toEqual(V1_PARAMS.threshold.table.base[1]);
-    expect(V1_PARAMS.taper.lastSimDays).toBe(10);
-    expect(() => applyChanges(V1_PARAMS, [change('taper.lastSimDays', 9, 14)])).toThrow(/does not match/);
-    expect(() => applyChanges(V1_PARAMS, [change('taper.nothing', undefined, 1)])).toThrow();
-  });
-  it('resolves a version this build does not know to the newest one it knows', () => {
-    expect(ruleSet(99).version).toBe(latestRuleSetVersion());
+  it('v1 equals the engine defaults and resolves for any number', () => {
+    expect(ruleSet(1)).toEqual(V1);
     expect(ruleSet(null).version).toBe(1);
+    expect(ruleSet(999).version).toBe(LATEST_RULESET_VERSION);
   });
-  it('lets an admin value from Admin → Regels win over the pinned version, and otherwise follows the version', () => {
-    withV2();
-    registerRuleSet({ ...V2, changes: [...V2.changes, change('thresholdCapPctLthr', 1, 0.98)] });
-    expect(withAdminRules(ruleSet(2), { ...DEFAULT_RULES }).thresholdCapPctLthr).toBe(0.98);
-    expect(withAdminRules(ruleSet(2), { ...DEFAULT_RULES, thresholdCapPctLthr: 0.95 }).thresholdCapPctLthr).toBe(0.95);
+
+  it('same input + same version = exactly the same plan', () => {
+    for (const f of fixtures()) {
+      const opts = { lang: 'nl' as const, today: FIXTURE_TODAY, ...f.opts };
+      const a = generateSeason({ ...f.profile, ruleSet: ruleSet(1) }, opts);
+      const b = generateSeason({ ...f.profile, ruleSet: ruleSet(1) }, opts);
+      expect(a).toEqual(b);
+      // no rule set on the profile = v1
+      expect(generateSeason(f.profile, opts)).toEqual(a);
+    }
   });
-  it('a new version really changes the plan, and only where its rules apply', () => {
-    withV2();
-    const p = CASES.a;
-    const v1 = generateSeason(p, { lang: 'nl', today: TODAY }).flatMap((w) => w.sessions);
-    const v2 = generateSeason(p, { lang: 'nl', today: TODAY, ruleSet: ruleSet(2) }).flatMap((w) => w.sessions);
-    expect(v2.length).toBe(v1.length);
-    const changed = v2.filter((s, i) => JSON.stringify(s) !== JSON.stringify(v1[i]));
-    expect(changed.length).toBeGreaterThan(0);
-    expect(changed.length).toBeLessThan(v1.length);
-    expect(v2.find((s) => s.type === 'easy' && s.hrCap)!.hrCap).toBeLessThan(v1.find((s) => s.type === 'easy' && s.hrCap)!.hrCap!);
+
+  it('a version only changes the keys it lists, and changes the plan', () => {
+    const v2 = resolve(2);
+    expect(v2.version).toBe(2);
+    expect(v2.volume.easyShare).toBe(0.25);
+    expect(v2.changedKeys).toEqual(['volume.easyShare', 'sim.kmShort']);
+    expect({ ...v2, version: 1, changedKeys: [], volume: { ...v2.volume, easyShare: 0.2 }, sim: { ...v2.sim, kmShort: 4 } }).toEqual(V1);
+    const opts = { today: FIXTURE_TODAY };
+    expect(generateSeason({ ...omen.profile, ruleSet: v2 }, opts)).not.toEqual(generateSeason(omen.profile, opts));
+    expect(() => buildRuleSet([{ ...TEST[0], changes: [{ key: 'volume.nope', before: 1, after: 2, sourceIds: [], why }] }], 2)).toThrow();
+  });
+
+  it('every shipped version lists `before` = the value in the version before it', () => {
+    let prev = V1;
+    for (const v of VERSIONS) {
+      for (const c of v.changes) expect(getRule(prev, c.key), `${v.version} ${c.key}`).toEqual(c.before);
+      for (const c of v.changes) for (const l of ['nl', 'en', 'de', 'es', 'ko'] as const) expect(c.why[l], `${v.version} ${c.key} ${l}`).toBeTruthy();
+      prev = buildRuleSet(VERSIONS, v.version);
+      expect(prev.version).toBe(v.version);
+    }
+  });
+
+  it('changesBetween runs both ways', () => {
+    expect(changesBetween(1, 2, TEST).map((c) => c.after)).toEqual([0.25, 5]);
+    expect(changesBetween(2, 1, TEST).map((c) => c.after)).toEqual([4, 0.2]);
+    expect(changesBetween(2, 2, TEST)).toEqual([]);
+  });
+
+  it('admin coaching_rules apply, except keys a later version changed', () => {
+    const db = { ...V1.coaching, eliteMaxDecaySec: 15, wallBallSet: 12 };
+    expect(effectiveCoaching(ruleSet(1), db).eliteMaxDecaySec).toBe(15);
+    expect(effectiveCoaching(ruleSet(1), null)).toEqual(V1.coaching);
+    const cv: RuleSetVersion[] = [{ ...TEST[0], changes: [{ key: 'coaching.eliteMaxDecaySec', before: 12, after: 10, sourceIds: [], why }] }];
+    const v2 = buildRuleSet(cv, 2);
+    expect(effectiveCoaching(v2, db)).toEqual({ ...db, eliteMaxDecaySec: 10 });
+  });
+
+  it('rolling back restores the coaching value of the old version, also with database rules', () => {
+    const cv: RuleSetVersion[] = [{ ...TEST[0], changes: [{ key: 'coaching.eliteMaxDecaySec', before: 12, after: 10, sourceIds: [], why }] }];
+    const res = (v: number) => buildRuleSet(cv, v);
+    const opts = { lang: 'en' as const, today: FIXTURE_TODAY, rules: { ...V1.coaching, eliteMaxDecaySec: 14 } };
+    const start: RulePin[] = [{ from: null, version: 1 }];
+    const original = seasonWithPins(omen.profile, opts, start, res);
+    const applied = seasonWithPins(omen.profile, opts, [...start, { from: FIXTURE_TODAY, version: 2 }], res);
+    expect(applied).not.toEqual(original);
+    expect(seasonWithPins(omen.profile, opts, [...start, { from: FIXTURE_TODAY, version: 2 }, { from: FIXTURE_TODAY, version: 1 }], res)).toEqual(original);
   });
 });
 
-describe('plan updates: preview, apply, roll back', () => {
-  const opts = { lang: 'nl' as const, today: TODAY };
-  const p = CASES.a;
-  const eras = [{ from: '0000-00-00', ruleSet: ruleSet(1) }];
+describe('pins: apply and roll back', () => {
+  const today = FIXTURE_TODAY;
+  const opts = { lang: 'nl' as const, today };
+  const start: RulePin[] = [{ from: null, version: 1 }];
+  const applied: RulePin[] = [...start, { from: today, version: 2 }];
+  const rolledBack: RulePin[] = [...applied, { from: today, version: 1 }];
 
-  it('the preview finds only real differences', () => {
-    withV2();
-    const same = previewPlanUpdate(p, opts, eras, ruleSet(1));
-    expect(same.changedDays).toBe(0);
-    expect(same.weeks).toEqual([]);
-    expect(same.forecast).toBeNull();
-    const diff = previewPlanUpdate(p, opts, eras, ruleSet(2));
-    const cur = generateVersionedSeason(p, opts, eras).flatMap((w) => w.sessions);
-    const nxt = generateVersionedSeason(p, opts, [{ from: '0000-00-00', ruleSet: ruleSet(1) }, { from: TODAY, ruleSet: ruleSet(2) }]).flatMap((w) => w.sessions);
-    const until = '2026-11-30';
-    const real = cur.filter((s, i) => s.date >= TODAY && s.date < until && JSON.stringify(s) !== JSON.stringify(nxt[i])).map((s) => s.date);
-    expect(diff.weeks.flatMap((w) => w.days.map((d) => d.date))).toEqual(real);
-    for (const w of diff.weeks) for (const d of w.days) expect(d.fields.length).toBeGreaterThan(0);
-    expect(diff.weeks.every((w) => w.start >= '2026-10-26')).toBe(true);
-    expect(diff.changedDays).toBeGreaterThan(0);
+  it('versionOn and pinsOf', () => {
+    expect(versionOn(applied, '2026-11-15')).toBe(1);
+    expect(versionOn(applied, today)).toBe(2);
+    expect(versionOn(rolledBack, today)).toBe(1);
+    expect(pinsOf([], 3)).toEqual([{ from: null, version: 3 }]);
+    expect(pinsOf([{ version_no: 2, rule_set_version: 2, effective_from: today }, { version_no: 1, rule_set_version: 1, effective_from: '2026-10-01' }], 2)).toEqual([
+      { from: null, version: 1 },
+      { from: today, version: 2 },
+    ]);
   });
-  it('the forecast diff only appears when the forecast factors change', () => {
-    withV2();
-    const three = profile({ weekSchedule: defaultSchedule(3) });
-    expect(previewPlanUpdate(three, opts, eras, ruleSet(2)).forecast).not.toBeNull();
-    expect(previewPlanUpdate(p, opts, eras, ruleSet(2)).forecast).toBeNull(); // 5 days: factor 1 in both versions
+
+  it('apply changes only today and later; past days stay exactly the same', () => {
+    const before = flat(seasonWithPins(omen.profile, opts, start, resolve));
+    const after = flat(seasonWithPins(omen.profile, opts, applied, resolve));
+    expect(after.filter((s) => s.date < today)).toEqual(before.filter((s) => s.date < today));
+    expect(after.filter((s) => s.date >= today)).not.toEqual(before.filter((s) => s.date >= today));
   });
-  it('apply and then roll back gives exactly the original future plan; the past is never touched', () => {
-    withV2();
-    const original = generateVersionedSeason(p, opts, eras);
-    const applied = [...eras, { from: TODAY, ruleSet: ruleSet(2) }];
-    const afterApply = generateVersionedSeason(p, opts, applied);
-    // days before today are identical, from today on something differs
-    const past = (w: typeof original) => w.flatMap((x) => x.sessions).filter((s) => s.date < TODAY);
-    expect(past(afterApply)).toEqual(past(original));
-    expect(JSON.stringify(afterApply)).not.toEqual(JSON.stringify(original));
-    // roll back on the same day: a new era with version 1 again
-    const rolled = [...applied, { from: TODAY, ruleSet: ruleSet(1) }];
-    const afterRollback = generateVersionedSeason(p, opts, rolled);
-    expect(snapshotOf(afterRollback, TODAY)).toEqual(snapshotOf(original, TODAY));
-    expect(afterRollback).toEqual(original);
+
+  it('apply, then roll back, gives exactly the original future plan', () => {
+    const original = seasonWithPins(omen.profile, opts, start, resolve);
+    const back = seasonWithPins(omen.profile, opts, rolledBack, resolve);
+    expect(back).toEqual(original);
   });
-  it('a rollback on a later day keeps the days in between as they were under the update', () => {
-    withV2();
-    const applied = [...eras, { from: TODAY, ruleSet: ruleSet(2) }];
-    const later = '2026-11-16';
-    const rolled = [...applied, { from: later, ruleSet: ruleSet(1) }];
-    const o = { ...opts, today: later };
-    const a = generateVersionedSeason(p, o, applied).flatMap((w) => w.sessions);
-    const r = generateVersionedSeason(p, o, rolled).flatMap((w) => w.sessions);
-    expect(r.filter((s) => s.date < later)).toEqual(a.filter((s) => s.date < later));
-    const v1 = generateVersionedSeason(p, o, eras).flatMap((w) => w.sessions);
-    expect(r.filter((s) => s.date >= later)).toEqual(v1.filter((s) => s.date >= later));
+
+  it('logged sessions are never touched', () => {
+    const plan = flat(seasonWithPins(omen.profile, opts, start, resolve));
+    const easy = plan.find((s) => s.date >= today && s.type === 'easy')!;
+    const log = { [easy.date]: { completed: true, planned: easy as unknown as Record<string, unknown> } };
+    const after = flat(freezeLogged(seasonWithPins(omen.profile, opts, applied, resolve), log));
+    const kept = after.find((s) => s.date === easy.date)!;
+    expect({ ...kept, frozen: undefined }).toEqual({ ...easy, frozen: undefined });
+    const p = previewPlanUpdate({ profile: omen.profile, opts, pins: start, log, toVersion: 2, today, resolve });
+    const day = p.weeks.flatMap((w) => w.days).find((d) => d.date === easy.date)!;
+    expect(day.frozen).toBe(true);
+    expect(day.fields).toEqual([]);
+  });
+});
+
+describe('previewPlanUpdate', () => {
+  const today = FIXTURE_TODAY;
+  const opts = { lang: 'en' as const, today };
+  const pins: RulePin[] = [{ from: null, version: 1 }];
+
+  it('finds nothing when the version stays the same', () => {
+    const p = previewPlanUpdate({ profile: omen.profile, opts, pins, toVersion: 1, today, resolve });
+    expect(p.changedDays).toBe(0);
+    expect(p.forecastChanged).toBe(false);
+    expect(p.weeks.flatMap((w) => w.days)).toHaveLength(28);
+  });
+
+  it('finds only real differences', () => {
+    const p = previewPlanUpdate({ profile: omen.profile, opts, pins, toVersion: 2, today, resolve });
+    expect(p.changedDays).toBeGreaterThan(0);
+    for (const d of p.weeks.flatMap((w) => w.days)) {
+      expect(d.date >= today).toBe(true);
+      if (!d.fields.length) {
+        expect(d.after).toEqual(d.before);
+        continue;
+      }
+      // the test version only touches easy-run volume and the short sim distance
+      expect(['easy', 'sim']).toContain(d.before!.type);
+      expect(d.fields).toContain('km');
+      expect(JSON.stringify(d.after)).not.toBe(JSON.stringify(d.before));
+    }
+    // easy runs got longer → more km in at least one week, never fewer
+    expect(p.weeks.some((w) => w.kmAfter > w.kmBefore)).toBe(true);
+    expect(p.weeks.every((w) => w.kmAfter >= w.kmBefore)).toBe(true);
+  });
+
+  it('reports a forecast change only when the forecast rules change', () => {
+    const fc: RuleSetVersion[] = [{ ...TEST[0], changes: [{ key: 'prediction.raceDayMarginSec', before: 30, after: 60, sourceIds: [], why }] }];
+    const ambitious = { ...omen.profile, goalSec: 74 * 60 };
+    const p = previewPlanUpdate({ profile: ambitious, opts, pins, toVersion: 2, today, resolve: (v) => buildRuleSet(fc, v) });
+    expect(p.changedDays).toBe(0);
+    expect(p.model.after.chance).not.toBe(p.model.before.chance);
+    expect(p.forecastChanged).toBe(true);
+    expect(previewPlanUpdate({ profile: omen.profile, opts, pins, toVersion: 2, today, resolve }).forecastChanged).toBe(false);
   });
 });

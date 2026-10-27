@@ -1,158 +1,217 @@
-import { useMemo } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
-import { generateVersionedSeason, previewPlanUpdate, ruleSet, snapshotOf, type RuleChange } from '../engine';
-import { PlanDiffView } from '../components/PlanDiffView';
-import { PageHeader, Spinner } from '../components/ui';
-import { useCoach, useKnowledge } from '../data/hooks';
-import { updateTitle, usePlanChoices, usePlanUpdateActions, usePlanUpdates } from '../data/planUpdates';
+import { ShieldCheck } from 'lucide-react';
+import { changesBetween, freezeLogged, LATEST_RULESET_VERSION, previewPlanUpdate, seasonWithPins, type PlanPreview, type RuleChange } from '../engine';
+import { useCoach, useMutations, usePlanChoices, usePlanUpdates } from '../data/hooks';
 import { useI18n } from '../lib/i18n';
-import { usePt } from '../lib/usePt';
+import { fmtDay, loc, pt } from '../lib/planupdates';
+import { Notice, PageHeader, Spinner } from '../components/ui';
+import { ForecastCompare, PlanDiffWeeks, RuleChangeList, useSources } from '../components/PlanUpdates';
 
-const GROUPS = ['zones', 'threshold', 'volume', 'longRun', 'sim', 'taper', 'forecast'];
-const groupOf = (key: string) => GROUPS.find((g) => key === g || key.startsWith(`${g}.`)) ?? 'other';
-const show = (v: unknown) => (typeof v === 'object' && v !== null ? JSON.stringify(v) : String(v));
+type Coach = ReturnType<typeof useCoach>;
 
-export function ChangeList({ changes }: { changes: RuleChange[] }) {
+/** Before/after of the member's own plan when `toVersion` is pinned from today. */
+function usePreview(c: Coach, toVersion: number | null) {
+  return useMemo(() => {
+    if (!c.profile || toVersion == null) return null;
+    const preview = previewPlanUpdate({ profile: c.fullProfile, opts: c.planOpts, pins: c.pins, log: c.byDate, toVersion, today: c.today, forecast: c.profile });
+    const after = () => freezeLogged(seasonWithPins(c.fullProfile, c.planOpts, [...c.pins, { from: c.today, version: toVersion }]), c.byDate);
+    return { preview, after };
+  }, [c, toVersion]);
+}
+
+function Body({ intro, changes, changesTitle, preview, actions }: { intro: ReactNode; changes: RuleChange[]; changesTitle: string; preview: PlanPreview; actions: ReactNode }) {
   const { lang } = useI18n();
-  const p = usePt();
-  const knowledge = useKnowledge();
+  const sources = useSources();
   return (
-    <ul className="space-y-3">
-      {changes.map((c) => (
-        <li key={c.key} className="panel p-4">
-          <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <h3 className="font-semibold">{p(`pu.group.${groupOf(c.key)}`)}</h3>
-            <code className="stat text-xs text-muted">{c.key}</code>
-          </div>
-          <p className="mt-2 text-sm">
-            <span className="text-muted">{p('pu.change.was')}</span> <span className="stat text-muted line-through">{show(c.before)}</span>
-            <span className="mx-2 text-muted" aria-hidden>
-              →
-            </span>
-            <span className="text-muted">{p('pu.change.becomes')}</span> <span className="stat font-semibold">{show(c.after)}</span>
-          </p>
-          <p className="mt-2 text-sm">
-            <span className="font-semibold">{p('pu.change.why')}: </span>
-            {c.why[lang] || c.why.en}
-          </p>
-          {c.sourceIds.length > 0 && (
-            <p className="mt-1 text-xs text-muted">
-              {p('pu.change.sources')}:{' '}
-              {c.sourceIds.map((id, i) => (
-                <span key={id}>
-                  {i > 0 && ', '}
-                  <Link to={`/science#source-${id}`} className="text-fg underline">
-                    {knowledge.data?.find((k) => k.id === id)?.title ?? id}
-                  </Link>
-                </span>
-              ))}
-            </p>
-          )}
-        </li>
-      ))}
-    </ul>
+    <div className="mx-auto max-w-4xl space-y-4">
+      <div className="text-muted">{intro}</div>
+      <p className="flex items-center gap-2 text-sm text-muted">
+        <ShieldCheck className="h-4 w-4 shrink-0 text-good" aria-hidden />
+        {pt(lang, 'page.safe')}
+      </p>
+      {changes.length > 0 && (
+        <section className="panel p-5">
+          <h2 className="mb-3 text-lg font-bold">{changesTitle}</h2>
+          <RuleChangeList changes={changes} sources={sources.data ?? []} />
+        </section>
+      )}
+      <section className="panel p-5">
+        <h2 className="text-lg font-bold">{pt(lang, 'page.weeks')}</h2>
+        <p className="mb-3 mt-1 text-sm text-muted">{preview.changedDays ? pt(lang, 'page.legend') : pt(lang, 'page.noChanges')}</p>
+        <PlanDiffWeeks preview={preview} />
+      </section>
+      <section className="panel p-5">
+        <h2 className="mb-3 text-lg font-bold">{pt(lang, 'page.forecast')}</h2>
+        <ForecastCompare preview={preview} />
+      </section>
+      <div className="sticky bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-10 flex flex-wrap gap-2 md:bottom-3 rounded-xl border border-line bg-panel/95 p-3 shadow-paper backdrop-blur">{actions}</div>
+    </div>
   );
 }
 
-export default function PlanUpdate() {
-  const { id } = useParams();
+/** /plan/update/:id – what a plan update changes for this member, with Apply and Not now. */
+export default function PlanUpdatePage() {
   const { lang } = useI18n();
-  const p = usePt();
-  const nav = useNavigate();
+  const { id } = useParams();
   const c = useCoach(lang);
   const updates = usePlanUpdates();
   const choices = usePlanChoices();
-  const act = usePlanUpdateActions();
-  const u = updates.data?.find((x) => x.id === id) ?? null;
-  const choice = choices.data?.find((x) => x.plan_update_id === id) ?? null;
-
-  const preview = useMemo(() => {
-    if (!u || !c.profile) return null;
-    return previewPlanUpdate(c.fullProfile, { ...c.planOpts, today: c.today }, c.eras, ruleSet(u.rule_set_version), 28);
-  }, [u, c]);
-
-  if (updates.isLoading || !c.ready) return <Spinner />;
-  if (!u || !c.profile || !preview) {
+  const { applyPlanUpdate, dismissPlanUpdate } = useMutations();
+  const [busy, setBusy] = useState(false);
+  const upd = updates.data?.find((u) => u.id === id && u.status === 'published') ?? null;
+  const known = !!upd && upd.rule_set_version <= LATEST_RULESET_VERSION;
+  const pv = usePreview(c, known ? upd!.rule_set_version : null);
+  if (!c.profile || updates.isLoading) return <Spinner />;
+  if (!upd || !pv)
     return (
-      <>
-        <PageHeader eyebrow={p('pu.page.eyebrow')} title={p('pu.state.notFound')} />
-        <Link to="/plan" className="btn-ghost">
-          {p('pu.page.back')}
+      <div className="mx-auto max-w-xl space-y-4">
+        <Notice tone="warn">{pt(lang, 'page.notFound')}</Notice>
+        <Link to="/cockpit" className="btn-ghost btn-sm">
+          {pt(lang, 'page.back')}
         </Link>
-      </>
+      </div>
     );
-  }
-
-  const isCurrent = u.rule_set_version <= c.pin;
-  const date = (d: string) => new Date(d).toLocaleDateString(lang === 'nl' ? 'nl-NL' : lang, { day: 'numeric', month: 'long', year: 'numeric' });
-  const next = ruleSet(u.rule_set_version);
+  const pinned = c.row.rule_set_version ?? 1;
+  const inForce = pinned === upd.rule_set_version;
+  const choice = choices.data?.find((x) => x.plan_update_id === upd.id) ?? null;
+  const title = loc(upd.title, lang);
+  const date = fmtDay(lang, upd.published_at ?? upd.created_at);
 
   const apply = async () => {
-    const prev = snapshotOf(c.weeks, c.today);
-    const after = generateVersionedSeason(c.fullProfile, c.planOpts, [...c.eras.filter((e) => e.from < c.today), { from: c.today, ruleSet: next }]);
+    setBusy(true);
     try {
-      await act.apply.mutateAsync({ updateId: u.id, from: c.today, prev, next: snapshotOf(after, c.today) });
-      toast.success(p('pu.toast.applied'));
-      nav('/plan');
-    } catch {
-      toast.error(p('pu.toast.error'));
+      await applyPlanUpdate(upd, c.today, c.weeks, pv.after(), pt(lang, 'page.change', { date, title }));
+      toast.success(pt(lang, 'page.toastApplied'));
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setBusy(false);
     }
   };
-  const later = async () => {
+  const notNow = async () => {
+    setBusy(true);
     try {
-      await act.dismiss.mutateAsync(u.id);
-      toast(p('pu.toast.dismissed'));
-      nav('/cockpit');
-    } catch {
-      toast.error(p('pu.toast.error'));
+      await dismissPlanUpdate(upd);
+      toast.success(pt(lang, 'page.toastDismissed'));
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setBusy(false);
     }
   };
 
-  const state = isCurrent
+  const status = inForce
     ? choice?.choice === 'applied'
-      ? p('pu.state.applied', { date: date(choice.at) })
-      : p('pu.state.current')
+      ? pt(lang, 'page.applied', { date: fmtDay(lang, choice.at) })
+      : pt(lang, 'page.alreadyIn')
     : choice?.choice === 'dismissed'
-      ? p('pu.state.dismissed')
+      ? pt(lang, 'page.dismissed')
       : choice?.choice === 'rolled_back'
-        ? p('pu.state.rolledBack')
+        ? pt(lang, 'page.rolledBack')
         : null;
 
   return (
     <>
-      <PageHeader eyebrow={p('pu.page.eyebrow')} title={updateTitle(u, lang)}>
-        <span className="text-xs text-muted">{p('pu.page.published', { date: date(u.published_at ?? u.created_at) })}</span>
-      </PageHeader>
-      <div className="space-y-6">
-        <p className="text-sm text-muted">{p('pu.page.intro')}</p>
-        {state && <p className="rounded-lg border border-line bg-panel2 p-3 text-sm">{state}</p>}
-        <section>
-          <h2 className="mb-2 text-lg font-bold">{p('pu.changes.title')}</h2>
-          <ChangeList changes={u.changes} />
-        </section>
-        <section>
-          <h2 className="mb-2 text-lg font-bold">{p('pu.preview.title')}</h2>
-          <div className="panel p-4">
-            <PlanDiffView diff={preview} />
-          </div>
-        </section>
-        {!isCurrent && (
-          <section className="panel sticky bottom-[76px] z-10 md:bottom-2 space-y-2 border-ink/20 p-4 shadow-lg">
-            <div className="flex flex-wrap gap-2">
-              <button className="btn-primary" disabled={act.apply.isPending || act.dismiss.isPending} onClick={apply}>
-                {act.apply.isPending ? p('pu.btn.applying') : p('pu.btn.apply')}
+      <PageHeader eyebrow={`${pt(lang, 'page.eyebrow')} · ${date}`} title={title} />
+      {status && (
+        <div className="mx-auto mb-4 max-w-4xl">
+          <Notice>{status}</Notice>
+        </div>
+      )}
+      <Body
+        intro={
+          <>
+            {loc(upd.summary, lang) && <span className="mb-2 block text-base text-fg">{loc(upd.summary, lang)}</span>}
+            {pt(lang, 'page.intro')}
+          </>
+        }
+        changes={upd.changes ?? []}
+        changesTitle={pt(lang, 'page.changes')}
+        preview={pv.preview}
+        actions={
+          inForce ? (
+            <Link to="/cockpit" className="btn-ghost">
+              {pt(lang, 'page.back')}
+            </Link>
+          ) : (
+            <>
+              <button className="btn-primary" disabled={busy} onClick={apply}>
+                {pt(lang, 'page.apply')}
               </button>
-              {choice?.choice !== 'dismissed' && (
-                <button className="btn-ghost" disabled={act.apply.isPending || act.dismiss.isPending} onClick={later}>
-                  {p('pu.btn.later')}
+              {!choice && (
+                <button className="btn-ghost" disabled={busy} onClick={notNow}>
+                  {pt(lang, 'page.notNow')}
                 </button>
               )}
-            </div>
-            <p className="text-xs text-muted">{p('pu.apply.note')}</p>
-          </section>
-        )}
+              {choice && (
+                <Link to="/cockpit" className="btn-ghost">
+                  {pt(lang, 'page.back')}
+                </Link>
+              )}
+            </>
+          )
+        }
+      />
+    </>
+  );
+}
+
+/** /plan/history/:versionId – before/after of restoring an earlier plan version, then confirm. */
+export function PlanRollbackPage() {
+  const { lang } = useI18n();
+  const { versionId } = useParams();
+  const nav = useNavigate();
+  const c = useCoach(lang);
+  const { rollbackPlan } = useMutations();
+  const [busy, setBusy] = useState(false);
+  const target = c.profile ? (c.versions?.find((v) => v.id === versionId) ?? null) : null;
+  const pv = usePreview(c, target?.rule_set_version ?? null);
+  if (!c.profile || !c.versions) return <Spinner />;
+  if (!target || !pv)
+    return (
+      <div className="mx-auto max-w-xl space-y-4">
+        <Notice tone="warn">{pt(lang, 'rollback.notFound')}</Notice>
+        <Link to="/settings?tab=history" className="btn-ghost btn-sm">
+          {pt(lang, 'rollback.cancel')}
+        </Link>
       </div>
+    );
+  const pinned = c.row.rule_set_version ?? 1;
+  const same = target.rule_set_version === pinned;
+  const changes = changesBetween(pinned, target.rule_set_version);
+  const restore = async () => {
+    setBusy(true);
+    try {
+      const msg = pt(lang, 'rollback.done', { n: target.version_no });
+      await rollbackPlan(target, c.today, c.weeks, pv.after(), msg);
+      toast.success(msg);
+      nav('/settings?tab=history');
+    } catch (e) {
+      toast.error((e as Error).message);
+      setBusy(false);
+    }
+  };
+  return (
+    <>
+      <PageHeader eyebrow={pt(lang, 'rollback.eyebrow')} title={pt(lang, 'rollback.title', { n: target.version_no })} />
+      <Body
+        intro={same ? pt(lang, 'rollback.same', { n: target.version_no }) : pt(lang, 'rollback.intro', { n: target.version_no, v: target.rule_set_version })}
+        changes={changes}
+        changesTitle={pt(lang, 'rollback.changes')}
+        preview={pv.preview}
+        actions={
+          <>
+            <button className="btn-primary" disabled={busy || same} onClick={restore}>
+              {pt(lang, 'rollback.confirm')}
+            </button>
+            <Link to="/settings?tab=history" className="btn-ghost">
+              {pt(lang, 'rollback.cancel')}
+            </Link>
+          </>
+        }
+      />
     </>
   );
 }

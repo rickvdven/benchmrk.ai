@@ -1,180 +1,216 @@
 import { useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { PlanDiffView } from '../../components/PlanDiffView';
-import { ChangeList } from '../PlanUpdate';
-import { Spinner } from '../../components/ui';
-import { ERA_START, defaultSchedule, mondayOf, previewPlanUpdate, ruleSet, ruleSetDef, ruleSetVersions, addDays, todayISO, type Profile, type RuleEra } from '../../engine';
-import { isComplete, toProfile, type ProfileRow } from '../../data/mapping';
-import { updateTitle, type PlanUpdateRow } from '../../data/planUpdates';
-import { useI18n } from '../../lib/i18n';
+import clsx from 'clsx';
+import { demoAthletes, pinsOf, previewPlanUpdate, todayISO, VERSIONS, LATEST_RULESET_VERSION, type Localized, type RulePin } from '../../engine';
 import { supabase } from '../../lib/supabase';
-import { usePt } from '../../lib/usePt';
+import { useI18n } from '../../lib/i18n';
+import { fmtDay, loc } from '../../lib/planupdates';
+import { useRulesAndBaselines, type PlanUpdateRow, type PlanVersionRow } from '../../data/hooks';
+import { isComplete, toProfile, type EntryRow, type ProfileRow } from '../../data/mapping';
+import { Notice, Segmented, Spinner } from '../../components/ui';
+import { ForecastCompare, PlanDiffWeeks, RuleChangeList, useSources } from '../../components/PlanUpdates';
 
-type Demo = 'openMen' | 'openWomen' | 'proMen';
-const DEMOS: Record<Demo, { sex: 'man' | 'woman'; category: Profile['category']; goal: number; pace: number }> = {
-  openMen: { sex: 'man', category: 'solo_open', goal: 4800, pace: 285 },
-  openWomen: { sex: 'woman', category: 'solo_open', goal: 5700, pace: 330 },
-  proMen: { sex: 'man', category: 'solo_pro', goal: 4200, pace: 245 },
-};
+const LANGS = ['nl', 'en', 'de', 'es', 'ko'] as const;
 
-/** A demo athlete with a middling profile: 16 weeks to the race, 5 training days. */
-function demoProfile(d: Demo, today: string): Profile {
-  const x = DEMOS[d];
-  const stars = { skierg: 3, sledPush: 3, sledPull: 3, burpees: 3, row: 3, farmers: 3, lunges: 3, wallballs: 3 };
-  return {
-    athlete: { name: d, sex: x.sex, lthr: 170, maxHr: 190, thresholdPaceSec: x.pace, archetype: 'hybrid', flags: { achilles: false, quad: false, back: false, shin: false }, stationStars: stars, stationTimes: {} },
-    category: x.category,
-    raceName: 'Demo',
-    raceDate: addDays(mondayOf(today), 16 * 7 + 5),
-    goalSec: x.goal,
-    planStart: addDays(mondayOf(today), -14),
-    weekSchedule: defaultSchedule(5),
-  };
-}
-
-/** Admin → Plan updates: drafts from rule sets in the code, preview for demo athletes and a member, publish. */
-export function PlanUpdatesAdmin() {
-  const p = usePt();
-  const { lang } = useI18n();
-  const qc = useQueryClient();
-  const rows = useQuery({
-    queryKey: ['admin', 'plan-updates'],
-    queryFn: async () => ((await supabase.from('plan_updates').select('*').order('rule_set_version', { ascending: false })).data ?? []) as PlanUpdateRow[],
-  });
-  const members = useQuery({
-    queryKey: ['admin', 'athletes'],
+function useAllUpdates() {
+  return useQuery({
+    queryKey: ['plan-updates'],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc('admin_list_athletes');
+      const { data, error } = await supabase.from('plan_updates').select('*').order('rule_set_version', { ascending: false });
       if (error) throw error;
-      return (data ?? []) as { id: string; email: string; name: string; onboarded: boolean }[];
+      return (data ?? []) as PlanUpdateRow[];
     },
   });
+}
+
+/** Admin → Plan updates: drafts come from the rule-set metadata in the repo; preview on demo athletes or a member; publish. */
+export function PlanUpdatesAdmin() {
+  const qc = useQueryClient();
+  const ups = useAllUpdates();
   const [sel, setSel] = useState<number | null>(null);
-  const [who, setWho] = useState<string>('demo:openMen');
-  const [run, setRun] = useState(0);
-  const today = todayISO();
-  const codeVersions = ruleSetVersions().filter((v) => v > 1);
+  if (ups.isError) return <Notice tone="warn">Table plan_updates not found – apply migration 022_plan_updates.sql first.</Notice>;
+  if (!ups.data) return <Spinner />;
+  const inDb = new Map(ups.data.map((u) => [u.rule_set_version, u]));
+  const missing = VERSIONS.filter((v) => !inDb.has(v.version));
+  const current = sel ?? ups.data[0]?.rule_set_version ?? null;
+  const upd = current != null ? (inDb.get(current) ?? null) : null;
 
-  const member = useQuery({
-    queryKey: ['admin', 'member-profile', who],
-    enabled: who.startsWith('member:') && who.length > 7,
-    queryFn: async () => (await supabase.from('profiles').select('*').eq('id', who.slice(7)).maybeSingle()).data as ProfileRow | null,
-  });
-
-  const selRow = rows.data?.find((r) => r.rule_set_version === sel) ?? null;
-  const diff = useMemo(() => {
-    if (!sel || !run || !ruleSetDef(sel)) return null;
-    let profile: Profile | null = null;
-    let from = ruleSet(sel - 1);
-    if (who.startsWith('demo:')) profile = demoProfile(who.slice(5) as Demo, today);
-    else if (isComplete(member.data)) {
-      profile = toProfile(member.data);
-      from = ruleSet(member.data.rule_set_version ?? 1);
-    }
-    if (!profile) return null;
-    const eras: RuleEra[] = [{ from: ERA_START, ruleSet: from }];
-    return previewPlanUpdate(profile, { lang, today }, eras, ruleSet(sel), 28);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sel, run, who, member.data, lang]);
-
-  if (!rows.data) return <Spinner />;
-  const refresh = () => qc.invalidateQueries({ queryKey: ['admin', 'plan-updates'] });
-  const makeDraft = async (v: number) => {
-    const d = ruleSetDef(v);
-    if (!d) return;
-    const { error } = await supabase.from('plan_updates').insert({ rule_set_version: v, title: d.title.en, summary: d.title, changes: d.changes, status: 'draft' });
+  const createDraft = async (version: number) => {
+    const v = VERSIONS.find((x) => x.version === version)!;
+    const { error } = await supabase.from('plan_updates').insert({ rule_set_version: v.version, title: v.title, summary: {}, changes: v.changes, status: 'draft' });
     if (error) return toast.error(error.message);
-    refresh();
-  };
-  const setStatus = async (r: PlanUpdateRow, status: 'draft' | 'published') => {
-    if (status === 'published' && !confirm(p('pu.admin.publishConfirm'))) return;
-    const { error } = await supabase.from('plan_updates').update({ status }).eq('id', r.id);
-    if (error) return toast.error(error.message);
+    toast.success(`Draft for rule set v${version} created`);
+    setSel(version);
     qc.invalidateQueries({ queryKey: ['plan-updates'] });
-    refresh();
   };
-  const versions = Array.from(new Set([...codeVersions, ...rows.data.map((r) => r.rule_set_version)])).sort((a, b) => b - a);
 
   return (
-    <div className="space-y-5">
-      <p className="text-sm text-muted">{p('pu.admin.intro')}</p>
-      <section className="panel space-y-3 p-4">
-        <h2 className="font-bold">{p('pu.admin.versions')}</h2>
-        {!versions.length && <p className="text-sm text-muted">{p('pu.admin.noVersions')}</p>}
-        {versions.map((v) => {
-          const r = rows.data.find((x) => x.rule_set_version === v);
-          const inCode = !!ruleSetDef(v);
-          return (
-            <div key={v} className="flex flex-wrap items-center justify-between gap-2 border-t border-line pt-3 text-sm first:border-0 first:pt-0">
-              <div>
-                <span className="font-semibold">v{v}</span> {r && <>· {updateTitle(r, lang)} </>}
-                {r && <span className="chip ml-1">{r.status === 'published' ? p('pu.admin.published') : p('pu.admin.draft')}</span>}
-                {!inCode && <div className="text-xs text-bad">{p('pu.admin.noCode')}</div>}
-              </div>
-              <div className="flex gap-2">
-                {!r && inCode && (
-                  <button className="btn-ghost btn-sm" onClick={() => makeDraft(v)}>
-                    {p('pu.admin.makeDraft', { v })}
-                  </button>
-                )}
-                {inCode && (
-                  <button className="btn-ghost btn-sm" onClick={() => setSel(v)}>
-                    {p('pu.admin.preview')}
-                  </button>
-                )}
-                {r && r.status === 'draft' && (
-                  <button className="btn-primary btn-sm" onClick={() => setStatus(r, 'published')}>
-                    {p('pu.admin.publish')}
-                  </button>
-                )}
-                {r && r.status === 'published' && (
-                  <button className="btn-ghost btn-sm" onClick={() => setStatus(r, 'draft')}>
-                    {p('pu.admin.unpublish')}
-                  </button>
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </section>
-      {sel && (
-        <section className="panel space-y-4 p-4">
-          <h2 className="font-bold">
-            {p('pu.admin.preview')} v{sel}
-          </h2>
-          {selRow && <ChangeList changes={selRow.changes} />}
-          <div className="flex flex-wrap items-end gap-2">
-            <label className="text-xs text-muted">
-              {p('pu.admin.demo')} / {p('pu.admin.member')}
-              <select className="input mt-1 min-w-[220px]" value={who} onChange={(e) => (setWho(e.target.value), setRun(0))}>
-                {(Object.keys(DEMOS) as Demo[]).map((d) => (
-                  <option key={d} value={`demo:${d}`}>
-                    {p(`pu.admin.demo.${d}`)}
-                  </option>
-                ))}
-                <option value="member:" disabled>
-                  — {p('pu.admin.member')} —
-                </option>
-                {(members.data ?? []).filter((m) => m.onboarded).map((m) => (
-                  <option key={m.id} value={`member:${m.id}`}>
-                    {m.name || m.email}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <button className="btn-primary" onClick={() => setRun((n) => n + 1)}>
-              {p('pu.admin.run')}
+    <div className="space-y-4">
+      <Notice>
+        Rule sets live in the repo (<span className="stat">src/engine/rules/versions.ts</span>, newest in code: v{LATEST_RULESET_VERSION}). A plan update offers one version to the
+        members; nobody's plan changes until they press Apply. Publishing sends no mail.
+      </Notice>
+      {missing.length > 0 && (
+        <section className="panel flex flex-wrap items-center gap-2 p-4 text-sm">
+          <span className="flex-1">Rule-set versions without a plan update:</span>
+          {missing.map((v) => (
+            <button key={v.version} className="btn-primary btn-sm" onClick={() => createDraft(v.version)}>
+              Create draft from rule set v{v.version}
             </button>
-          </div>
-          {diff && (
-            <>
-              <p className="stat text-sm text-volt">{p('pu.admin.changed', { n: diff.changedDays })}</p>
-              <PlanDiffView diff={diff} />
-            </>
-          )}
+          ))}
         </section>
       )}
+      {!ups.data.length && !missing.length && <p className="text-sm text-muted">No plan updates yet. All members follow rule set 1.</p>}
+      {ups.data.length > 0 && (
+        <div className="overflow-x-auto">
+          <Segmented
+            value={String(current)}
+            onChange={(v) => setSel(Number(v))}
+            options={ups.data.map((u) => ({ value: String(u.rule_set_version), label: `v${u.rule_set_version} · ${u.status}` }))}
+          />
+        </div>
+      )}
+      {upd && <UpdateEditor key={upd.id} upd={upd} />}
     </div>
+  );
+}
+
+function UpdateEditor({ upd }: { upd: PlanUpdateRow }) {
+  const qc = useQueryClient();
+  const { lang } = useI18n();
+  const sources = useSources();
+  const [title, setTitle] = useState<Partial<Localized>>(upd.title ?? {});
+  const [summary, setSummary] = useState<Partial<Localized>>(upd.summary ?? {});
+  const published = upd.status === 'published';
+  const save = async (patch: Partial<PlanUpdateRow>) => {
+    const { error } = await supabase.from('plan_updates').update(patch).eq('id', upd.id);
+    if (error) return toast.error(error.message);
+    toast.success('Saved');
+    qc.invalidateQueries({ queryKey: ['plan-updates'] });
+  };
+  const inCode = upd.rule_set_version <= LATEST_RULESET_VERSION;
+  return (
+    <div className="space-y-4">
+      <section className="panel space-y-3 p-5">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-lg font-bold">
+            {loc(upd.title, lang)} <span className="chip ml-1">rule set v{upd.rule_set_version}</span>
+            <span className={clsx('chip ml-1', published ? 'bg-good/15 text-good' : 'bg-warn/15 text-warn')}>{upd.status}</span>
+          </h2>
+          {published ? (
+            <span className="text-xs text-muted">published {upd.published_at ? fmtDay(lang, upd.published_at, true) : ''}</span>
+          ) : (
+            <button
+              className="btn-primary btn-sm"
+              disabled={!inCode}
+              onClick={() => {
+                if (confirm(`Publish rule set v${upd.rule_set_version}? Members see the notice in their cockpit and choose themselves. New members start on this version.`))
+                  void save({ status: 'published' });
+              }}
+            >
+              Publish
+            </button>
+          )}
+        </div>
+        {!inCode && <Notice tone="warn">This app version does not know rule set v{upd.rule_set_version} yet. Deploy the rule set first.</Notice>}
+        <div className="grid gap-2 sm:grid-cols-2">
+          {LANGS.map((l) => (
+            <label key={l} className="block space-y-1">
+              <span className="label">Title {l.toUpperCase()}</span>
+              <input className="input" value={title[l] ?? ''} onChange={(e) => setTitle({ ...title, [l]: e.target.value })} />
+              <textarea className="input h-16 py-2" placeholder={`Summary ${l.toUpperCase()} (optional)`} value={summary[l] ?? ''} onChange={(e) => setSummary({ ...summary, [l]: e.target.value })} />
+            </label>
+          ))}
+        </div>
+        <button className="btn-ghost btn-sm" onClick={() => save({ title, summary })}>
+          Save texts
+        </button>
+        <h3 className="pt-2 font-semibold">Changes</h3>
+        <RuleChangeList changes={upd.changes ?? []} sources={sources.data ?? []} />
+      </section>
+      {inCode && <PreviewPanel version={upd.rule_set_version} />}
+    </div>
+  );
+}
+
+interface AthleteRow {
+  id: string;
+  name: string;
+  email: string;
+  onboarded: boolean;
+}
+
+function PreviewPanel({ version }: { version: number }) {
+  const { lang } = useI18n();
+  const today = todayISO();
+  const rb = useRulesAndBaselines();
+  const demos = useMemo(() => demoAthletes(today), [today]);
+  const [who, setWho] = useState<string>(demos[0].id);
+  const [member, setMember] = useState<string>('');
+  const athletes = useQuery({
+    queryKey: ['admin', 'athletes'],
+    queryFn: async () => ((await supabase.rpc('admin_list_athletes')).data ?? []) as AthleteRow[],
+  });
+  const m = useQuery({
+    queryKey: ['admin', 'plan-preview', member],
+    enabled: !!member,
+    queryFn: async () => {
+      const [a, v] = await Promise.all([
+        supabase.rpc('admin_get_athlete', { _uid: member }),
+        supabase.from('user_plan_versions').select('*').eq('user_id', member).order('version_no'),
+      ]);
+      if (a.error) throw a.error;
+      return { d: a.data as { profile: ProfileRow; sessions: EntryRow[] }, versions: (v.data ?? []) as PlanVersionRow[] };
+    },
+  });
+
+  const preview = useMemo(() => {
+    // raw coaching_rules: generatePlan mixes them with the rule set of each version
+    const opts = { lang, today, rules: rb.data?.rules, baselines: rb.data?.baselines };
+    if (who === 'member') {
+      if (!m.data || !isComplete(m.data.d.profile)) return null;
+      const row = m.data.d.profile;
+      const pins: RulePin[] = pinsOf(m.data.versions, row.rule_set_version ?? 1);
+      const log = Object.fromEntries((m.data.d.sessions ?? []).map((e) => [e.date, e]));
+      return previewPlanUpdate({ profile: toProfile(row), opts, pins, log, toVersion: version, today });
+    }
+    const demo = demos.find((d) => d.id === who)!;
+    return previewPlanUpdate({ profile: demo.profile, opts, pins: [{ from: null, version: version - 1 }], toVersion: version, today });
+  }, [who, m.data, demos, version, lang, today, rb.data]);
+
+  return (
+    <section className="panel space-y-4 p-5">
+      <h2 className="text-lg font-bold">Preview</h2>
+      <div className="flex flex-wrap items-center gap-2">
+        <Segmented value={who} onChange={setWho} size="sm" options={[...demos.map((d) => ({ value: d.id, label: d.label })), { value: 'member', label: 'Member…' }]} />
+        {who === 'member' && (
+          <select className="input h-9 w-auto max-w-full" value={member} onChange={(e) => setMember(e.target.value)}>
+            <option value="">Choose a member</option>
+            {(athletes.data ?? [])
+              .filter((a) => a.onboarded)
+              .map((a) => (
+                <option key={a.id} value={a.id}>
+                  {a.name || a.email}
+                </option>
+              ))}
+          </select>
+        )}
+      </div>
+      {who !== 'member' && <p className="text-xs text-muted">Demo athlete: plan started 4 weeks ago, race in 12 weeks, from rule set v{version - 1}.</p>}
+      {who === 'member' && member && m.data && !isComplete(m.data.d.profile) && <Notice tone="warn">This member has not finished onboarding.</Notice>}
+      {preview ? (
+        <>
+          <p className="text-sm">
+            <span className="font-semibold">{preview.changedDays}</span> changed days in the next 4 weeks · rule set v{preview.fromVersion} → v{preview.toVersion}
+          </p>
+          <PlanDiffWeeks preview={preview} />
+          <h3 className="font-semibold">Forecast and chance</h3>
+          <ForecastCompare preview={preview} />
+        </>
+      ) : (
+        who === 'member' && member && <Spinner />
+      )}
+    </section>
   );
 }

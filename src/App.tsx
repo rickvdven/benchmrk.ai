@@ -30,7 +30,8 @@ const AuthPage = lazyRetry(() => import('./pages/Auth'));
 const Onboarding = lazyRetry(() => import('./pages/Onboarding'));
 const Cockpit = lazyRetry(() => import('./pages/Cockpit'));
 const Plan = lazyRetry(() => import('./pages/Plan'));
-const PlanUpdate = lazyRetry(() => import('./pages/PlanUpdate'));
+const PlanUpdatePage = lazyRetry(() => import('./pages/PlanUpdate'));
+const PlanRollbackPage = lazyRetry(() => import('./pages/PlanUpdate').then((m) => ({ default: m.PlanRollbackPage })));
 const Log = lazyRetry(() => import('./pages/Log'));
 const Doubles = lazyRetry(() => import('./pages/Doubles'));
 const Recovery = lazyRetry(() => import('./pages/Recovery'));
@@ -100,7 +101,8 @@ function AppRoutes() {
           <Route path="/onboarding" element={<RequireAuth><Onboarding /></RequireAuth>} />
           <Route path="/cockpit" element={app(<Cockpit />)} />
           <Route path="/plan" element={app(<Plan />)} />
-          <Route path="/plan/update/:id" element={app(<PlanUpdate />)} />
+          <Route path="/plan/update/:id" element={app(<PlanUpdatePage />)} />
+          <Route path="/plan/history/:versionId" element={app(<PlanRollbackPage />)} />
           <Route path="/log" element={app(<Log />)} />
           <Route path="/doubles" element={app(<Doubles />)} />
           <Route path="/recovery" element={<Recovery />} />
