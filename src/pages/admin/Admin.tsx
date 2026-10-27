@@ -531,11 +531,10 @@ function Rules() {
   );
 }
 
+/** Read-only: the baselines drive every forecast and the strength focus, so they never change without a plan update. */
 function Baselines() {
   const { lang } = useI18n();
-  const qc = useQueryClient();
   const q = useQuery({ queryKey: ['admin', 'baselines'], queryFn: async () => (await supabase.from('station_baselines').select('*')).data ?? [] });
-  const [edit, setEdit] = useState<Record<string, number | null>>({});
   if (!q.data) return <Spinner />;
   const get = (c: string, s: string) => (q.data as { weight_class: string; station: string; seconds: number }[]).find((r) => r.weight_class === c && r.station === s)?.seconds;
   const classes = [
@@ -545,7 +544,11 @@ function Baselines() {
   ];
   return (
     <div className="space-y-3">
-      <Notice>Mid-pack (3★) solo station times. Star ratings scale these (1★ ×1.32 … 5★ ×0.78); doubles teams ×0.82. Logged benchmark splits always win.</Notice>
+      <Notice>
+        Locked: mid-pack (3★) solo station times. They drive every forecast and, through the weakest stations, the strength focus, so changing them here would
+        change plans without anyone choosing. A change goes through a new rule set and a plan update (docs/planupdates/README.md). Star ratings scale these (1★ ×1.32
+        … 5★ ×0.78); doubles teams ×0.82. Logged benchmark splits always win.
+      </Notice>
       <div className="panel overflow-x-auto">
         <table className="w-full min-w-[620px] text-sm">
           <thead>
@@ -562,43 +565,16 @@ function Baselines() {
             {STATIONS.map((s) => (
               <tr key={s} className="border-t border-line">
                 <td className="px-3 py-2">{stationLabel(lang, s)}</td>
-                {classes.map(([c]) => {
-                  const k = `${c}:${s}`;
-                  return (
-                    <td key={c} className="px-3 py-2">
-                      <input
-                        className="input stat h-8 w-20 text-xs"
-                        value={edit[k] !== undefined ? (edit[k] ? fmtMmss(edit[k]!) : '') : fmtMmss(get(c, s) ?? 0)}
-                        onChange={(e) => {
-                          const m = e.target.value.match(/^(\d{1,2}):(\d{2})$/);
-                          setEdit({ ...edit, [k]: m ? +m[1] * 60 + +m[2] : null });
-                        }}
-                      />
-                    </td>
-                  );
-                })}
+                {classes.map(([c]) => (
+                  <td key={c} className="stat px-3 py-2">
+                    {fmtMmss(get(c, s) ?? 0)}
+                  </td>
+                ))}
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      <button
-        className="btn-primary"
-        disabled={!Object.values(edit).some((v) => v)}
-        onClick={async () => {
-          const rows = Object.entries(edit)
-            .filter(([, v]) => v)
-            .map(([k, v]) => ({ weight_class: k.split(':')[0], station: k.split(':')[1], seconds: v }));
-          const { error } = await supabase.from('station_baselines').upsert(rows);
-          if (error) return toast.error(error.message);
-          setEdit({});
-          toast.success('Saved');
-          qc.invalidateQueries({ queryKey: ['admin', 'baselines'] });
-          qc.invalidateQueries({ queryKey: ['rules'] });
-        }}
-      >
-        Save
-      </button>
     </div>
   );
 }

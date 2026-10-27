@@ -22,5 +22,8 @@ Een wijziging in de bronnen verandert het schema van een lid nooit stilletjes. E
 ## Coachregels uit de database
 Admin → Coachingregels is alleen-lezen: een waarde daar wijzigen zou het plan van iedereen stil veranderen. Een regel aanpassen gaat via een nieuwe regelset (sleutel `coaching.…`) en een planupdate. Technisch blijven de databasewaarden de basis, en een regelset die een `coaching.`-sleutel verandert gaat daar voor leden op die versie overheen.
 
+## Stations-basiswaarden
+Admin → Stations-basiswaarden is ook alleen-lezen: de tijden (`station_baselines`) bepalen elke voorspelling en via de zwakste stations ook de krachtfocus. Ze staan nog niet in de regelset. Wil een VERWERK-opdracht ze veranderen, voeg ze dan eerst toe aan `RuleSet` (bijvoorbeeld `prediction.baselines`, v1 = de huidige waarden) en wijzig ze daarna via een nieuwe versie.
+
 ## Screenshots
 De screenshots in deze map zijn gemaakt met een gemockte Supabase en een **demo-regelset v2** (duurlopen 20 → 24 % van het weekvolume, korte sims 4 → 5 km). Die versie staat niet in de repo.
