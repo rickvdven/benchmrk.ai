@@ -27,15 +27,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (!isComplete(row) || !row.email || row.race_date! < today) continue;
     const gid = (row as { gym_id?: string | null }).gym_id;
     if (!row.sim_protocol && gid && gymProto.get(gid)) row.sim_protocol = gymProto.get(gid) as ProfileRow['sim_protocol'];
-    const [{ data: entries }, { data: morning }] = await Promise.all([
+    const [{ data: entries }, { data: morning }, { data: versions }] = await Promise.all([
       s.from('session_entries').select('date,completed').eq('user_id', row.id),
       s.from('morning_checks').select('date,score').eq('user_id', row.id),
+      s.from('user_plan_versions').select('rule_set_version,effective_from').eq('user_id', row.id).order('version_no'),
     ]);
     const ctx = {
       row,
       completed: Object.fromEntries((entries ?? []).filter((e) => e.completed).map((e) => [e.date, true])),
       morning: Object.fromEntries((morning ?? []).map((m) => [m.date, m.score])),
       today,
+      versions,
     };
     try {
       if (dowOf(today) === 0 || req.query.force === 'weekly') {

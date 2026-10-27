@@ -57,6 +57,8 @@ export interface ProfileRow {
   baseline: Record<string, unknown> | null;
   /** Shown on cards and leaderboards instead of the name; set through set_nickname(). */
   nickname?: string | null;
+  /** The rule set version the plan follows; changed only through apply_plan_update() / rollback_plan_version(). */
+  rule_set_version?: number;
   /** 'private' (default) or 'gym'; set through set_visibility(). */
   visibility?: 'private' | 'gym' | 'public';
   visibility_consent_at?: string | null;
