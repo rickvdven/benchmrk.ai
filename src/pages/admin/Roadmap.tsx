@@ -20,8 +20,8 @@ interface Todo {
 }
 const COLS: Status[] = ['backlog', 'todo', 'doing', 'done'];
 const L = {
-  en: { backlog: 'Backlog', todo: 'Next', doing: 'In progress', done: 'Done', add: 'Task', title: 'Title', detail: 'Details (optional)', area: 'Area', owner: 'Who', save: 'Save', del: 'Delete this task?', all: 'All', intro: 'Roadmap for RoxCoach. Claude keeps this board up to date too.' },
-  nl: { backlog: 'Backlog', todo: 'Volgende', doing: 'Bezig', done: 'Klaar', add: 'Taak', title: 'Titel', detail: 'Details (optioneel)', area: 'Onderdeel', owner: 'Wie', save: 'Opslaan', del: 'Deze taak verwijderen?', all: 'Alles', intro: 'Roadmap voor RoxCoach. Claude houdt dit bord ook bij.' },
+  en: { backlog: 'Backlog', todo: 'Next', doing: 'In progress', done: 'Done', add: 'Task', title: 'Title', detail: 'Details (optional)', area: 'Area', owner: 'Who', save: 'Save', del: 'Delete this task?', all: 'All', intro: 'Roadmap for Benchmrk. Claude keeps this board up to date too.' },
+  nl: { backlog: 'Backlog', todo: 'Volgende', doing: 'Bezig', done: 'Klaar', add: 'Taak', title: 'Titel', detail: 'Details (optioneel)', area: 'Onderdeel', owner: 'Wie', save: 'Opslaan', del: 'Deze taak verwijderen?', all: 'Alles', intro: 'Roadmap voor Benchmrk. Claude houdt dit bord ook bij.' },
 };
 const AREA_CLS: Record<string, string> = {
   Lancering: 'bg-volt/15 text-volt',
