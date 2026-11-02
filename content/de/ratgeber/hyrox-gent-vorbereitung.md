@@ -5,7 +5,7 @@ description: Startest du vom 17. bis 20. Dezember in der Flanders Expo Gent? Ein
 breadcrumb: Gent Vorbereitung
 order: 21
 published: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-02
 translationOf: gids/hyrox-gent-voorbereiden
 answer: >-
   Mit 8 Wochen bis HYROX Gent (17. bis 20. Dezember 2026) hast du reichlich Zeit für 6 Wochen gezieltes
@@ -28,28 +28,30 @@ faq:
     a: Das hängt von deiner Division ab. Laut vorläufigem Zeitplan starten im Dezember Men am Donnerstag (17.) und Samstag (19.), Women am Donnerstag (17.) und Sonntag (20.) sowie Men Pro und Women Pro am Freitag (18.). Deine persönliche Startzeit folgt etwa 3 Tage vorher.
   - q: Kann ich die Division oder das Event wechseln?
     a: Nein. Laut Rennseite gibt es keine Umbuchungen auf andere Events und keine Divisionswechsel. Namensänderungen sind bis 1 Tag vor dem Rennen möglich.
+  - q: Bis wann kann ich den Namen auf meinem Gent-Ticket ändern?
+    a: Bis 1 Tag vor deinem Renntag, spätestens um 07:59 Uhr Ortszeit, über dein HYROX-Konto. Mit dem Flex Add-On kannst du bis 16 November 2026 mit 100 % Erstattung stornieren und bis 10 Dezember mit 50 %, für Athleten, die am 17 Dezember starten.
   - q: Was muss ich beim Einchecken mitbringen?
     a: Einen gültigen Ausweis. Du bekommst ein Armband, ein Venue-Armband, ein Knöchelband mit Zeitmesschip und eine Startnummer. Ohne all diese Teile darfst du nicht starten.
 sources:
   - title: HYROX Gent, offizielle Rennseite (Daten, Ort, Check-in, Tickets)
     url: https://hyrox.com/event/hyrox-gent/
-    accessed: 2026-10-22
+    accessed: 2026-11-02
   - title: HYROX, Find my race (Kalender 2026/27)
     url: https://hyrox.com/find-my-race/
-    accessed: 2026-10-22
+    accessed: 2026-11-02
   - title: HYROX Sports Science Report 2025 (Robinson & Olthof, concurrent training)
     url: https://hyrox.com/wp-content/uploads/2025/12/SSAC-Report.pdf
-    accessed: 2026-10-22
+    accessed: 2026-11-02
     note: Empfehlung, mindestens 6 Wochen strukturiert zu trainieren.
   - title: HYROX Singles Rulebook, Saison 26/27
     url: https://maintain.hyrox.com/rulebooks/HYROX_RulebookSingles_EN.pdf
-    accessed: 2026-10-22
+    accessed: 2026-11-02
   - title: Bosquet et al. (2007), Effects of tapering on performance – a meta-analysis, Med Sci Sports Exerc
     url: https://pubmed.ncbi.nlm.nih.gov/17762369/
-    accessed: 2026-10-22
+    accessed: 2026-11-02
   - title: Brandt et al. (2025), Frontiers in Physiology
     url: https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2025.1519240/full
-    accessed: 2026-10-22
+    accessed: 2026-11-02
 ---
 ## Wann ist HYROX Gent und was musst du regeln?
 

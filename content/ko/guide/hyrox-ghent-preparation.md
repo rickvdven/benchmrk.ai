@@ -6,7 +6,7 @@ breadcrumb: 헨트 준비
 order: 21
 translationOf: gids/hyrox-gent-voorbereiden
 published: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-02
 answer: >-
   하이록스(HYROX) 헨트(2026년 12월 17~20일)까지 8주가 남았다면 6주 집중 훈련과 2주 테이퍼를 하기에 충분합니다.
   HYROX Sports Science Report는 최소 6주를 권합니다. 6주를 역치, compromised running, 무거운 심 한 번이
@@ -26,28 +26,30 @@ faq:
     a: 부문에 따라 다릅니다. 잠정 일정에 따르면 Men은 12월 17일 목요일과 19일 토요일, Women은 17일 목요일과 20일 일요일, Men Pro와 Women Pro는 18일 금요일에 뜁니다. 개인 출발 시간은 약 3일 전에 나옵니다.
   - q: 부문이나 행사를 바꿀 수 있나요?
     a: 아니요. 레이스 페이지에 따르면 다른 행사로의 이전이나 부문 변경은 없습니다. 이름 변경은 레이스 1일 전까지 가능합니다.
+  - q: 헨트 티켓의 이름은 언제까지 변경할 수 있나요?
+    a: 레이스 당일 1일 전까지, 늦어도 현지 시간 07:59까지 HYROX 계정에서 변경할 수 있습니다. Flex Add-On이 있으면 12월 17일에 레이스하는 선수는 2026년 11월 16일까지 100 % 환불, 12월 10일까지 50 % 환불로 취소할 수 있습니다.
   - q: 체크인할 때 무엇을 가져가야 하나요?
     a: 유효한 신분증입니다. 손목밴드, 행사장 손목밴드, 타이밍 칩이 달린 발목밴드, 배번을 받습니다. 이 모두가 없으면 레이스에 나갈 수 없습니다.
 sources:
   - title: HYROX Gent, 공식 레이스 페이지 (날짜, 장소, 체크인, 티켓)
     url: https://hyrox.com/event/hyrox-gent/
-    accessed: 2026-10-22
+    accessed: 2026-11-02
   - title: HYROX, Find my race (2026/27 캘린더)
     url: https://hyrox.com/find-my-race/
-    accessed: 2026-10-22
+    accessed: 2026-11-02
   - title: HYROX Sports Science Report 2025 (Robinson & Olthof, concurrent training)
     url: https://hyrox.com/wp-content/uploads/2025/12/SSAC-Report.pdf
-    accessed: 2026-10-22
+    accessed: 2026-11-02
     note: 최소 6주 동안 체계적으로 훈련하라는 권고.
   - title: HYROX Singles Rulebook, 26/27 시즌
     url: https://maintain.hyrox.com/rulebooks/HYROX_RulebookSingles_EN.pdf
-    accessed: 2026-10-22
+    accessed: 2026-11-02
   - title: Bosquet et al. (2007), Effects of tapering on performance – a meta-analysis, Med Sci Sports Exerc
     url: https://pubmed.ncbi.nlm.nih.gov/17762369/
-    accessed: 2026-10-22
+    accessed: 2026-11-02
   - title: Brandt et al. (2025), Frontiers in Physiology
     url: https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2025.1519240/full
-    accessed: 2026-10-22
+    accessed: 2026-11-02
 ---
 ## HYROX 헨트는 언제이고 무엇을 준비해야 하나요?
 
