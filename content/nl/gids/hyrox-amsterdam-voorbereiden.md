@@ -5,7 +5,7 @@ description: Race je 22 tot 31 januari 2027 in RAI Amsterdam? Een opbouw van 13 
 breadcrumb: Amsterdam voorbereiden
 order: 22
 published: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-09
 answer: >-
   Met 13 weken tot HYROX Amsterdam (22 tot 31 januari 2027) kun je bijna een volledige opbouw doen: 3 weken
   basis, 3 weken drempel, 3 weken compromised running, 2 weken piek en 2 weken taper. Dat is 3 weken korter
@@ -26,29 +26,31 @@ faq:
     a: De race loopt van 22 tot 31 januari 2027, verdeeld over twee weken. Welke dag je racet hangt van je divisie af. Je persoonlijke starttijd volgt ongeveer 3 dagen vooraf.
   - q: Welke divisies zijn er in Amsterdam?
     a: Volgens de racepagina onder meer Men, Women, de Pro-divisies, Doubles, Relay en Company Challenge, plus HYROX Youngstars voor leeftijd 8 tot 15. Pro-divisies racen op bepaalde dagen.
+  - q: Racen Pro-atleten op een andere dag dan Open?
+    a: Volgens het voorlopige schema wel. Men Pro en Women Pro staan op vrijdag 22 en vrijdag 29 januari, en Company Challenge alleen op vrijdag 29 januari. Men en Women Open hebben meer dagen, onder meer woensdag 27 en donderdag 28 januari.
   - q: Kan ik mijn ticket nog annuleren?
     a: Alleen met een Flex Add-On, en die kun je achteraf niet meer toevoegen. Daarmee krijg je tot 31 dagen voor de racedag 100 % terug en tot 7 dagen ervoor 50 %. Voor een race op 22 januari is dat tot 22 december.
 sources:
   - title: HYROX Amsterdam, officiële racepagina (data, locatie, divisies, tickets)
     url: https://hyrox.com/event/hyrox-amsterdam/
-    accessed: 2026-10-22
+    accessed: 2026-11-09
   - title: HYROX, Find my race (kalender 2026/27)
     url: https://hyrox.com/find-my-race/
-    accessed: 2026-10-22
+    accessed: 2026-11-09
   - title: HYROX Sports Science Report 2025 (Robinson & Olthof, concurrent training)
     url: https://hyrox.com/wp-content/uploads/2025/12/SSAC-Report.pdf
-    accessed: 2026-10-22
+    accessed: 2026-11-09
     note: Aanbeveling om minimaal 6 weken gestructureerd te trainen.
   - title: HYROX Singles Rulebook, seizoen 26/27
     url: https://maintain.hyrox.com/rulebooks/HYROX_RulebookSingles_EN.pdf
     accessed: 2026-10-22
   - title: Bosquet et al. (2007), Effects of tapering on performance – a meta-analysis, Med Sci Sports Exerc
     url: https://pubmed.ncbi.nlm.nih.gov/17762369/
-    accessed: 2026-10-22
+    accessed: 2026-11-09
 ---
 ## Wanneer is HYROX Amsterdam en wat moet je regelen?
 
-HYROX Amsterdam staat voor 22 tot 31 januari 2027 in RAI Amsterdam, Europaplein 24. Het eerste weekend is vrijdag 22 tot zondag 24 januari, het tweede deel loopt van woensdag 27 tot zondag 31 januari. Het schema per divisie is voorlopig.
+HYROX Amsterdam staat voor 22 tot 31 januari 2027 in RAI Amsterdam, Europaplein 24. Het eerste weekend is vrijdag 22 tot zondag 24 januari, het tweede deel loopt van woensdag 27 tot zondag 31 januari. Het schema per divisie is voorlopig; per 9 november staan de dagen en tijden op de racepagina, maar laps, parkeren, kleedkamers en warming-upruimte nog op TBA.
 
 | Wat | Volgens de racepagina |
 |---|---|
