@@ -24,3 +24,7 @@ for t in supabase/tests/*.test.sql; do
   $PSQL -f "$t" >/dev/null
   echo "ok: $t"
 done
+for t in supabase/tests/*.parallel.sh; do
+  PSQL="$PSQL" bash "$t"
+  echo "ok: $t"
+done

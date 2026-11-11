@@ -3,9 +3,11 @@ import { build } from 'esbuild';
 import { readdirSync, rmSync, mkdirSync } from 'node:fs';
 rmSync('api', { recursive: true, force: true });
 mkdirSync('api/cron', { recursive: true });
+mkdirSync('api/social', { recursive: true });
 const entries = [
   ...readdirSync('server').filter((f) => f.endsWith('.ts')).map((f) => `server/${f}`),
   ...readdirSync('server/cron').filter((f) => f.endsWith('.ts')).map((f) => `server/cron/${f}`),
+  ...readdirSync('server/social').filter((f) => f.endsWith('.ts')).map((f) => `server/social/${f}`),
 ];
 await build({
   entryPoints: entries,

@@ -27214,7 +27214,7 @@ var import_postcss_value_parser9 = __toESM(require_lib3(), 1);
 var import_escape_html2 = __toESM(require_escape_html(), 1);
 var import_opentype = __toESM(require_opentype(), 1);
 
-// node_modules/fflate/esm/index.mjs
+// node_modules/satori/node_modules/fflate/esm/index.mjs
 import { createRequire } from "module";
 var require2 = createRequire("/");
 var Worker;

@@ -14364,7 +14364,7 @@ var unsubToken = (uid, kind) => crypto2.createHmac("sha256", secret()).update(`$
 var unsubUrl = (uid, kind) => `${APP_URL()}/api/unsubscribe?u=${uid}&k=${kind}&t=${unsubToken(uid, kind)}`;
 
 // server/_lib/mail.ts
-var PREF = { weekly: "weekly", benchmark: "reminders", trial: "reminders", team: "team", payment: "account", welcome: "account", test: "account", referral: "account" };
+var PREF = { weekly: "weekly", benchmark: "reminders", trial: "reminders", team: "team", payment: "account", welcome: "account", test: "account", referral: "account", social: "account" };
 async function setting(key) {
   const { data } = await db().from("app_settings").select("value").eq("key", key).maybeSingle();
   return data?.value;
@@ -15163,6 +15163,7 @@ var de_default = {
     "ad.payments": "Zahlungen",
     "ad.knowledge": "Wissen",
     "ad.planUpdates": "Planupdates",
+    "ad.social": "Social",
     "ad.rules": "Coaching-Regeln",
     "ad.baselines": "Stations-Basiswerte",
     "ad.settings": "App-Einstellungen",
@@ -15780,6 +15781,7 @@ var es_default = {
     "ad.payments": "Pagos",
     "ad.knowledge": "Conocimiento",
     "ad.planUpdates": "Actualizaciones del plan",
+    "ad.social": "Social",
     "ad.rules": "Reglas de coaching",
     "ad.baselines": "Referencias de estaciones",
     "ad.settings": "Ajustes de la app",
@@ -16397,6 +16399,7 @@ var ko_default = {
     "ad.payments": "\uACB0\uC81C",
     "ad.knowledge": "\uC9C0\uC2DD",
     "ad.planUpdates": "\uD50C\uB79C \uC5C5\uB370\uC774\uD2B8",
+    "ad.social": "Social",
     "ad.rules": "\uCF54\uCE6D \uADDC\uCE59",
     "ad.baselines": "\uC2A4\uD14C\uC774\uC158 \uAE30\uC900\uAC12",
     "ad.settings": "\uC571 \uC124\uC815",
@@ -18417,6 +18420,106 @@ function simpleMail(row, kind, p = {}) {
   };
 }
 
+// server/_lib/meta.ts
+import crypto3 from "node:crypto";
+var GRAPH_VERSION = "v26.0";
+var GRAPH_BASE = `https://graph.facebook.com/${GRAPH_VERSION}`;
+var RUPLOAD_BASE = `https://rupload.facebook.com/video-upload/${GRAPH_VERSION}`;
+var metaConfig = () => ({
+  token: env("META_SYSTEM_USER_TOKEN"),
+  appSecret: env("META_APP_SECRET"),
+  pageId: env("META_PAGE_ID"),
+  igUserId: env("META_IG_USER_ID")
+});
+var appsecretProof = (token, secret2) => crypto3.createHmac("sha256", secret2).update(token).digest("hex");
+var MetaError = class extends Error {
+  constructor(kind, message, code) {
+    super(message);
+    this.kind = kind;
+    this.code = code;
+  }
+  toString() {
+    return `[${this.kind}] ${this.message}`;
+  }
+};
+function redact(text, secrets = []) {
+  let s = String(text);
+  for (const x of secrets) if (x && x.length >= 6) s = s.split(x).join("[redacted]");
+  return s.replace(/(access_token|appsecret_proof|input_token|token)=([^&\s"']+)/gi, "$1=[redacted]").replace(/(OAuth|Bearer)\s+[A-Za-z0-9._\-|]+/g, "$1 [redacted]").replace(/\bEA[A-Za-z0-9]{20,}\b/g, "[redacted]");
+}
+function kindOf(code, subcode) {
+  if (code === 190 || code === 102) return "token";
+  if (code === 10 || code === 200 || code !== void 0 && code >= 200 && code < 300) return "permission";
+  if (code === 4 || code === 17 || code === 32 || code === 613 || code === 80001 || code === 80002) return "rate";
+  if (code === 9 && subcode === 2207042) return "limit";
+  if (code === 9004 || code === 36003 || code === 2207026 || subcode !== void 0 && subcode >= 2207e3 && subcode < 2208e3) return "media";
+  return "meta";
+}
+function graphClient(cfg, fetchImpl = fetch) {
+  if (!cfg.token) throw new MetaError("config", "META_SYSTEM_USER_TOKEN is not set");
+  const auth = () => ({ access_token: cfg.token, ...cfg.appSecret ? { appsecret_proof: appsecretProof(cfg.token, cfg.appSecret) } : {} });
+  const secrets = [cfg.token, cfg.appSecret];
+  return async (method, path, params = {}) => {
+    const all = {};
+    for (const [k, v] of Object.entries({ ...params, ...auth() })) if (v !== void 0 && v !== null) all[k] = String(v);
+    const url = `${GRAPH_BASE}/${path.replace(/^\//, "")}`;
+    let r;
+    try {
+      r = method === "GET" ? await fetchImpl(`${url}${url.includes("?") ? "&" : "?"}${new URLSearchParams(all)}`) : await fetchImpl(url, { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: new URLSearchParams(all).toString() });
+    } catch (e) {
+      throw new MetaError("meta", redact(`network error: ${e.message}`, secrets));
+    }
+    const body = await r.json().catch(() => ({}));
+    if (!r.ok || body.error) {
+      const e = body.error ?? {};
+      const msg = [e.error_user_msg, e.message].filter(Boolean).join(" \u2013 ") || `HTTP ${r.status}`;
+      throw new MetaError(kindOf(e.code, e.error_subcode), redact(msg, secrets) + (e.code ? ` (code ${e.code}${e.error_subcode ? `/${e.error_subcode}` : ""})` : ""), e.code);
+    }
+    return body;
+  };
+}
+var REQUIRED_SCOPES = ["instagram_basic", "instagram_content_publish", "pages_show_list", "pages_read_engagement", "pages_manage_posts"];
+async function checkToken(cfg, graph) {
+  if (!cfg.token) return { ok: false, problems: ["token_missing"] };
+  try {
+    const r = await graph("GET", "debug_token", { input_token: cfg.token });
+    const d = r.data ?? {};
+    const problems = [];
+    if (!d.is_valid) problems.push("token_invalid");
+    const scopes = d.scopes ?? [];
+    for (const s of REQUIRED_SCOPES) if (!scopes.includes(s)) problems.push(`missing:${s}`);
+    if (!cfg.pageId) problems.push("page_id_missing");
+    if (!cfg.igUserId) problems.push("ig_user_id_missing");
+    return { ok: problems.length === 0, problems, type: d.type, expires_at: d.expires_at || null };
+  } catch (e) {
+    return { ok: false, problems: [e instanceof MetaError ? e.toString() : redact(String(e), [cfg.token, cfg.appSecret])] };
+  }
+}
+
+// server/_lib/social.ts
+var OPS_MAIL = "info@benchmrk.ai";
+var secretsOf = (cfg) => [cfg.token, cfg.appSecret, env("SOCIAL_AGENT_TOKEN"), env("SOCIAL_CRON_SECRET")];
+
+// server/_lib/socialToken.ts
+async function checkSocialToken() {
+  const cfg = metaConfig();
+  if (!cfg.token) return null;
+  const r = await checkToken(cfg, graphClient(cfg));
+  const problems = r.problems.map((p) => redact(p, secretsOf(cfg)));
+  await db().from("admin_audit_log").insert({ actor: null, action: "social.token_check", target_type: "meta_token", target_id: null, details: { ok: r.ok, problems, type: r.type ?? null } });
+  if (!r.ok) {
+    const html = layout({
+      title: "Meta-koppeling heeft een probleem",
+      intro: "De dagelijkse controle van het Meta-token voor Instagram en Facebook gaf een probleem. Geplande posts worden mogelijk niet geplaatst.",
+      bodyHtml: rows(problems.map((p) => ["Probleem", p])),
+      cta: { label: "Open Admin \u2192 Social", url: `${APP_URL()}/admin/social` },
+      footer: "Automatische melding van Benchmrk."
+    });
+    await send({ userId: null, to: OPS_MAIL, kind: "social", subject: "Meta-koppeling: token controleren", html, force: true });
+  }
+  return { ok: r.ok, problems };
+}
+
 // server/cron/daily.ts
 async function handler(req, res) {
   const auth = req.headers.authorization;
@@ -18466,7 +18569,8 @@ async function handler(req, res) {
       console.error(row.id, e);
     }
   }
-  res.json({ date: today, users: profiles?.length ?? 0, ...out });
+  const social = await checkSocialToken().catch(() => null);
+  res.json({ date: today, users: profiles?.length ?? 0, ...out, ...social ? { social_token: social.ok ? "ok" : "problem" } : {} });
 }
 export {
   handler as default

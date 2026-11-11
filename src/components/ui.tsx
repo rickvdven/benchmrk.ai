@@ -100,7 +100,7 @@ export function Segmented<T extends string>({ value, options, onChange, size = '
   );
 }
 
-export function Modal({ open, onClose, title, children, wide }: { open: boolean; onClose: () => void; title: ReactNode; children: ReactNode; wide?: boolean }) {
+export function Modal({ open, onClose, title, children, wide, xl }: { open: boolean; onClose: () => void; title: ReactNode; children: ReactNode; wide?: boolean; xl?: boolean }) {
   useEffect(() => {
     if (!open) return;
     const k = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
@@ -117,7 +117,7 @@ export function Modal({ open, onClose, title, children, wide }: { open: boolean;
       <div
         role="dialog"
         aria-modal="true"
-        className={clsx('panel max-h-[92vh] w-full overflow-y-auto rounded-b-none p-5 sm:rounded-xl', wide ? 'sm:max-w-2xl' : 'sm:max-w-md')}
+        className={clsx('panel max-h-[92vh] w-full overflow-y-auto rounded-b-none p-5 sm:rounded-xl', xl ? 'sm:max-w-4xl' : wide ? 'sm:max-w-2xl' : 'sm:max-w-md')}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-4 flex items-start justify-between gap-4">
