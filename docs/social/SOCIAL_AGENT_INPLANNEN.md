@@ -5,11 +5,21 @@ Werkt pas als update 9 live staat en Rick je het agent-token heeft gegeven. Tot 
 ## Wat je mag
 
 - Concepten maken, bijwerken en annuleren zolang ze concept zijn.
-- Je mag **nooit** iets goedkeuren of plaatsen. Rick keurt elke post goed in Admin → Social.
+- Je mag **nooit** iets goedkeuren of plaatsen. Rick keurt elke post goed in Admin → Social, los of per week met één knop. Plan je posts daarom ruim vooruit (bijvoorbeeld de hele volgende week in één keer), zodat Rick ze vóór hun tijdstip kan goedkeuren; een concept waarvan het tijdstip voorbij is, wordt niet geplaatst.
 
 ## Bestanden klaarmaken
 
-- Beelden als **JPEG** (kwaliteit 90, sRGB), max. 8 MB. Instagram accepteert geen PNG: zet je renders om.
+- Beelden altijd als **JPEG** (kwaliteit 90, sRGB), max. 8 MB. Instagram accepteert via de API geen PNG, en Benchmrk weigert PNG (`upload-url` geeft `400 mime`). Zet je renders om vóór het uploaden. Transparante delen worden wit:
+  ```python
+  from PIL import Image
+  im = Image.open("1.png")
+  if im.mode in ("RGBA", "LA", "P"):
+      bg = Image.new("RGB", im.size, (255, 255, 255))
+      bg.paste(im.convert("RGBA"), mask=im.convert("RGBA").split()[-1])
+      im = bg
+  im.convert("RGB").save("1.jpg", "JPEG", quality=90, optimize=True)
+  ```
+  Op een Mac kan het ook met `sips -s format jpeg -s formatOptions 90 1.png --out 1.jpg` (let op: transparantie wordt dan zwart).
 - Carrousel: 2–10 beelden, allemaal dezelfde verhouding (4:5, 1080 × 1350, of 1:1).
 - Reel: MP4 (H.264, AAC), 9:16, 1080 × 1920, max. 50 MB en max. 90 s. Optioneel een cover als JPEG.
 - Bijschrift: max. 2.200 tekens en max. 30 hashtags. Neem het uit het captions-bestand van die week.
