@@ -6,7 +6,7 @@ description: ¿Corres del 17 al 20 de diciembre en Flanders Expo, Gante? Plan de
 breadcrumb: Preparar Gante
 order: 21
 published: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-02
 answer: >-
   Con 8 semanas por delante hasta HYROX Gante (17 al 20 de diciembre de 2026) tienes tiempo de sobra para
   6 semanas de entrenamiento con foco y 2 de taper. El HYROX Sports Science Report recomienda al menos 6
@@ -28,28 +28,30 @@ faq:
     a: Depende de tu división. Según el calendario provisional, Men corren el jueves 17 y el sábado 19 de diciembre, Women el jueves 17 y el domingo 20 de diciembre, y Men Pro y Women Pro el viernes 18 de diciembre. Tu hora de salida personal llega unos 3 días antes.
   - q: ¿Puedo cambiar de división o de evento?
     a: No. Según la página de la carrera, no hay traspasos a otros eventos ni cambios de división. Los cambios de nombre se pueden hacer hasta 1 día antes de la carrera.
+  - q: ¿Hasta cuándo puedo cambiar el nombre de mi entrada de Gante?
+    a: Hasta 1 día antes de tu día de carrera, a las 07:59 hora local como muy tarde, desde tu cuenta de HYROX. Con el Flex Add-On puedes cancelar con un reembolso del 100 % hasta el 16 de noviembre de 2026 y del 50 % hasta el 10 de diciembre, para quienes corren el 17 de diciembre.
   - q: ¿Qué debo llevar al check-in?
     a: Un documento de identidad válido. Recibes una pulsera, una pulsera del recinto, una tobillera con chip de cronometraje y un dorsal. Sin todo eso no puedes correr.
 sources:
   - title: HYROX Gent, página oficial de la carrera (fechas, lugar, check-in, entradas)
     url: https://hyrox.com/event/hyrox-gent/
-    accessed: 2026-10-22
+    accessed: 2026-11-02
   - title: HYROX, Find my race (calendario 2026/27)
     url: https://hyrox.com/find-my-race/
-    accessed: 2026-10-22
+    accessed: 2026-11-02
   - title: HYROX Sports Science Report 2025 (Robinson & Olthof, concurrent training)
     url: https://hyrox.com/wp-content/uploads/2025/12/SSAC-Report.pdf
-    accessed: 2026-10-22
+    accessed: 2026-11-02
     note: Recomendación de entrenar de forma estructurada al menos 6 semanas.
   - title: HYROX Singles Rulebook, temporada 26/27
     url: https://maintain.hyrox.com/rulebooks/HYROX_RulebookSingles_EN.pdf
-    accessed: 2026-10-22
+    accessed: 2026-11-02
   - title: Bosquet et al. (2007), Effects of tapering on performance – a meta-analysis, Med Sci Sports Exerc
     url: https://pubmed.ncbi.nlm.nih.gov/17762369/
-    accessed: 2026-10-22
+    accessed: 2026-11-02
   - title: Brandt et al. (2025), Frontiers in Physiology
     url: https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2025.1519240/full
-    accessed: 2026-10-22
+    accessed: 2026-11-02
 ---
 ## ¿Cuándo es HYROX Gante y qué tienes que organizar?
 

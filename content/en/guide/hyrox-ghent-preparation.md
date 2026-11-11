@@ -5,7 +5,7 @@ description: Racing 17 to 20 December at Flanders Expo Ghent? An 8-week plan wit
 breadcrumb: Ghent preparation
 order: 21
 published: 2026-10-22
-updated: 2026-10-22
+updated: 2026-11-02
 translationOf: gids/hyrox-gent-voorbereiden
 answer: >-
   With 8 weeks to HYROX Ghent (17 to 20 December 2026) you have plenty of time for 6 weeks of focused
@@ -27,28 +27,30 @@ faq:
     a: That depends on your division. According to the provisional schedule, Men race on Thursday 17 and Saturday 19 December, Women on Thursday 17 and Sunday 20 December, and Men Pro and Women Pro on Friday 18 December. Your personal start time follows about 3 days beforehand.
   - q: Can I switch division or event?
     a: No. According to the race page, there are no transfers to other events or division changes. Name changes are possible up to 1 day before the race.
+  - q: Until when can I change the name on my Ghent ticket?
+    a: Up to 1 day before your race day, by 07:59 local time at the latest, via your HYROX account. With the Flex Add-On you can cancel with a 100 % refund until 16 November 2026 and a 50 % refund until 10 December, for athletes racing on 17 December.
   - q: What do I need to bring when checking in?
     a: A valid ID. You get a wristband, a venue wristband, an ankle band with a timing chip and a start number. Without all of these you may not race.
 sources:
   - title: HYROX Ghent, official race page (dates, location, check-in, tickets)
     url: https://hyrox.com/event/hyrox-gent/
-    accessed: 2026-10-22
+    accessed: 2026-11-02
   - title: HYROX, Find my race (calendar 2026/27)
     url: https://hyrox.com/find-my-race/
-    accessed: 2026-10-22
+    accessed: 2026-11-02
   - title: HYROX Sports Science Report 2025 (Robinson & Olthof, concurrent training)
     url: https://hyrox.com/wp-content/uploads/2025/12/SSAC-Report.pdf
-    accessed: 2026-10-22
+    accessed: 2026-11-02
     note: Recommendation to train in a structured way for at least 6 weeks.
   - title: HYROX Singles Rulebook, season 26/27
     url: https://maintain.hyrox.com/rulebooks/HYROX_RulebookSingles_EN.pdf
-    accessed: 2026-10-22
+    accessed: 2026-11-02
   - title: Bosquet et al. (2007), Effects of tapering on performance – a meta-analysis, Med Sci Sports Exerc
     url: https://pubmed.ncbi.nlm.nih.gov/17762369/
-    accessed: 2026-10-22
+    accessed: 2026-11-02
   - title: Brandt et al. (2025), Frontiers in Physiology
     url: https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2025.1519240/full
-    accessed: 2026-10-22
+    accessed: 2026-11-02
 ---
 ## When is HYROX Ghent and what do you need to arrange?
 
