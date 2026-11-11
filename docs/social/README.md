@@ -18,6 +18,9 @@ De social agent maakt concepten; Rick keurt ze goed in **Admin → Social**; Ben
 4. `supabase/manual/social_cron.sql` met het echte `SOCIAL_CRON_SECRET` in de SQL Editor.
 5. Testpost: één beeld, alleen Instagram, 20 minuten vooruit; goedkeuren; controleren; daarna zelf verwijderen in Instagram. Dan één carrousel en één reel.
 
+## Werkwijze per week
+De agent zet de posts van een week in één keer klaar (via de API of als pakket). In Admin → Social staat bovenaan "X concepten in deze week wachten op je goedkeuring" met de knop **Alle X goedkeuren**; elke post wordt los goedgekeurd en gelogd, en op zijn eigen tijdstip geplaatst. Concepten waarvan het tijdstip al voorbij is, slaat die knop over.
+
 ## Statussen
 `draft` → (Goedkeuren) `approved` → (cron, tijdstip bereikt) `processing` → `published`.
 Een fout: poging + 1, terug naar `approved` met tijdstip +10 min; na 3 pogingen `failed` + mail. Een platform dat al gelukt is wordt niet opnieuw geplaatst. Een reel die bij Meta nog verwerkt wordt blijft `processing`; de volgende ronde kijkt opnieuw.

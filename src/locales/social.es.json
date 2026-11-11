@@ -110,5 +110,10 @@
   "val.file_type": "JPEG and MP4 only: {name}",
   "val.file_size": "File too large (image max 8 MB, video max 50 MB): {name}",
   "val.file_missing": "File missing in the zip: {name}",
-  "preview.username": "benchmrk"
+  "preview.username": "benchmrk",
+  "week.drafts": "{n} draft(s) this week waiting for your approval.",
+  "week.pastDrafts": "({n} with a time that has passed: change the time first.)",
+  "act.approveWeek": "Approve all {n}",
+  "confirm.approveWeek": "Approve {n} drafts this week? Each post is published at its own time.",
+  "msg.approvedWeek": "{n} posts approved"
 }

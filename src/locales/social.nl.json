@@ -110,5 +110,10 @@
   "val.file_type": "Alleen JPEG en MP4: {name}",
   "val.file_size": "Bestand te groot (beeld max. 8 MB, video max. 50 MB): {name}",
   "val.file_missing": "Bestand ontbreekt in de zip: {name}",
-  "preview.username": "benchmrk"
+  "preview.username": "benchmrk",
+  "week.drafts": "{n} concept(en) in deze week wachten op je goedkeuring.",
+  "week.pastDrafts": "({n} met een tijdstip dat al voorbij is: pas eerst het tijdstip aan.)",
+  "act.approveWeek": "Alle {n} goedkeuren",
+  "confirm.approveWeek": "{n} concepten in deze week goedkeuren? Elke post wordt op zijn eigen tijdstip geplaatst.",
+  "msg.approvedWeek": "{n} posts goedgekeurd"
 }

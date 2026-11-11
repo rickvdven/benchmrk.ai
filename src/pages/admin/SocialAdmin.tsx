@@ -640,6 +640,27 @@ export function SocialAdmin() {
   const noTime = useMemo(() => (q.data ?? []).filter((p) => !p.scheduled_at && (p.status === 'draft' || p.status === 'rejected')), [q.data]);
   const current = (q.data ?? []).find((p) => p.id === open) ?? null;
   const thisWeek = amsMonday(new Date());
+  // "approve the week": every draft in this week with a time still ahead; each one is approved (and audited) on its own
+  const qc = useQueryClient();
+  const [approving, setApproving] = useState(false);
+  const drafts = inWeek.filter((p) => p.status === 'draft');
+  const approvable = drafts.filter((p) => Date.parse(p.scheduled_at!) > Date.now() + 60_000 && p.platforms.length > 0);
+  const approveWeek = async () => {
+    if (!confirm(t('confirm.approveWeek', { n: approvable.length }))) return;
+    setApproving(true);
+    let ok = 0;
+    for (const p of approvable) {
+      try {
+        await rpc('social_approve', { _id: p.id, _scheduled_at: p.scheduled_at });
+        ok++;
+      } catch (e) {
+        toast.error(`${p.source ?? p.id}: ${(e as Error).message}`);
+      }
+    }
+    setApproving(false);
+    if (ok) toast.success(t('msg.approvedWeek', { n: ok }));
+    await qc.invalidateQueries({ queryKey: ['social-posts'] });
+  };
   const weekLabel = new Date(week + 'T12:00:00Z').toLocaleDateString(lang === 'ko' ? 'ko-KR' : lang, { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
 
   if (q.isError) return <Notice tone="warn">Table social_posts not found – apply migration 024_social_posts.sql first. ({(q.error as Error).message})</Notice>;
@@ -671,6 +692,19 @@ export function SocialAdmin() {
           </button>
         </div>
       </div>
+      {drafts.length > 0 && (
+        <div className="panel flex flex-wrap items-center gap-3 border-volt/60 bg-volt/10 p-3 text-sm">
+          <span className="flex-1">
+            {t('week.drafts', { n: drafts.length })}
+            {drafts.length > approvable.length && <span className="ml-1 text-muted">{t('week.pastDrafts', { n: drafts.length - approvable.length })}</span>}
+          </span>
+          {approvable.length > 0 && (
+            <button className="btn-primary btn-sm" disabled={approving} onClick={approveWeek}>
+              {t('act.approveWeek', { n: approvable.length })}
+            </button>
+          )}
+        </div>
+      )}
       {!q.data ? (
         <Spinner />
       ) : (
