@@ -4,6 +4,7 @@ import { ProtocolFields } from '../../components/SimProtocolEditor';
 import { GymManager } from '../../components/GymManager';
 import { Roadmap } from './Roadmap';
 import { PlanUpdatesAdmin } from './PlanUpdatesAdmin';
+import { SocialAdmin } from './SocialAdmin';
 import { NavLink, Route, Routes, useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -933,6 +934,7 @@ export default function Admin() {
     ['/admin/tts', 'ad.tts'],
     ['/admin/knowledge', 'ad.knowledge'],
     ['/admin/planupdates', 'ad.planUpdates'],
+    ['/admin/social', 'ad.social'],
     ['/admin/rules', 'ad.rules'],
     ['/admin/baselines', 'ad.baselines'],
     ['/admin/settings', 'ad.settings'],
@@ -959,6 +961,7 @@ export default function Admin() {
         <Route path="tts" element={<TtsTest />} />
         <Route path="knowledge" element={<Knowledge />} />
         <Route path="planupdates" element={<PlanUpdatesAdmin />} />
+        <Route path="social" element={<SocialAdmin />} />
         <Route path="rules" element={<Rules />} />
         <Route path="baselines" element={<Baselines />} />
         <Route path="settings" element={<AppSettings />} />

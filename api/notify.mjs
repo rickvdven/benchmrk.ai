@@ -14375,7 +14375,7 @@ var unsubToken = (uid, kind) => crypto2.createHmac("sha256", secret()).update(`$
 var unsubUrl = (uid, kind) => `${APP_URL()}/api/unsubscribe?u=${uid}&k=${kind}&t=${unsubToken(uid, kind)}`;
 
 // server/_lib/mail.ts
-var PREF = { weekly: "weekly", benchmark: "reminders", trial: "reminders", team: "team", payment: "account", welcome: "account", test: "account", referral: "account" };
+var PREF = { weekly: "weekly", benchmark: "reminders", trial: "reminders", team: "team", payment: "account", welcome: "account", test: "account", referral: "account", social: "account" };
 async function setting(key) {
   const { data } = await db().from("app_settings").select("value").eq("key", key).maybeSingle();
   return data?.value;
@@ -14878,6 +14878,7 @@ var de_default = {
     "ad.payments": "Zahlungen",
     "ad.knowledge": "Wissen",
     "ad.planUpdates": "Planupdates",
+    "ad.social": "Social",
     "ad.rules": "Coaching-Regeln",
     "ad.baselines": "Stations-Basiswerte",
     "ad.settings": "App-Einstellungen",
@@ -15495,6 +15496,7 @@ var es_default = {
     "ad.payments": "Pagos",
     "ad.knowledge": "Conocimiento",
     "ad.planUpdates": "Actualizaciones del plan",
+    "ad.social": "Social",
     "ad.rules": "Reglas de coaching",
     "ad.baselines": "Referencias de estaciones",
     "ad.settings": "Ajustes de la app",
@@ -16112,6 +16114,7 @@ var ko_default = {
     "ad.payments": "\uACB0\uC81C",
     "ad.knowledge": "\uC9C0\uC2DD",
     "ad.planUpdates": "\uD50C\uB79C \uC5C5\uB370\uC774\uD2B8",
+    "ad.social": "Social",
     "ad.rules": "\uCF54\uCE6D \uADDC\uCE59",
     "ad.baselines": "\uC2A4\uD14C\uC774\uC158 \uAE30\uC900\uAC12",
     "ad.settings": "\uC571 \uC124\uC815",

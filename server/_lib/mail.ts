@@ -1,8 +1,8 @@
 import { db, env, APP_URL, unsubUrl } from './server';
 
-export type MailKind = 'weekly' | 'benchmark' | 'team' | 'payment' | 'welcome' | 'trial' | 'test' | 'referral';
+export type MailKind = 'weekly' | 'benchmark' | 'team' | 'payment' | 'welcome' | 'trial' | 'test' | 'referral' | 'social';
 /** Which preference switch controls a mail kind ('account' mails cannot be switched off except welcome). */
-export const PREF: Record<MailKind, string> = { weekly: 'weekly', benchmark: 'reminders', trial: 'reminders', team: 'team', payment: 'account', welcome: 'account', test: 'account', referral: 'account' };
+export const PREF: Record<MailKind, string> = { weekly: 'weekly', benchmark: 'reminders', trial: 'reminders', team: 'team', payment: 'account', welcome: 'account', test: 'account', referral: 'account', social: 'account' };
 
 async function setting(key: string) {
   const { data } = await db().from('app_settings').select('value').eq('key', key).maybeSingle();

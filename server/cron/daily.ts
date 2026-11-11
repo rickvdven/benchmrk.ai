@@ -2,6 +2,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { db, env } from '../_lib/server';
 import { send } from '../_lib/mail';
 import { benchmarkMail, simpleMail, weeklyMail } from '../_lib/templates';
+import { checkSocialToken } from '../_lib/socialToken';
 import { isComplete, type ProfileRow } from '../../src/data/mapping';
 import { todayISO, dowOf, addDays } from '../../src/engine/index';
 
@@ -56,5 +57,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       console.error(row.id, e);
     }
   }
-  res.json({ date: today, users: profiles?.length ?? 0, ...out });
+  // Meta token for social posts: still valid and allowed to publish? Mail info@ when not.
+  const social = await checkSocialToken().catch(() => null);
+  res.json({ date: today, users: profiles?.length ?? 0, ...out, ...(social ? { social_token: social.ok ? 'ok' : 'problem' } : {}) });
 }
