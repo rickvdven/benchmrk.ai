@@ -26,6 +26,9 @@ export interface SourceRow {
   replaced_by?: string | null;
   checked_at?: string | null;
   rule_keys?: string[];
+  /** per language (nl, en, de); es and ko fall back to en (migration 025) */
+  summary_i18n?: Record<string, string> | null;
+  label_i18n?: Record<string, string> | null;
   created_at?: string;
 }
 
