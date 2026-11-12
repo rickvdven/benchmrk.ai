@@ -322,7 +322,9 @@ export function useKnowledge() {
   return useQuery({
     queryKey: ['knowledge'],
     staleTime: 30 * 60_000,
-    queryFn: async () => ((await supabase.from('knowledge_sources').select('id,title,category,author,source_url')).data ?? []) as KnowledgeRow[],
+    // archived sources (migration 022) are never shown as the source of a session
+    queryFn: async () =>
+      (((await supabase.from('knowledge_sources').select('*').order('created_at')).data ?? []) as (KnowledgeRow & { status?: string })[]).filter((k) => k.status !== 'archived'),
   });
 }
 

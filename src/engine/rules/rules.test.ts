@@ -189,3 +189,17 @@ describe('previewPlanUpdate', () => {
     expect(previewPlanUpdate({ profile: omen.profile, opts, pins, toVersion: 2, today, resolve }).forecastChanged).toBe(false);
   });
 });
+
+describe('rule keys in the source migrations', () => {
+  it('every rule key a source supports exists in the rule set', async () => {
+    const { readdirSync, readFileSync } = await import('node:fs');
+    const dir = new URL('../../../supabase/migrations/', import.meta.url);
+    const keys = new Set<string>();
+    for (const f of readdirSync(dir).filter((x) => x.endsWith('.sql'))) {
+      for (const m of readFileSync(new URL(f, dir), 'utf8').matchAll(/array\[([^\]]*)\]/g))
+        for (const k of m[1].matchAll(/'([a-zA-Z]+\.[a-zA-Z0-9.]+)'/g)) if (!k[1].includes('@') && !/\.(jpg|mp4)$/.test(k[1])) keys.add(k[1]);
+    }
+    expect(keys.size).toBeGreaterThan(5);
+    for (const k of keys) expect(getRule(V1, k), k).not.toBeUndefined();
+  });
+});
