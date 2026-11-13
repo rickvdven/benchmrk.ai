@@ -386,6 +386,8 @@
     "alt.why": "Warum",
     "alt.pick": "Stattdessen nehmen",
     "alt.done": "Einheit ersetzt",
+    "alt.rehab": "Kraft für die Verletzung hinzufügen",
+    "alt.rehabHint": "Aus deiner Verletzungseinstellung. Wird hinter die gewählte Einheit gesetzt.",
     "alt.badge": "Alternative",
     "alt.replaces": "Ersetzt: {title}",
     "alt.back": "Zurück zur ursprünglichen Einheit",
