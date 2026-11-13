@@ -4,6 +4,8 @@ seoTitle: "HYROX runs pacen: welk tempo voor je doeltijd? | Benchmrk"
 description: Reken je benodigde looptempo uit je doeltijd, stations en Roxzone. Met een rekenvoorbeeld, verval per run en hoe je run 1 en run 8 pacet.
 breadcrumb: Runs pacen
 order: 5
+topic: lopen
+stat: "5:28/km"
 updated: 2026-10-22
 answer: >-
   Trek je verwachte stationtijd en Roxzone-tijd af van je doeltijd en deel de rest door 8. Dat is je

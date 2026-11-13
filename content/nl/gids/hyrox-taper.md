@@ -4,6 +4,8 @@ seoTitle: "HYROX taper: zo pak je de laatste 2 weken aan | Benchmrk"
 description: Taper 2 weken, met minder volume en hetzelfde tempo. Wat onderzoek zegt, wanneer je laatste sim en zware kracht vallen, en hoe je raceweek eruitziet.
 breadcrumb: Taper
 order: 3
+topic: racedag
+stat: "41–60 %"
 updated: 2026-10-22
 answer: >-
   Taper de laatste 2 weken voor je HYROX-race door je volume te verlagen en je tempo gelijk te houden. In

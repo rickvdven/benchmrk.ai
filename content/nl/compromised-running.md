@@ -4,6 +4,7 @@ seoTitle: "Compromised running voor HYROX: wat het is en hoe"
 description: Compromised running is lopen na zwaar stationwerk. Wat het onderzoek wel en niet zegt, en hoe je het traint met sims en een compromised-afsluiter.
 breadcrumb: Compromised running
 order: 3
+topic: lopen
 updated: 2026-10-22
 answer: >-
   Compromised running is hardlopen terwijl je al vermoeid bent van stationwerk, zoals in een HYROX-race na

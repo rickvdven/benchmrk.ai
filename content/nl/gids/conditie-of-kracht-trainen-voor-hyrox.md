@@ -5,6 +5,7 @@ description: Conditie of kracht eerst voor HYROX? Wat Brandt (2025) en het HYROX
 breadcrumb: Conditie of kracht
 order: 26
 published: 2026-11-02
+topic: opbouw
 updated: 2026-11-02
 answer: >-
   Geef je conditie de voorrang, maar train kracht gewoon mee. In de studie van Brandt en collega's (2025) bij

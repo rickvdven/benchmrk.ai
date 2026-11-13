@@ -4,6 +4,8 @@ seoTitle: "HYROX Open of Pro: gewichten per divisie | Benchmrk"
 description: Open en Pro hebben dezelfde afstanden, maar Pro gebruikt zwaardere gewichten. Alle gewichten per divisie, inclusief Doubles, en hoe je kiest.
 breadcrumb: Open of Pro
 order: 10
+topic: stations
+stat: "152 → 202 kg"
 updated: 2026-10-22
 answer: >-
   HYROX Open en Pro hebben dezelfde 8 km lopen en dezelfde stations. Het verschil zit in de gewichten: Pro is

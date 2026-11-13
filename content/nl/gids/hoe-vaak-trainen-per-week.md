@@ -4,6 +4,8 @@ seoTitle: "Hoe vaak per week trainen voor HYROX? | Benchmrk"
 description: Minimaal 2, liefst 3 tot 5 trainingen per week. Wat onderzoek zegt over frequentie, en hoe je 2 tot 7 dagen indeelt.
 breadcrumb: Hoe vaak trainen
 order: 2
+topic: opbouw
+stat: "3–5×"
 updated: 2026-10-22
 answer: >-
   Train minimaal 2 keer per week, en liefst 3 tot 5 keer. Minder dan 2 keer geeft volgens de richtlijn van

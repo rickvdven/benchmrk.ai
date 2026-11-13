@@ -4,6 +4,8 @@ seoTitle: "SkiErg en roeien in HYROX: zo pace je de ergs"
 description: Start de SkiErg niet te hard en gebruik de roeier om je benen te sparen voor de tweede helft. Regels, weerstand en hoe je de ergs traint.
 breadcrumb: SkiErg en roeien
 order: 13
+topic: stations
+stat: "1000 m"
 updated: 2026-10-22
 answer: >-
   Pace de SkiErg en de roeier gelijkmatig, op een inspanning die je de hele 1000 m volhoudt. Start de SkiErg

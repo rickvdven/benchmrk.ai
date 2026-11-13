@@ -5,6 +5,8 @@ description: Hoeveel seconden of minuten kost een fout in HYROX? De straftabel u
 breadcrumb: Straftijden
 order: 25
 published: 2026-11-02
+topic: stations
+stat: "15 s"
 updated: 2026-11-02
 answer: >-
   In het HYROX Singles Rulebook 26/27 krijg je bij SkiErg, sleds, burpee broad jumps en roeier eerst een

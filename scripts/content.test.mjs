@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { loadContent, overviewAlternates, renderOverview, renderPage, robots, sitemap, validate } from './content.mjs';
+import { homeLinks, loadContent, overviewAlternates, renderOverview, renderPage, renderTopic, robots, sitemap, topicHubs, validate, TOPICS } from './content.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const ldOf = (html) => [...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/g)].map((m) => JSON.parse(m[1]));
@@ -89,5 +89,53 @@ describe('content-build (fixture)', () => {
     const en = pages.find((x) => x.lang === 'en');
     expect(validate([p, { ...en, translationOf: undefined }]).errors.some((e) => e.includes('translationOf'))).toBe(true);
     expect(validate([p, { ...en, translationOf: 'gids/bestaat-niet' }]).errors.some((e) => e.includes('verwijst naar geen NL-pagina'))).toBe(true);
+  });
+});
+
+describe('onderwerpen, overzicht en navigatie', () => {
+  const pages = loadContent(join(here, '..'));
+  const now = Date.parse('2026-11-13');
+  it('elke NL-gids heeft een bestaand onderwerp, vertalingen nemen het over', () => {
+    for (const p of pages.filter((x) => x.type === 'gids')) expect(TOPICS[p.topic], p.file).toBeTruthy();
+    const en = pages.find((x) => x.translationOf === 'gids/hyrox-splits-analyseren' && x.lang === 'en');
+    expect(en.topic).toBe('racedag');
+    expect(en.stat).toBe('48.5 %');
+  });
+  it('maakt per taal en onderwerp een hubpagina met kaarten, kruimelpad en hreflang', () => {
+    const hubs = topicHubs(pages);
+    expect(hubs.length).toBeGreaterThanOrEqual(25);
+    const h = hubs.find((x) => x.lang === 'nl' && x.key === 'lopen');
+    expect(h.url).toBe('/nl/gids/lopen-en-pacing');
+    const html = renderTopic('nl', 'lopen', pages, { now });
+    expect(html).toContain('<h1>Lopen en pacing</h1>');
+    expect(html).toContain('href="/nl/gids/tempoverlies-run-1-tot-8"');
+    expect(html).toContain('hreflang="en" href="https://benchmrk.ai/en/guide/running-and-pacing"');
+    expect(sitemap(pages)).toContain('<loc>https://benchmrk.ai/de/ratgeber/laufen-und-pacing</loc>');
+  });
+  it('overzicht: onderwerp van de week uitgelicht, start hier en onderwerpen', () => {
+    const html = renderOverview('nl', pages, { featured: 'gids/tempoverlies-run-1-tot-8', now });
+    expect(html).toMatch(/class="feat" href="\/nl\/gids\/tempoverlies-run-1-tot-8"/);
+    expect(html).toContain('Onderwerp van de week');
+    expect(html).toContain('Start hier');
+    expect(html).toContain('href="/nl/gids/stations"');
+    for (const p of pages.filter((x) => x.lang === 'nl' && !x.topic)) expect(html).toContain(`href="${p.url}"`);
+  });
+  it('gidspagina: onderwerp in kruimelpad, inhoudsopgave met bestaande ankers en lees verder', () => {
+    for (const lang of ['nl', 'ko']) {
+      const p = pages.find((x) => x.lang === lang && x.group === 'gids/tempoverlies-run-1-tot-8');
+      const html = renderPage(p, pages, { now });
+      const ids = [...html.matchAll(/ id="([^"]+)"/g)].map((m) => m[1]);
+      expect(new Set(ids).size).toBe(ids.length);
+      const toc = [...html.matchAll(/<nav class="toc"[\s\S]*?<\/nav>/g)][0][0];
+      for (const [, id] of toc.matchAll(/href="#([^"]+)"/g)) expect(ids).toContain(id);
+      expect(html).toContain('class="related"');
+      expect(ldOf(html).find((o) => o['@type'] === 'BreadcrumbList').itemListElement).toHaveLength(4);
+    }
+  });
+  it('homepage-links bevatten overzichten, onderwerpen en alle NL-pagina\'s', () => {
+    const nav = homeLinks(pages);
+    expect(nav).toContain('href="/en/guide"');
+    expect(nav).toContain('href="/nl/gids/races"');
+    for (const p of pages.filter((x) => x.lang === 'nl')) expect(nav).toContain(`href="${p.url}"`);
   });
 });

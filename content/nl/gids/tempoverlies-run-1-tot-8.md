@@ -5,6 +5,8 @@ description: In een echte race liepen 24 PRO-mannen run 8 ongeveer 16 % trager d
 breadcrumb: Tempoverlies run 1 tot 8
 order: 28
 published: 2026-11-13
+topic: lopen
+stat: "3:43 → 4:25/km"
 updated: 2026-11-13
 answer: >-
   In de HYScience-studie liepen 24 PRO-mannen (eindtijd gemiddeld 69:58) run 1 op 3:43/km en run 8 op

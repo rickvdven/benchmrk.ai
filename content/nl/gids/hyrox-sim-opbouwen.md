@@ -4,6 +4,8 @@ seoTitle: "HYROX-sim opbouwen: van 4 rondes naar generale repetitie"
 description: "Een HYROX-sim groeit van 4 rondes met halve stations naar een volledige generale repetitie. Per fase: afstand, stationvolume, tempo en wanneer je stopt."
 breadcrumb: Sim opbouwen
 order: 6
+topic: opbouw
+stat: "8 × 750 m"
 updated: 2026-10-22
 answer: >-
   Bouw een HYROX-sim op in stappen. Begin met 4 rondes van 1 km rustig plus één station op 50 % van het

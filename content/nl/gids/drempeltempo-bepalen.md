@@ -4,6 +4,8 @@ seoTitle: "Drempeltempo en drempelhartslag bepalen | Benchmrk"
 description: Bepaal je drempelhartslag met een test van 30 minuten en controleer je drempeltempo met 4 × 1000 m. Met zones en hoe je de waarden later bijstelt.
 breadcrumb: Drempeltempo bepalen
 order: 4
+topic: lopen
+stat: "30 min"
 updated: 2026-10-22
 answer: >-
   Loop 30 minuten zo hard als je in je eentje volhoudt. Je gemiddelde hartslag over de laatste 20 minuten is

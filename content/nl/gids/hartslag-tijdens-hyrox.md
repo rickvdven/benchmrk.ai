@@ -5,6 +5,8 @@ description: Welke hartslag en welk looptempo houd je vol in een HYROX-race? Wat
 breadcrumb: Hartslag tijdens de race
 order: 29
 published: 2026-11-13
+topic: lopen
+stat: "79,5 %"
 updated: 2026-11-13
 answer: >-
   Race op tempo en gebruik je eigen drempelhartslag als controle. In een gesimuleerde race lag de hartslag
