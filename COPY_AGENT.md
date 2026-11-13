@@ -209,3 +209,4 @@ Alles wat je daarnaast nodig hebt, zoek je op. Open de bron, link haar en noteer
 - [ ] De inhoud staat in de ruwe HTML (curl-check).
 - [ ] Er zijn 3 interne links, de CTA met UTM, en de disclaimer "niet verbonden aan HYROX".
 - [ ] Geen claims buiten de functielijst.
+- [ ] De NL-pagina heeft een `topic` (zie `scripts/topics.mjs`) en, als er een sterk getal in staat, een `stat` voor de kaart in het overzicht.

@@ -5,6 +5,7 @@ description: Race je 22 tot 31 januari 2027 in RAI Amsterdam? Een opbouw van 13 
 breadcrumb: Amsterdam voorbereiden
 order: 22
 published: 2026-10-22
+topic: races
 updated: 2026-10-22
 answer: >-
   Met 13 weken tot HYROX Amsterdam (22 tot 31 januari 2027) kun je bijna een volledige opbouw doen: 3 weken

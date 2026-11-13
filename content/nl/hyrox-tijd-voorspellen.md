@@ -4,6 +4,8 @@ seoTitle: "HYROX-tijd voorspellen: runs, stations en Roxzone"
 description: Je HYROX-eindtijd is 8 runs plus 8 stations plus Roxzone. Zo reken je elk deel uit, met een voorbeeld uit de Benchmrk-engine en de snelle check.
 breadcrumb: Tijd voorspellen
 order: 2
+topic: lopen
+stat: "1:18:41"
 updated: 2026-10-22
 answer: >-
   Je voorspelt je HYROX-eindtijd door drie delen op te tellen: 8 runs van 1 km, 8 stations en de Roxzone.

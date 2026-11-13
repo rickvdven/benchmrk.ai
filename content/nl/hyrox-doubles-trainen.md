@@ -4,6 +4,7 @@ seoTitle: "HYROX Doubles trainen: tempo, stations verdelen, sim"
 description: In Doubles loop je samen en verdeel je stations. Zo bepaal je het teamtempo, verdeel je elk station op jullie sterke punten en train je een gedeelde sim.
 breadcrumb: Doubles
 order: 6
+topic: opbouw
 updated: 2026-10-22
 answer: >-
   In HYROX Doubles lopen jullie de 8 kilometer samen en verdelen jullie het werk op elk station zoals je

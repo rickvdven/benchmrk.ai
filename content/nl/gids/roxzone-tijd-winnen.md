@@ -4,6 +4,7 @@ seoTitle: "Roxzone: zo win je tijd bij de wissels in HYROX | Benchmrk"
 description: "De Roxzone kost ook topatleten ruim 4 minuten. Zo verlies je er geen tijd: ken de route, voorkom straffen, wandel niet en oefen je wissels in elke sim."
 breadcrumb: Roxzone
 order: 7
+topic: stations
 updated: 2026-10-22
 answer: >-
   Je wint tijd in de Roxzone door de route te kennen, door te blijven lopen en door straffen te voorkomen.

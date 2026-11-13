@@ -4,6 +4,8 @@ seoTitle: "Wall balls in HYROX: zo val je niet stil | Benchmrk"
 description: "De wall balls zijn het laatste en zwaarste station. Zo kom je door 100 herhalingen: ken de regels, kies vaste sets en train ze vermoeid."
 breadcrumb: Wall balls
 order: 11
+topic: stations
+stat: "100 ×"
 updated: 2026-10-22
 answer: >-
   Je komt door de 100 wall balls door vaste sets te kiezen en die vanaf de eerste set aan te houden, met

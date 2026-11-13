@@ -4,6 +4,7 @@ seoTitle: "Sled pull in HYROX: techniek, regels en training"
 description: Trek de sled hand over hand vanuit de Racers Box, blijf staan en houd het touw in je lane. Met de regels, gewichten, valkuilen en een voorbeeldtraining.
 breadcrumb: Sled pull
 order: 9
+topic: stations
 updated: 2026-10-22
 answer: >-
   Trek de sled hand over hand naar je toe terwijl je staand in de Racers Box blijft, aan het eind van je lane.

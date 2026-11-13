@@ -5,6 +5,7 @@ description: Race je van 1 tot 4 april 2027 in Ahoy Rotterdam? Wanneer je begint
 breadcrumb: Rotterdam voorbereiden
 order: 24
 published: 2026-11-02
+topic: races
 updated: 2026-11-02
 answer: >-
   HYROX Rotterdam is van 1 tot en met 4 april 2027 in Ahoy. Wie op donderdag 1 april racet, kan op 10

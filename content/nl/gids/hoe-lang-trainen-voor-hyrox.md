@@ -4,6 +4,7 @@ seoTitle: "Hoe lang trainen voor HYROX? Weken en opbouw | Benchmrk"
 description: Reken op ongeveer 16 weken voor een volledige opbouw, en minimaal 6 weken voor een merkbaar effect. Wat je doet met 6, 10, 16 of meer weken tot je race.
 breadcrumb: Hoe lang trainen
 order: 1
+topic: opbouw
 updated: 2026-10-22
 answer: >-
   Voor een volledige opbouw heb je ongeveer 16 weken nodig: 4 weken basis, 4 weken drempel, 4 weken

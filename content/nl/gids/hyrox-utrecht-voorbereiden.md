@@ -5,6 +5,7 @@ description: Race je 26 tot 30 november in Jaarbeurs Utrecht? Een weekplan voor 
 breadcrumb: Utrecht voorbereiden
 order: 20
 published: 2026-10-22
+topic: races
 updated: 2026-10-22
 answer: >-
   Met 5 weken tot HYROX Utrecht (26 tot 30 november 2026) train je 3 weken gericht en taper je 2 weken. Het

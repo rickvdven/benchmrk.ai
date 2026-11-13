@@ -57,6 +57,8 @@ sources:                                                # bronnen die je echt he
     url: https://…
     accessed: 2026-10-20                                # peildatum
     note: …                                             # optioneel
+topic: racedag                                          # alleen NL: onderwerp uit scripts/topics.mjs (lopen, stations, opbouw, racedag, races); vertalingen nemen het over
+stat: "41–60 %"                                         # optioneel, alleen NL: kerngetal op de kaart, moet in de pagina staan; vertalingen krijgen het met de juiste decimaal
 translationOf: gids/hyrox-taper                         # alleen in vertalingen: de NL-pagina waar dit een vertaling van is
 ---
 ```
@@ -68,3 +70,10 @@ translationOf: gids/hyrox-taper                         # alleen in vertalingen:
 - Interne links als absoluut pad: minimaal 3 naar andere gidsen (`/nl/gids/…`) en 1 naar een website-pagina (`/nl/…`).
 - FAQ, bronnen, auteur, datum, JSON-LD (Article, FAQPage, BreadcrumbList) en de disclaimer
   "Benchmrk is niet verbonden aan HYROX." voegt het sjabloon zelf toe.
+
+## Overzicht, onderwerpen en navigatie
+- `/<taal>/<gidsmap>` toont onderwerpknoppen, een uitgelichte gids (het onderwerp van de week uit `WEEKONDERWERP.md`, anders de nieuwste gids), "Start hier" (`START_HERE` in `scripts/topics.mjs`) en per onderwerp de drie nieuwste kaarten.
+- Per onderwerp en taal is er een hubpagina `/<taal>/<gidsmap>/<onderwerp-slug>` met een korte intro en alle kaarten. Labels, slugs en intro's staan in `scripts/topics.mjs`.
+- Elke gids krijgt automatisch het onderwerp in het kruimelpad, een leestijd, een inhoudsopgave (vanaf 4 H2's) en "Lees verder" met drie gidsen uit hetzelfde onderwerp.
+- De build zet links naar de overzichten, onderwerpen en alle NL-pagina's in de ruwe HTML van de homepage (binnen `#root`), zodat crawlers zonder JavaScript de gidsen vinden. React vervangt ze bij het laden.
+

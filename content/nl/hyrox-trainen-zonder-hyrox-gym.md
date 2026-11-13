@@ -4,6 +4,7 @@ seoTitle: "HYROX trainen zonder HYROX-gym of thuis: zo werkt het"
 description: Geen sled, SkiErg of wall ball in de buurt? Zo vervang je elk station in een gewone gym of thuis, en zo past een WOD van je gym in je schema.
 breadcrumb: Zonder HYROX-gym
 order: 4
+topic: opbouw
 updated: 2026-10-22
 answer: >-
   Ja. Het grootste deel van een HYROX-race is lopen, en dat kan overal. Stations vervang je door oefeningen

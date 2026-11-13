@@ -4,6 +4,7 @@ seoTitle: "Sneller op de sled push in HYROX: kracht en tactiek"
 description: Sneller op de sled push word je met zware sledtraining, genoeg beenkracht en zo min mogelijk stilstand. Met regels, gewichten en een voorbeeldtraining.
 breadcrumb: Sled push
 order: 8
+topic: stations
 updated: 2026-10-22
 answer: >-
   Je wordt sneller op de sled push door zwaarder te trainen dan je racegewicht, door genoeg beenkracht op te

@@ -5,6 +5,7 @@ description: Race je 17 tot 20 december in Flanders Expo Gent? Een plan van 8 we
 breadcrumb: Gent voorbereiden
 order: 21
 published: 2026-10-22
+topic: races
 updated: 2026-11-02
 answer: >-
   Met 8 weken tot HYROX Gent (17 tot 20 december 2026) heb je ruim genoeg tijd voor 6 weken gericht trainen

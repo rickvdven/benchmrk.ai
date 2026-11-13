@@ -5,6 +5,7 @@ description: Vier sessies en een doeltijd van 1:15. Zo kies je wat voorrang krij
 breadcrumb: Vier trainingen, één doel
 order: 30
 published: 2026-11-13
+topic: opbouw
 updated: 2026-11-13
 answer: >-
   Je eigen gat krijgt voorrang. Zit het in de runs, dan zijn drempelwerk en een lange duurloop je vaste

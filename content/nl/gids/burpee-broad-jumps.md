@@ -4,6 +4,8 @@ seoTitle: "Burpee broad jumps in HYROX: regels en training"
 description: 80 meter burpee broad jumps kosten veel tijd en sturen je moe de langste run in. De regels die no-reps voorkomen, een vast ritme en hoe je ze traint.
 breadcrumb: Burpee broad jumps
 order: 12
+topic: stations
+stat: "5 cm"
 updated: 2026-10-22
 answer: >-
   Je wordt efficiënter op burpee broad jumps door in een vast ritme te werken en no-reps te voorkomen. Elke

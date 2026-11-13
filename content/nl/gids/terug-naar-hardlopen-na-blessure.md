@@ -4,6 +4,7 @@ seoTitle: "Hardlopen opbouwen na een blessure, richting HYROX"
 description: Houd je conditie vast met fietsen of aquajoggen, test of je kuit klaar is en bouw in 3 weken op met wandelen en hardlopen. Altijd met je fysio.
 breadcrumb: Terug na blessure
 order: 14
+topic: opbouw
 updated: 2026-10-22
 answer: >-
   Laat je blessure eerst beoordelen door een fysiotherapeut of arts. Houd intussen je conditie vast met

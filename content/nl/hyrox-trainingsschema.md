@@ -4,6 +4,7 @@ seoTitle: "HYROX-trainingsschema: 16 weken opbouw | Benchmrk"
 description: Een HYROX-schema van 16 weken in vijf fases, met drempeltraining, vijf benchmarks en een taper van 2 weken. Met voorbeeldweek en tabellen.
 breadcrumb: Trainingsschema
 order: 1
+topic: opbouw
 updated: 2026-10-22
 answer: >-
   Een goed HYROX-trainingsschema duurt ongeveer 16 weken en loopt in vijf fases: basis (week 1–4), drempel

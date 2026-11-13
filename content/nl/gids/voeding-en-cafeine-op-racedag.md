@@ -5,6 +5,8 @@ description: Cafeïne, ontbijt en koolhydraten voor een race van zo’n 75 minut
 breadcrumb: Voeding op racedag
 order: 31
 published: 2026-11-13
+topic: racedag
+stat: "3–6 mg/kg"
 updated: 2026-11-13
 answer: >-
   Eet op racedag wat je in training al kent en houd het licht. Cafeïne kan helpen: de ISSN noemt 3 tot 6 mg

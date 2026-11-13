@@ -5,6 +5,8 @@ description: Een gat van 4 minuten naar 1:15? Zo deel je je uitslag op in runs, 
 breadcrumb: Splits analyseren
 order: 27
 published: 2026-11-13
+topic: racedag
+stat: "48,5 %"
 updated: 2026-11-13
 answer: >-
   Deel je uitslag op in runs, stations en Roxzone, reken het aandeel van elk deel uit en vergelijk run 1 met
