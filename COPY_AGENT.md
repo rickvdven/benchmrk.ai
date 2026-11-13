@@ -101,10 +101,42 @@ Algemene feiten over de race, zoals stationafstanden, gewichten per divisie en d
 ## Wekelijkse ronde (na de eerste batch)
 
 - **3 nieuwe pagina's per week** in het Nederlands, in één PR.
-- Kies uit:
-  - zoekvragen die nog niet gedekt zijn (zoek wat mensen vragen in Google "Mensen vragen ook", Reddit r/hyrox en forums)
-  - komende races (een voorbereidingsgids per race, met datum en stad uit de officiële kalender)
-  - onderwerpen van /science
+
+### Doelgroep (besluit Rick, 11 november 2026)
+
+Nieuwe pagina's schrijf je voor iemand die al minstens één race heeft gedaan, een concrete doeltijd heeft, 2 tot 6 keer per week traint en geen coach heeft. Bij de mannen (Open en Pro) gaat het om tijden van ruwweg 1:05 tot 1:25, met het zwaartepunt rond 1:10 tot 1:15. Bij de vrouwen ligt de vergelijkbare groep eerder rond 1:20 tot 1:30. Die bandbreedtes zijn schattingen, dus zet ze niet als feit op een pagina. Het hoofdvoorbeeld is 1:15. Wie langzamer is, leest mee.
+
+- **Geen nieuwe basispagina's** over regels, gewichten of "hoe vaak trainen". Die staan er al. Verversen mag wel.
+- Schrijf als een trainingsmaat op hetzelfde niveau: minder uitleg, meer getallen. Denk aan tempo's per kilometer, splits en seconden per station.
+
+### Wat je per ronde maakt
+
+1. **Onderwerp van de week (verplicht).** Eén gids over het onderwerp voor de week die volgende maandag begint. De social agent van Benchmrk gebruikt hetzelfde onderwerp voor de Instagram-posts van die week. De onderzoekspost op donderdag linkt naar deze gids zodra hij live staat.
+   - Kies een onderwerp op het niveau van de doelgroep dat nog niet als hoofdonderwerp van een gids bestaat. Voorbeelden:
+     - waar de laatste minuten tussen 1:20 en 1:15 zitten
+     - tempoverlies tussen run 1 en run 8
+     - drempelintervallen voor HYROX
+     - sim-tempo per fase van je opbouw
+     - pacing van de stations bij een doeltijd van 1:15
+     - seconden in de Roxzone bij een doeltijd van 1:15 (een andere invalshoek dan `roxzone-tijd-winnen`)
+   - Bouw de gids rond minstens één studie die je zelf hebt geopend, met de groep (aantal mensen, niveau, echte of gesimuleerde race) en de beperking in gewone taal. Haal studies uit `/science` (`research/`) of zoek ze zelf.
+   - Zet het onderwerp in `content/WEEKONDERWERP.md` (zie hieronder).
+2. **Racehaak.** Valt er binnen 8 weken een race in Nederland of België waar nog geen voorbereidingsgids voor is? Maak die dan, met datum en stad uit de officiële kalender. Schrijf hem voor de doelgroep: wat er in de laatste weken nog te winnen is bij een doeltijd van 1:15.
+3. **Vrije keuze.** Een zoekvraag die nog niet gedekt is, of een onderwerp van /science, op het niveau van de doelgroep. Zoekvragen vind je in Google "Mensen vragen ook", op Reddit r/hyrox en op forums. Is er geen racehaak, maak dan twee pagina's in deze categorie.
+
+### `content/WEEKONDERWERP.md`
+
+Het onderwerp van de week is de koppeling met de social agent. Die leest dit bestand op maandag van de nieuwste open PR-branch `content/…`, of anders van main. Voeg per ronde bovenaan de tabel één rij toe:
+
+| Week (maandag) | Onderwerp | Hoofdvraag | Gids (NL) | Studie(s) | PR |
+|---|---|---|---|---|---|
+| 2026-11-23 | Tempoverlies run 1 → run 8 | Hoeveel tempo verlies je tussen run 1 en run 8? | `/nl/gids/<slug>` | Auteur e.a. (jaar), Tijdschrift, link | #nr |
+
+- Gebruik bij Studie(s) dezelfde studie die in de gids staat. Zo kan de social agent hem openen en dezelfde getallen gebruiken.
+- Herhaal geen onderwerp dat al in de tabel staat.
+
+### Verversen
+
 - **Elke ronde ook:** één bestaande pagina verversen. Controleer de feiten opnieuw, werk "Bijgewerkt op" bij en voeg een nieuwe vraag aan de FAQ toe.
 - **Vertalen (besluit Rick, 22 oktober 2026):** alle NL-pagina's staan ook in EN, DE, ES en KO, met hreflang. Elke nieuwe of ververste NL-pagina krijgt in dezelfde ronde ook die vier vertalingen (zelfde PR of een tweede PR met prefix `content/`).
   - Vertaal niet woord voor woord. Schrijf de H1 zoals mensen in die taal zoeken, geef de pagina een eigen slug en voeg `translationOf` toe (zie `content/README.md`).
@@ -123,6 +155,12 @@ Algemene feiten over de race, zoals stationafstanden, gewichten per divisie en d
 - Open Men, drempeltempo 4:45/km, 16 weken, doel 1:20:00.
 - Verwacht 1:18:41: runs 42:24, stations 30:52, Roxzone 5:25.
 - Kans 96 %. Benodigd looptempo 5:28/km, huidig 5:18/km.
+
+**Voorbeeldprofiel bij doeltijd 1:15** (stand 11 november 2026; altijd labelen als "voorbeeldprofiel", nooit als echte atleet)
+
+- Open Men, doel 1:15:00, drempeltempo 4:25/km, drempelhartslag 168, 35 km per week, 5 trainingsdagen.
+- Kans 70 %, verwacht 1:16:42, "als je vandaag zou racen" 1:19:17.
+- Dit is het profiel uit de social-serie "Route naar 1:15". Andere getallen uit de engine bereken je zelf met de snelle check op benchmrk.ai (`/#check`). Noem dan de invoer en de peildatum.
 
 **Onderzoek: Brandt et al. (2025), Frontiers in Physiology, doi:10.3389/fphys.2025.1519240**
 
