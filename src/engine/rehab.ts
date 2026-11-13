@@ -1,4 +1,4 @@
-import { injuriesOf, RUN_AREAS, type InjuryArea } from './injury';
+import { injuriesOf, prehabLine, RUN_AREAS, type InjuryArea } from './injury';
 import { daysBetween } from './time';
 import { z2Cap } from './zones';
 import type { Flags, Lang, Session } from './types';
@@ -249,4 +249,110 @@ export function adaptForInjury(c: RehabCtx, s: Partial<Session>, date: string, t
     default:
       return null;
   }
+}
+
+
+// ---------- blessurekracht bij een vervangende training ----------
+
+type RBK = 'isoT' | 'hsrT' | 'plyoT' | 'isoX' | 'hsrX' | 'plyoX' | 'otherT' | 'note';
+const RB: Record<Lang, Record<RBK, string>> = {
+  en: {
+    isoT: 'Leg and calf strength · phase 1, isometric · ~15 min',
+    hsrT: 'Leg and calf strength · phase 2, heavy and slow · ~20 min',
+    plyoT: 'Leg and calf strength · phase 3, strength and jumps · ~20 min',
+    isoX: 'Thighs and hips without loading the calf: glute bridge 3 × 12 and wall sit 3 × 30 s, only if pain-free.',
+    hsrX: 'Add: split squat or step-up 3 × 8 each leg and single-leg glute bridge 3 × 10, if pain-free.',
+    plyoX: 'Add: split squat 3 × 8 each leg and step-ups 3 × 10 each leg. Single-leg hops only once pogo jumps are pain-free.',
+    otherT: 'Injury strength · ~15 min',
+    note: 'If the pain stays or gets worse, have a physiotherapist look at it.',
+  },
+  nl: {
+    isoT: 'Been- en kuitkracht · fase 1, isometrisch · ±15 min',
+    hsrT: 'Been- en kuitkracht · fase 2, zwaar en langzaam · ±20 min',
+    plyoT: 'Been- en kuitkracht · fase 3, kracht en sprong · ±20 min',
+    isoX: 'Bovenbeen en heup zonder kuitbelasting: glute bridge 3 × 12 en wall sit 3 × 30 s, alleen als dat pijnvrij is.',
+    hsrX: 'Erbij: split squat of step-up 3 × 8 per been en glute bridge op één been 3 × 10, als dat pijnvrij is.',
+    plyoX: 'Erbij: split squat 3 × 8 per been en step-ups 3 × 10 per been. Hops op één been pas als pogo jumps pijnvrij zijn.',
+    otherT: 'Blessurekracht · ±15 min',
+    note: 'Blijft de pijn of wordt hij erger, laat er een fysiotherapeut naar kijken.',
+  },
+  de: {
+    isoT: 'Bein- und Wadenkraft · Phase 1, isometrisch · ca. 15 Min.',
+    hsrT: 'Bein- und Wadenkraft · Phase 2, schwer und langsam · ca. 20 Min.',
+    plyoT: 'Bein- und Wadenkraft · Phase 3, Kraft und Sprünge · ca. 20 Min.',
+    isoX: 'Oberschenkel und Hüfte ohne Wadenbelastung: Glute Bridge 3 × 12 und Wall Sit 3 × 30 s, nur wenn schmerzfrei.',
+    hsrX: 'Dazu: Split Squat oder Step-up 3 × 8 pro Bein und einbeinige Glute Bridge 3 × 10, wenn schmerzfrei.',
+    plyoX: 'Dazu: Split Squat 3 × 8 pro Bein und Step-ups 3 × 10 pro Bein. Einbeinige Hops erst, wenn Pogo Jumps schmerzfrei sind.',
+    otherT: 'Kraft für die Verletzung · ca. 15 Min.',
+    note: 'Bleibt der Schmerz oder wird er schlimmer, lass eine Physiotherapeutin oder einen Physiotherapeuten draufschauen.',
+  },
+  es: {
+    isoT: 'Fuerza de pierna y gemelo · fase 1, isométrica · ~15 min',
+    hsrT: 'Fuerza de pierna y gemelo · fase 2, pesada y lenta · ~20 min',
+    plyoT: 'Fuerza de pierna y gemelo · fase 3, fuerza y saltos · ~20 min',
+    isoX: 'Muslo y cadera sin cargar el gemelo: puente de glúteo 3 × 12 y sentadilla en pared 3 × 30 s, solo si no duele.',
+    hsrX: 'Añade: split squat o step-up 3 × 8 por pierna y puente de glúteo a una pierna 3 × 10, si no duele.',
+    plyoX: 'Añade: split squat 3 × 8 por pierna y step-ups 3 × 10 por pierna. Saltos a una pierna solo cuando los pogo jumps no duelan.',
+    otherT: 'Fuerza para la lesión · ~15 min',
+    note: 'Si el dolor sigue o empeora, que lo vea un fisioterapeuta.',
+  },
+  ko: {
+    isoT: '다리·종아리 근력 · 1단계, 등척성 · 약 15분',
+    hsrT: '다리·종아리 근력 · 2단계, 무겁고 느리게 · 약 20분',
+    plyoT: '다리·종아리 근력 · 3단계, 근력과 점프 · 약 20분',
+    isoX: '종아리에 부담 없는 허벅지·엉덩이: 글루트 브리지 3 × 12, 월 싯 3 × 30초, 통증이 없을 때만.',
+    hsrX: '추가: 스플릿 스쿼트 또는 스텝업 다리당 3 × 8, 한 다리 글루트 브리지 3 × 10, 통증이 없을 때.',
+    plyoX: '추가: 스플릿 스쿼트 다리당 3 × 8, 스텝업 다리당 3 × 10. 한 발 홉은 포고 점프가 통증 없을 때부터.',
+    otherT: '부상 근력 · 약 15분',
+    note: '통증이 계속되거나 심해지면 물리치료사에게 확인받으세요.',
+  },
+};
+
+export type RehabPhase = 'iso' | 'hsr' | 'plyo';
+export interface RehabBlock {
+  title: string;
+  /** one exercise or rule per line */
+  text: string;
+  /** calf/Achilles/foot/shin protocol (isometric → heavy slow → plyometric) */
+  calf: boolean;
+  phase?: RehabPhase;
+}
+
+/**
+ * Strength block for a current injury, to add to a replacement session ("can't do this as planned").
+ * Calf, foot and shin follow the same phases as injury mode (isometric → heavy slow resistance → plyometrics;
+ * Beyer 2015, Silbernagel 2007): by days since the injury, or by return week after the return test.
+ * Other areas get their prehab line. Null when there is no current injury and no return week.
+ */
+export function rehabStrength(c: { lang: Lang; flags: Flags | null | undefined; rs?: RuleSet }, date: string, today: string): RehabBlock | null {
+  const lang = c.lang;
+  const rb = RB[lang] ?? RB.en;
+  const inj = injuriesOf(c.flags);
+  const ri = runInjury(c.flags, today);
+  const w = returnWeek(c.flags, date, c.rs ?? V1);
+  let phase: RehabPhase | undefined;
+  let day = 0;
+  if (ri?.calf) {
+    day = Math.max(0, daysBetween(ri.since, date));
+    phase = day < 7 ? 'iso' : day < 21 ? 'hsr' : 'plyo';
+  } else if (w && CALF.some((a) => inj[a] === 'recent')) {
+    day = Math.max(0, daysBetween(c.flags!.returnSince!, date));
+    phase = w < 3 ? 'hsr' : 'plyo';
+  }
+  const active = (a: InjuryArea) => inj[a] === 'now' || (!!w && inj[a] === 'recent');
+  const others = (Object.keys(inj) as InjuryArea[]).filter((a) => !CALF.includes(a) && active(a));
+  if (!phase && !others.length) return null;
+  const lines: string[] = [];
+  if (phase) {
+    lines.push(tr(lang, phase, { d: day + 1 }), rb[`${phase}X` as RBK]);
+    if (ri?.calf) lines.push(tr(lang, 'test'));
+  }
+  for (const a of others) lines.push(prehabLine(lang, a));
+  lines.push(tr(lang, 'gate'), rb.note);
+  return { title: phase ? rb[`${phase}T` as RBK] : rb.otherT, text: lines.join('\n'), calf: !!phase, phase };
+}
+
+/** The chosen replacement session with the injury strength block appended. */
+export function withRehab(s: Session, b: RehabBlock): Session {
+  return { ...s, description: `${s.description}\n\n${b.title}\n${b.text}`, sourceKey: b.calf ? 'Beyer' : s.sourceKey };
 }

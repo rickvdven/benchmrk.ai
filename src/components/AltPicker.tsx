@@ -2,7 +2,7 @@ import { useState } from 'react';
 import clsx from 'clsx';
 import { toast } from 'sonner';
 import { Repeat2, Star } from 'lucide-react';
-import { alternativesFor, type Session } from '../engine';
+import { alternativesFor, withRehab, type Session } from '../engine';
 import { useCoach, useMutations } from '../data/hooks';
 import { useI18n } from '../lib/i18n';
 
@@ -12,6 +12,7 @@ export function AltPicker({ s, onPicked }: { s: Session; onPicked: () => void })
   const c = useCoach(lang);
   const { saveEntry } = useMutations();
   const [open, setOpen] = useState(false);
+  const [addRehab, setAddRehab] = useState(true);
   if (!c.profile) return null;
   if (!open)
     return (
@@ -21,7 +22,8 @@ export function AltPicker({ s, onPicked }: { s: Session; onPicked: () => void })
     );
   const alt = alternativesFor(s, c.fullProfile, c.weeks, lang);
   if (!alt) return null;
-  const pick = async (x: Session) => {
+  const pick = async (o: Session) => {
+    const x = addRehab && alt.rehab ? withRehab(o, alt.rehab) : o;
     await saveEntry(s.date, { completed: false, planned: x as unknown as Record<string, unknown> });
     toast.success(t('alt.done'));
     onPicked();
@@ -32,6 +34,17 @@ export function AltPicker({ s, onPicked }: { s: Session; onPicked: () => void })
       <p className="text-xs text-muted">{t('alt.intro')}</p>
       <p className="rounded-lg border border-volt/40 bg-volt/5 p-2.5 text-sm">{alt.advice}</p>
       {alt.note && <p className="text-xs text-warn">{alt.note}</p>}
+      {alt.rehab && (
+        <label className="flex cursor-pointer gap-3 rounded-lg border border-line p-3">
+          <input type="checkbox" className="mt-0.5 h-4 w-4 shrink-0 accent-volt" checked={addRehab} onChange={(e) => setAddRehab(e.target.checked)} />
+          <span>
+            <span className="font-semibold">{t('alt.rehab')}</span>
+            <span className="block text-xs text-muted">{t('alt.rehabHint')}</span>
+            <span className="mt-2 block font-medium">{alt.rehab.title}</span>
+            <span className="mt-1 block whitespace-pre-line text-xs text-muted">{alt.rehab.text}</span>
+          </span>
+        </label>
+      )}
       <div className="grid gap-3 sm:grid-cols-2">
         {alt.options.map((o) => {
           const rec = o.key === alt.recommended;

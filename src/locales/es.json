@@ -386,6 +386,8 @@
     "alt.why": "Por qué",
     "alt.pick": "Usar esta",
     "alt.done": "Sesión sustituida",
+    "alt.rehab": "Añadir fuerza para la lesión",
+    "alt.rehabHint": "Según tu ajuste de lesión. Se añade después de la sesión que elijas.",
     "alt.badge": "Alternativa",
     "alt.replaces": "Sustituye: {title}",
     "alt.back": "Volver a la sesión original",

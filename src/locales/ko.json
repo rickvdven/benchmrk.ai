@@ -386,6 +386,8 @@
     "alt.why": "이유",
     "alt.pick": "이걸로 변경",
     "alt.done": "세션 변경됨",
+    "alt.rehab": "부상 근력 추가",
+    "alt.rehabHint": "부상 설정에 따라 선택한 세션 뒤에 추가됩니다.",
     "alt.badge": "대체",
     "alt.replaces": "대체됨: {title}",
     "alt.back": "원래 세션으로",

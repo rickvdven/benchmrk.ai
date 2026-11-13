@@ -382,6 +382,45 @@ describe('alternatives when a session cannot go ahead', () => {
     expect(a.recommended).toBe('long');
     expect(a.options[1].session.type).toBe('recovery');
   });
+  it('current calf injury → injury strength block in the right phase, added to the chosen option', async () => {
+    const { alternativesFor } = await import('./alternatives');
+    const { withInjuries } = await import('./injury');
+    const { withRehab } = await import('./rehab');
+    const p = profile({});
+    const weeks = generatePlan(p);
+    const thr = weeks.flatMap((w) => w.sessions).find((s) => s.type === 'threshold')!;
+    const since = (days: number) => {
+      const d = new Date(`${thr.date}T12:00:00Z`);
+      d.setUTCDate(d.getUTCDate() - days);
+      return d.toISOString().slice(0, 10);
+    };
+    const at = (days: number) => {
+      p.athlete.flags = withInjuries(profile({}).athlete.flags, { achilles: 'now' }, undefined, since(days));
+      return alternativesFor(thr, p, weeks, 'nl', since(days))!;
+    };
+    expect(at(2).rehab).toMatchObject({ calf: true, phase: 'iso' });
+    expect(at(10).rehab).toMatchObject({ calf: true, phase: 'hsr' });
+    const late = at(30);
+    expect(late.rehab).toMatchObject({ calf: true, phase: 'plyo' });
+    expect(late.rehab!.title).toMatch(/Been- en kuitkracht/);
+    expect(late.rehab!.text).toMatch(/fysiotherapeut/);
+    const chosen = withRehab(late.options[1].session, late.rehab!);
+    expect(chosen.description).toContain(late.options[1].session.description);
+    expect(chosen.description).toContain(late.rehab!.title);
+    expect(chosen.sourceKey).toBe('Beyer');
+  });
+  it('other injury areas get their prehab line; no injury → no block', async () => {
+    const { alternativesFor } = await import('./alternatives');
+    const { withInjuries } = await import('./injury');
+    const p = profile({});
+    const weeks = generatePlan(p);
+    const thr = weeks.flatMap((w) => w.sessions).find((s) => s.type === 'threshold')!;
+    expect(alternativesFor(thr, p, weeks, 'en')!.rehab).toBeUndefined();
+    p.athlete.flags = withInjuries(p.athlete.flags, { knee: 'now' });
+    const a = alternativesFor(thr, p, weeks, 'en')!;
+    expect(a.rehab).toMatchObject({ calf: false });
+    expect(a.rehab!.text).toMatch(/Spanish squat/);
+  });
 });
 
 describe('gym sim protocol (Groesbeek)', () => {

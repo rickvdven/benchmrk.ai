@@ -3,6 +3,7 @@ import { addDays, fmtMmss } from './time';
 import { z2Cap } from './zones';
 import { injuryProfile } from './injury';
 import { weekOf } from './plan';
+import { rehabStrength, type RehabBlock } from './rehab';
 import type { Lang, Profile, Session, Week } from './types';
 
 /**
@@ -19,6 +20,8 @@ export interface Alternatives {
   recommended: string;
   advice: string;
   note?: string;
+  /** strength block for a current injury; the picker offers to add it to the chosen option */
+  rehab?: RehabBlock;
 }
 
 type D = Record<string, string>;
@@ -211,7 +214,14 @@ const T: Record<Lang, D> = {
 };
 const tr = (l: Lang, k: string, p: Record<string, string | number> = {}) => ((T[l] ?? T.en)[k] ?? T.en[k]).replace(/\{(\w+)\}/g, (_, x) => String(p[x] ?? ''));
 
-export function alternativesFor(s: Session, p: Profile, weeks: Week[], lang: Lang): Alternatives | null {
+export function alternativesFor(s: Session, p: Profile, weeks: Week[], lang: Lang, today: string = new Date().toISOString().slice(0, 10)): Alternatives | null {
+  const alt = buildAlternatives(s, p, weeks, lang);
+  if (!alt) return null;
+  const rehab = rehabStrength({ lang, flags: p.athlete.flags, rs: rulesOf(p) }, s.date, today);
+  return rehab ? { ...alt, rehab } : alt;
+}
+
+function buildAlternatives(s: Session, p: Profile, weeks: Week[], lang: Lang): Alternatives | null {
   const a = p.athlete;
   const rs = rulesOf(p);
   const cap = z2Cap(a.lthr, a.maxHr, rs);
