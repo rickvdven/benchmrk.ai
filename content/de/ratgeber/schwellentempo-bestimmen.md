@@ -4,7 +4,7 @@ seoTitle: "Schwellentempo und Schwellenherzfrequenz bestimmen"
 description: Bestimme deine Schwellenherzfrequenz mit einem 30-Minuten-Test und prüfe dein Schwellentempo mit 4 × 1000 m. Mit Zonen und wie du die Werte später anpasst.
 breadcrumb: Schwellentempo bestimmen
 order: 4
-updated: 2026-10-22
+updated: 2026-11-16
 translationOf: gids/drempeltempo-bepalen
 answer: >-
   Lauf 30 Minuten so hart, wie du allein durchhältst. Deine durchschnittliche Herzfrequenz über die letzten
@@ -24,21 +24,27 @@ faq:
   - q: Kann ich die Schätzung meiner Uhr nutzen?
     a: Ja, als Startpunkt. Prüfe den Wert danach mit einem eigenen Test; in Benchmrk macht das Benchmark 1.
   - q: Wie oft solltest du deine Schwelle neu testen?
-    a: Im Benchmrk-Plan gibt es zwei Schwellentests, in Woche 4 und Woche 7. Außerdem schlägt die App dir Anpassungen deiner Tempi vor, wenn deine Logs zeigen, dass sie zu hart oder zu leicht sind.
+    a: In einem Plan über 16 Wochen gibt es zwei Schwellentests, in Woche 4 und Woche 7. In einem kürzeren Plan verschieben sie sich mit den Phasen. Außerdem schlägt die App dir Anpassungen deiner Tempi vor, wenn deine Logs zeigen, dass sie zu hart oder zu leicht sind.
   - q: Warum läufst du den Test allein?
     a: Der Test misst, was du selbst durchhältst. Läufst du mit anderen mit, misst du eher deren Tempo als deins.
   - q: Was machst du, wenn deine Herzfrequenz im Test über deine Schwellenherzfrequenz steigt?
     a: Dann bist du schneller als deine Schwelle gelaufen. Benchmrk korrigiert das Tempo dafür mit 2,5 Sekunden pro Kilometer pro Schlag über deiner Schwellenherzfrequenz.
+  - q: Ist eine Schwelle aus einem Labortest dasselbe wie die aus dem 30-Minuten-Test?
+    a: Nicht genau. Forschende nutzen oft die zweite ventilatorische Schwelle (VT2) aus einem Labortest; in der HYScience-Studie lag sie bei 24 PRO-Männern bei 16,41 km/h, und sie liefen alle Läufe und die Roxzone zusammen im Schnitt mit 84 % davon. Dein 30-Minuten-Test liefert einen verwandten, aber nicht denselben Wert.
 sources:
   - title: Jones et al. (2019), The maximal metabolic steady state – redefining the gold standard, Physiol Rep
     url: https://pubmed.ncbi.nlm.nih.gov/31124324/
-    accessed: 2026-10-22
+    accessed: 2026-11-16
   - title: Jamnick et al. (2020), An examination and critique of current methods to determine exercise intensity, Sports Med
     url: https://pubmed.ncbi.nlm.nih.gov/32729096/
-    accessed: 2026-10-22
+    accessed: 2026-11-16
   - title: Brandt et al. (2025), Frontiers in Physiology
     url: https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2025.1519240/full
-    accessed: 2026-10-22
+    accessed: 2026-11-16
+  - title: Gutiérrez-Hellín J, Alonso-Domínguez S, Gil-Cabrera J e.a. (2026). Relative Running Intensity and Pacing During an Official HYROX PRO MEN Competition. The HYScience Study. International Journal of Sports Physiology and Performance.
+    url: https://pubmed.ncbi.nlm.nih.gov/42697540/
+    accessed: 2026-11-16
+    note: PubMed-Eintrag mit Zusammenfassung gelesen.
 ---
 ## Was ist deine Schwelle?
 
@@ -83,7 +89,7 @@ Mit einem Schwellentest über 4 × 1000 m. Im Benchmrk-Plan ist das Benchmark 1,
 
 Lag deine Herzfrequenz höher als deine Schwellenherzfrequenz, bist du eigentlich über deiner Schwelle gelaufen. Benchmrk korrigiert dein neues Schwellentempo dann mit 2,5 Sekunden pro Kilometer pro Schlag Unterschied, mit einem Maximum von 15 Sekunden. Pro Test ändert sich dein Schwellentempo höchstens um 20 Sekunden pro Kilometer. So verhindert die App, dass ein einziger schlechter oder zu guter Tag deinen ganzen Plan umwirft.
 
-In Woche 7 folgt Benchmark 2: 3 × 2000 m in deinem Schwellentempo mit 2 Minuten Pause. Dieser Test zeigt, ob du das Tempo auch länger durchhältst. Beide Tests liegen weit vor dem [Tapering](/de/ratgeber/hyrox-tapering), sodass du die neuen Tempi noch Wochen nutzt.
+In einem Plan über 16 Wochen liegt Benchmark 1 in Woche 4. In Woche 7 folgt Benchmark 2: 3 × 2000 m in deinem Schwellentempo mit 2 Minuten Pause. Dieser Test zeigt, ob du das Tempo auch länger durchhältst. Beide Tests liegen weit vor dem [Tapering](/de/ratgeber/hyrox-tapering), sodass du die neuen Tempi noch Wochen nutzt.
 
 ## Welche Herzfrequenzzonen gehören dazu?
 

@@ -6,7 +6,7 @@ breadcrumb: Drempeltempo bepalen
 order: 4
 topic: lopen
 stat: "30 min"
-updated: 2026-10-22
+updated: 2026-11-16
 answer: >-
   Loop 30 minuten zo hard als je in je eentje volhoudt. Je gemiddelde hartslag over de laatste 20 minuten is
   een goede schatting van je drempelhartslag, en je gemiddelde tempo een eerste schatting van je
@@ -25,21 +25,27 @@ faq:
   - q: Kan ik de schatting van mijn horloge gebruiken?
     a: Ja, als startpunt. Controleer de waarde daarna met een eigen test; in Benchmrk doet benchmark 1 dat.
   - q: Hoe vaak moet je je drempel opnieuw testen?
-    a: In het schema van Benchmrk zitten twee drempeltests, in week 4 en week 7. Daarnaast stelt de app je tempo's voor bij als je logs laten zien dat ze te zwaar of te licht zijn.
+    a: In een schema van 16 weken zitten twee drempeltests, in week 4 en week 7. Bij een korter schema schuiven ze mee met de fases. Daarnaast stelt de app je tempo's voor bij als je logs laten zien dat ze te zwaar of te licht zijn.
   - q: Waarom loop je de test alleen?
     a: De test meet wat jij zelf volhoudt. Loop je mee met anderen, dan meet je eerder hun tempo dan het jouwe.
   - q: Wat doe je als je hartslag tijdens de test boven je drempelhartslag uitkomt?
     a: Dan liep je sneller dan je drempel. Benchmrk corrigeert het tempo daarvoor met 2,5 seconden per kilometer per slag boven je drempelhartslag.
+  - q: Is een drempel uit een labtest hetzelfde als die uit de test van 30 minuten?
+    a: Niet precies. Onderzoekers gebruiken vaak de tweede ventilatoire drempel (VT2) uit een labtest; in de HYScience-studie lag die bij 24 PRO-mannen op 16,41 km/u, en liepen ze alle runs en de Roxzone samen op gemiddeld 84 % daarvan. Je test van 30 minuten geeft een verwante, maar niet dezelfde waarde.
 sources:
   - title: Jones et al. (2019), The maximal metabolic steady state – redefining the gold standard, Physiol Rep
     url: https://pubmed.ncbi.nlm.nih.gov/31124324/
-    accessed: 2026-10-22
+    accessed: 2026-11-16
   - title: Jamnick et al. (2020), An examination and critique of current methods to determine exercise intensity, Sports Med
     url: https://pubmed.ncbi.nlm.nih.gov/32729096/
-    accessed: 2026-10-22
+    accessed: 2026-11-16
   - title: Brandt et al. (2025), Frontiers in Physiology
     url: https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2025.1519240/full
-    accessed: 2026-10-22
+    accessed: 2026-11-16
+  - title: Gutiérrez-Hellín J, Alonso-Domínguez S, Gil-Cabrera J e.a. (2026). Relative Running Intensity and Pacing During an Official HYROX PRO MEN Competition. The HYScience Study. International Journal of Sports Physiology and Performance.
+    url: https://pubmed.ncbi.nlm.nih.gov/42697540/
+    accessed: 2026-11-16
+    note: PubMed-record met samenvatting gelezen.
 ---
 ## Wat is je drempel?
 
@@ -84,7 +90,7 @@ Met een drempeltest van 4 × 1000 m. In het schema van Benchmrk is dat benchmark
 
 Kwam je hartslag hoger uit dan je drempelhartslag, dan liep je eigenlijk boven je drempel. Benchmrk corrigeert je nieuwe drempeltempo dan met 2,5 seconden per kilometer per slag verschil, met een maximum van 15 seconden. Per test verandert je drempeltempo hooguit 20 seconden per kilometer. Zo voorkomt de app dat één slechte of te goede dag je hele schema omgooit.
 
-In week 7 volgt benchmark 2: 3 × 2000 m op je drempeltempo met 2 minuten rust. Die test laat zien of je het tempo ook langer volhoudt. Beide tests liggen ruim voor de [taper](/nl/gids/hyrox-taper), zodat je de nieuwe tempo's nog weken gebruikt.
+In een schema van 16 weken valt benchmark 1 in week 4. In week 7 volgt benchmark 2: 3 × 2000 m op je drempeltempo met 2 minuten rust. Die test laat zien of je het tempo ook langer volhoudt. Beide tests liggen ruim voor de [taper](/nl/gids/hyrox-taper), zodat je de nieuwe tempo's nog weken gebruikt.
 
 ## Welke hartslagzones horen erbij?
 
@@ -113,7 +119,7 @@ Elk trainingstempo is een vaste verhouding tot je drempeltempo (T). Een voorbeel
 | Rustige loop | T × 1,22 | 6:06/km |
 | Duurloop | T × 1,25 | 6:15/km |
 
-Je racetempo in HYROX ligt trager dan je drempeltempo, omdat je loopt na de stations. Hoeveel trager, lees je in [runs pacen](/nl/gids/runs-pacen). Hoe vaak je deze sessies per week doet, staat in [hoe vaak trainen per week](/nl/gids/hoe-vaak-trainen-per-week). Weet je je drempel, dan kun je ook je eindtijd schatten, zie [HYROX-tijd voorspellen](/nl/hyrox-tijd-voorspellen).
+Hoe je drempelherhalingen over je voorbereiding opbouwt, lees je in [drempelintervallen voor HYROX](/nl/gids/drempelintervallen-voor-hyrox). Je racetempo in HYROX ligt trager dan je drempeltempo, omdat je loopt na de stations. Hoeveel trager, lees je in [runs pacen](/nl/gids/runs-pacen). Hoe vaak je deze sessies per week doet, staat in [hoe vaak trainen per week](/nl/gids/hoe-vaak-trainen-per-week). Weet je je drempel, dan kun je ook je eindtijd schatten, zie [HYROX-tijd voorspellen](/nl/hyrox-tijd-voorspellen).
 
 ## Zo doet Benchmrk het
 
