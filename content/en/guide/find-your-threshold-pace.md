@@ -4,7 +4,7 @@ seoTitle: "Find your threshold pace and heart rate | Benchmrk"
 description: Find your threshold heart rate with a 30-minute test and check your threshold pace with 4 × 1000 m. With zones and how to adjust the values later.
 breadcrumb: Find your threshold pace
 order: 4
-updated: 2026-10-22
+updated: 2026-11-16
 translationOf: gids/drempeltempo-bepalen
 answer: >-
   Run 30 minutes as hard as you can hold on your own. Your average heart rate over the last 20 minutes is a
@@ -24,21 +24,27 @@ faq:
   - q: Can I use my watch's estimate?
     a: Yes, as a starting point. Then check the value with a test of your own; in Benchmrk, benchmark 1 does that.
   - q: How often should you retest your threshold?
-    a: The Benchmrk plan has two threshold tests, in week 4 and week 7. On top of that, the app suggests adjusting your paces if your logs show they are too hard or too easy.
+    a: A 16-week plan has two threshold tests, in week 4 and week 7. In a shorter plan they move with the phases. On top of that, the app suggests adjusting your paces if your logs show they are too hard or too easy.
   - q: Why do you run the test alone?
     a: The test measures what you can hold yourself. If you run along with others, you are more likely to measure their pace than yours.
   - q: What do you do if your heart rate goes above your threshold heart rate during the test?
     a: Then you ran faster than your threshold. Benchmrk corrects the pace for that by 2.5 seconds per kilometre for every beat above your threshold heart rate.
+  - q: Is a threshold from a lab test the same as one from the 30-minute test?
+    a: Not exactly. Researchers often use the second ventilatory threshold (VT2) from a lab test; in the HYScience study it was 16.41 km/h in 24 PRO men, and they ran all runs and the Roxzone together at an average of 84% of it. Your 30-minute test gives a related, but not identical value.
 sources:
   - title: Jones et al. (2019), The maximal metabolic steady state – redefining the gold standard, Physiol Rep
     url: https://pubmed.ncbi.nlm.nih.gov/31124324/
-    accessed: 2026-10-22
+    accessed: 2026-11-16
   - title: Jamnick et al. (2020), An examination and critique of current methods to determine exercise intensity, Sports Med
     url: https://pubmed.ncbi.nlm.nih.gov/32729096/
-    accessed: 2026-10-22
+    accessed: 2026-11-16
   - title: Brandt et al. (2025), Frontiers in Physiology
     url: https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2025.1519240/full
-    accessed: 2026-10-22
+    accessed: 2026-11-16
+  - title: Gutiérrez-Hellín J, Alonso-Domínguez S, Gil-Cabrera J e.a. (2026). Relative Running Intensity and Pacing During an Official HYROX PRO MEN Competition. The HYScience Study. International Journal of Sports Physiology and Performance.
+    url: https://pubmed.ncbi.nlm.nih.gov/42697540/
+    accessed: 2026-11-16
+    note: Read the PubMed record with the abstract.
 ---
 ## What is your threshold?
 
@@ -83,7 +89,7 @@ With a threshold test of 4 × 1000 m. In the Benchmrk plan that is benchmark 1, 
 
 If your heart rate came out higher than your threshold heart rate, you were actually running above your threshold. Benchmrk then corrects your new threshold pace by 2.5 seconds per kilometre per beat of difference, with a maximum of 15 seconds. Per test, your threshold pace changes by at most 20 seconds per kilometre. That stops the app from overturning your whole plan because of one bad or too-good day.
 
-In week 7, benchmark 2 follows: 3 × 2000 m at your threshold pace with 2 minutes of rest. That test shows whether you can hold the pace for longer too. Both tests are well before the [taper](/en/guide/hyrox-taper), so you use the new paces for weeks.
+In a 16-week plan, benchmark 1 falls in week 4. In week 7, benchmark 2 follows: 3 × 2000 m at your threshold pace with 2 minutes of rest. That test shows whether you can hold the pace for longer too. Both tests are well before the [taper](/en/guide/hyrox-taper), so you use the new paces for weeks.
 
 ## Which heart rate zones go with it?
 

@@ -4,7 +4,7 @@ seoTitle: "역치 페이스와 역치 심박수 정하는 법 | Benchmrk"
 description: 30분 테스트로 역치 심박수를 정하고 4 × 1000 m로 역치 페이스를 확인하세요. 심박 구간과 나중에 값을 조정하는 방법도 알려 드립니다.
 breadcrumb: 역치 페이스 정하기
 order: 4
-updated: 2026-10-22
+updated: 2026-11-16
 translationOf: gids/drempeltempo-bepalen
 answer: >-
   혼자서 버틸 수 있는 가장 센 강도로 30분을 달리세요. 마지막 20분의 평균 심박수가 역치 심박수의 좋은 추정치이고, 평균 페이스가 역치 페이스의 첫 추정치입니다. 나중에 역치 페이스 바로 아래로 4 × 1000 m를 하고 심박수가 역치 심박수 아래인지 확인하세요. 시계의 추정치도 쓸 수 있습니다. 모든 페이스와 심박 구간은 이 두 값을 기준으로 합니다.
@@ -20,21 +20,27 @@ faq:
   - q: 시계의 추정치를 써도 되나요?
     a: 네, 출발점으로요. 그 뒤에 직접 테스트로 확인하세요. Benchmrk에서는 벤치마크 1이 그 역할을 합니다.
   - q: 역치는 얼마나 자주 다시 테스트하나요?
-    a: Benchmrk 계획에는 4주와 7주에 역치 테스트가 두 번 있습니다. 또한 기록이 페이스가 너무 힘들거나 가볍다고 보여 주면 앱이 페이스 조정을 제안합니다.
+    a: 16주 계획에는 4주와 7주에 역치 테스트가 두 번 있습니다. 더 짧은 계획에서는 단계에 맞춰 옮겨집니다. 또한 기록이 페이스가 너무 힘들거나 가볍다고 보여 주면 앱이 페이스 조정을 제안합니다.
   - q: 왜 테스트를 혼자 달리나요?
     a: 테스트는 본인이 혼자 버티는 강도를 잽니다. 다른 사람과 달리면 본인 페이스보다 그 사람들의 페이스를 재기 쉽습니다.
   - q: 테스트 중 심박수가 역치 심박수를 넘으면 어떻게 하나요?
     a: 역치보다 빠르게 달린 것입니다. Benchmrk는 역치 심박수를 넘은 1박마다 페이스를 km당 2.5초씩 보정합니다.
+  - q: 실험실 테스트의 역치와 30분 테스트의 역치는 같은가요?
+    a: 정확히 같지는 않습니다. 연구자들은 실험실 테스트의 2차 환기 역치(VT2)를 자주 쓰는데, HYScience 연구에서 PRO 남자 24명의 VT2는 16.41 km/h였고, 모든 달리기와 Roxzone을 합쳐 평균 그 속도의 84%로 달렸습니다. 30분 테스트는 비슷하지만 같지는 않은 값을 줍니다.
 sources:
   - title: Jones et al. (2019), The maximal metabolic steady state – redefining the gold standard, Physiol Rep
     url: https://pubmed.ncbi.nlm.nih.gov/31124324/
-    accessed: 2026-10-22
+    accessed: 2026-11-16
   - title: Jamnick et al. (2020), An examination and critique of current methods to determine exercise intensity, Sports Med
     url: https://pubmed.ncbi.nlm.nih.gov/32729096/
-    accessed: 2026-10-22
+    accessed: 2026-11-16
   - title: Brandt et al. (2025), Frontiers in Physiology
     url: https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2025.1519240/full
-    accessed: 2026-10-22
+    accessed: 2026-11-16
+  - title: Gutiérrez-Hellín J, Alonso-Domínguez S, Gil-Cabrera J e.a. (2026). Relative Running Intensity and Pacing During an Official HYROX PRO MEN Competition. The HYScience Study. International Journal of Sports Physiology and Performance.
+    url: https://pubmed.ncbi.nlm.nih.gov/42697540/
+    accessed: 2026-11-16
+    note: 초록이 있는 PubMed 기록을 읽었습니다.
 ---
 ## 역치란 무엇인가요?
 
@@ -79,7 +85,7 @@ sources:
 
 심박수가 역치 심박수보다 높게 나왔다면 사실은 역치 위로 달린 것입니다. 그러면 Benchmrk는 새 역치 페이스를 차이 1박당 km당 2.5초로 보정하며, 최대 15초입니다. 테스트 한 번에 역치 페이스는 km당 최대 20초만 바뀝니다. 그래서 나쁘거나 너무 좋은 하루가 계획 전체를 뒤집는 일이 없습니다.
 
-7주에는 벤치마크 2가 이어집니다. 역치 페이스로 3 × 2000 m, 휴식 2분입니다. 이 테스트는 그 페이스를 더 오래 유지할 수 있는지 보여 줍니다. 두 테스트 모두 [테이퍼](/ko/guide/hyrox-taper)보다 훨씬 앞이어서 새 페이스를 몇 주 동안 쓸 수 있습니다.
+16주 계획에서 벤치마크 1은 4주에 있습니다. 7주에는 벤치마크 2가 이어집니다. 역치 페이스로 3 × 2000 m, 휴식 2분입니다. 이 테스트는 그 페이스를 더 오래 유지할 수 있는지 보여 줍니다. 두 테스트 모두 [테이퍼](/ko/guide/hyrox-taper)보다 훨씬 앞이어서 새 페이스를 몇 주 동안 쓸 수 있습니다.
 
 ## 어떤 심박 구간이 따라오나요?
 

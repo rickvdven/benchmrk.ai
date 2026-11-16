@@ -5,7 +5,7 @@ description: Calcula tu frecuencia cardiaca umbral con un test de 30 minutos y c
 breadcrumb: Calcular el ritmo umbral
 translationOf: gids/drempeltempo-bepalen
 order: 4
-updated: 2026-10-22
+updated: 2026-11-16
 answer: >-
   Corre 30 minutos tan fuerte como puedas sostener solo. Tu frecuencia cardiaca media de los últimos 20
   minutos es una buena estimación de tu frecuencia cardiaca umbral, y tu ritmo medio una primera estimación
@@ -24,21 +24,27 @@ faq:
   - q: ¿Puedo usar la estimación de mi reloj?
     a: Sí, como punto de partida. Después comprueba el valor con un test propio; en Benchmrk lo hace el benchmark 1.
   - q: ¿Cada cuánto hay que repetir el test de umbral?
-    a: En el plan de Benchmrk hay dos tests de umbral, en la semana 4 y la semana 7. Además, la app te propone ajustar tus ritmos si tus registros muestran que son demasiado duros o demasiado suaves.
+    a: En un plan de 16 semanas hay dos tests de umbral, en la semana 4 y la semana 7. En un plan más corto se desplazan con las fases. Además, la app te propone ajustar tus ritmos si tus registros muestran que son demasiado duros o demasiado suaves.
   - q: ¿Por qué haces el test en solitario?
     a: El test mide lo que tú sostienes por ti mismo. Si corres con otros, mides más bien su ritmo que el tuyo.
   - q: ¿Qué haces si tu frecuencia cardiaca en el test supera tu frecuencia cardiaca umbral?
     a: Entonces corrías más rápido que tu umbral. Benchmrk corrige el ritmo con 2,5 segundos por kilómetro por cada pulsación por encima de tu frecuencia cardiaca umbral.
+  - q: ¿Un umbral de una prueba de laboratorio es lo mismo que el del test de 30 minutos?
+    a: No exactamente. Los investigadores suelen usar el segundo umbral ventilatorio (VT2) de una prueba de laboratorio; en el estudio HYScience estaba en 16,41 km/h en 24 hombres PRO, y corrieron todas las carreras y la Roxzone juntas de media al 84 % de esa velocidad. Tu test de 30 minutos da un valor parecido, pero no el mismo.
 sources:
   - title: Jones et al. (2019), The maximal metabolic steady state – redefining the gold standard, Physiol Rep
     url: https://pubmed.ncbi.nlm.nih.gov/31124324/
-    accessed: 2026-10-22
+    accessed: 2026-11-16
   - title: Jamnick et al. (2020), An examination and critique of current methods to determine exercise intensity, Sports Med
     url: https://pubmed.ncbi.nlm.nih.gov/32729096/
-    accessed: 2026-10-22
+    accessed: 2026-11-16
   - title: Brandt et al. (2025), Frontiers in Physiology
     url: https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2025.1519240/full
-    accessed: 2026-10-22
+    accessed: 2026-11-16
+  - title: Gutiérrez-Hellín J, Alonso-Domínguez S, Gil-Cabrera J e.a. (2026). Relative Running Intensity and Pacing During an Official HYROX PRO MEN Competition. The HYScience Study. International Journal of Sports Physiology and Performance.
+    url: https://pubmed.ncbi.nlm.nih.gov/42697540/
+    accessed: 2026-11-16
+    note: Leído el registro de PubMed con el resumen.
 ---
 ## ¿Qué es tu umbral?
 
@@ -83,7 +89,7 @@ Con un test de umbral de 4 × 1000 m. En el plan de Benchmrk es el benchmark 1, 
 
 Si tu frecuencia cardiaca salió más alta que tu frecuencia cardiaca umbral, en realidad corrías por encima de tu umbral. Benchmrk corrige entonces tu nuevo ritmo umbral con 2,5 segundos por kilómetro por cada pulsación de diferencia, con un máximo de 15 segundos. Por test, tu ritmo umbral cambia como mucho 20 segundos por kilómetro. Así la app evita que un solo día malo o demasiado bueno trastoque todo tu plan.
 
-En la semana 7 viene el benchmark 2: 3 × 2000 m a tu ritmo umbral con 2 minutos de descanso. Ese test muestra si sostienes el ritmo también más tiempo. Los dos tests quedan bastante antes del [taper](/es/guia/taper-hyrox), así que sigues usando los nuevos ritmos durante semanas.
+En un plan de 16 semanas, el benchmark 1 cae en la semana 4. En la semana 7 viene el benchmark 2: 3 × 2000 m a tu ritmo umbral con 2 minutos de descanso. Ese test muestra si sostienes el ritmo también más tiempo. Los dos tests quedan bastante antes del [taper](/es/guia/taper-hyrox), así que sigues usando los nuevos ritmos durante semanas.
 
 ## ¿Qué zonas de frecuencia cardiaca corresponden?
 
