@@ -14472,8 +14472,11 @@ async function handler(req, res) {
     const graph = graphClient(cfg);
     if (action === "test") {
       const fields = "id,name,instagram_business_account{id,username}";
-      const acc = await graph("GET", "me/accounts", { fields });
-      let pages = acc.data ?? [];
+      let pages = [];
+      try {
+        pages = (await graph("GET", "me/accounts", { fields })).data ?? [];
+      } catch {
+      }
       if (!pages.length) {
         const me = await graph("GET", "me", { fields });
         pages = [me];
