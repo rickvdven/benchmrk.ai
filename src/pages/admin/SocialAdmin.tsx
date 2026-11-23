@@ -100,7 +100,10 @@ interface StatusResponse {
   quota?: { used: number; total: number } | null;
 }
 interface TestResponse {
-  pages: { id: string; name: string; instagram: { id: string; username: string | null } | null }[];
+  configured?: boolean;
+  /** missing when the test itself failed; the server then sends problems instead */
+  pages?: { id: string; name: string; instagram: { id: string; username: string | null } | null }[];
+  problems?: string[];
 }
 
 function problemText(t: T, p: string) {
@@ -153,8 +156,15 @@ function Connection() {
       )}
       {test && (
         <div className="rounded-lg border border-line bg-panel2/50 p-3">
-          {!test.pages.length && <p>{t('conn.none')}</p>}
-          {test.pages.map((p) => (
+          {!!test.problems?.length && (
+            <ul className="mb-2 list-disc space-y-0.5 pl-5 text-bad">
+              {test.problems.map((p) => (
+                <li key={p}>{problemText(t, p)}</li>
+              ))}
+            </ul>
+          )}
+          {!test.pages?.length && !test.problems?.length && <p>{t('conn.none')}</p>}
+          {(test.pages ?? []).map((p) => (
             <div key={p.id} className="grid gap-1 py-1 sm:grid-cols-2">
               <div>
                 <span className="label mr-1">{t('conn.page')}:</span>
@@ -172,7 +182,7 @@ function Connection() {
               </div>
             </div>
           ))}
-          <p className="mt-2 text-xs text-muted">{t('conn.hint')}</p>
+          {!!test.pages?.length && <p className="mt-2 text-xs text-muted">{t('conn.hint')}</p>}
         </div>
       )}
     </section>
