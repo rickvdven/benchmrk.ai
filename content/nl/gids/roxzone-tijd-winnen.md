@@ -5,7 +5,7 @@ description: "De Roxzone kost ook topatleten ruim 4 minuten. Zo verlies je er ge
 breadcrumb: Roxzone
 order: 7
 topic: stations
-updated: 2026-10-22
+updated: 2026-11-23
 answer: >-
   Je wint tijd in de Roxzone door de route te kennen, door te blijven lopen en door straffen te voorkomen.
   De Roxzone is het deel van het parcours tussen loopronde en stations. Zelfs de top 100 van Pro-mannen was
@@ -22,22 +22,28 @@ faq:
     a: Het deel van het parcours tussen het loopparcours en de stations. Je gaat de Roxzone in via de IN-boog en verlaat hem via de OUT-boog.
   - q: Hoeveel tijd kost de Roxzone?
     a: In de top 100 van Pro was dat in seizoen 2024/25 gemiddeld 4:10 bij de mannen en 4:34 bij de vrouwen, ongeveer 7 % van de totale tijd. In Benchmrk groeit de geschatte Roxzone-tijd mee met een trager drempeltempo.
+  - q: Hoeveel Roxzone-tijd hoort bij een doeltijd van 1:15?
+    a: In de snelle check van Benchmrk is dat 4:46 voor een man in Open met een drempeltempo van 4:25/km (voorbeeld, peildatum 23 november 2026). De top 100 van PRO-mannen deed er in 2024/25 gemiddeld 4:10 over.
   - q: Welke straffen kun je in de Roxzone krijgen?
     a: Wie via de OUT-boog naar binnen loopt of via de IN-boog naar buiten, krijgt 2 minuten straf. Hetzelfde geldt als je een station verlaat via de IN-boog.
   - q: Wie telt de looprondes?
-    a: Jij. Volgens het rulebook ben je zelf verantwoordelijk voor het tellen van je rondes; een rondescherm is alleen een hulpmiddel.
+    a: Jij. Volgens het rulebook ben je zelf verantwoordelijk voor het tellen van je rondes; een rondescherm is alleen een hulpmiddel. Een gemiste ronde kost 3 tot 7 minuten straf.
   - q: Kun je de Roxzone trainen?
     a: Ja. Oefen in elke sim de overgang van lopen naar station en terug, zonder te wandelen. Benchmrk geeft als doel om elke wissel onder 20 seconden te houden als je alleen traint.
 sources:
   - title: HYROX Singles Rulebook, seizoen 26/27
     url: https://maintain.hyrox.com/rulebooks/HYROX_RulebookSingles_EN.pdf
-    accessed: 2026-10-22
+    accessed: 2026-11-23
   - title: Rappelt et al. (2026), Longitudinal performance development in PRO and ELITE HYROX competitions, Frontiers in Physiology
     url: https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2026.1847569/full
-    accessed: 2026-10-22
+    accessed: 2026-11-23
   - title: Brandt et al. (2025), Frontiers in Physiology
     url: https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2025.1519240/full
-    accessed: 2026-10-22
+    accessed: 2026-11-23
+  - title: Benchmrk, snelle check (Open Men, 16 weken, drempeltempo 4:25/km, doel 1:15:00)
+    url: https://benchmrk.ai/#check
+    accessed: 2026-11-23
+    note: Rekenvoorbeeld met de regels van de app, geen meting.
 ---
 ## Wat is de Roxzone?
 
@@ -51,11 +57,12 @@ Meer dan je denkt. Rappelt en collega's (2026) analyseerden uitslagen uit de Pro
 
 | Seizoen | Top 100 Pro mannen | Top 100 Pro vrouwen |
 |---|---|---|
+| 2018/19 | 4:27 (6,3 %) | 5:05 (6,3 %) |
 | 2022/23 | 3:37 (6,1 %) | 3:56 (5,8 %) |
 | 2023/24 | 4:09 (7,1 %) | 4:09 (6,3 %) |
 | 2024/25 | 4:10 (7,3 %) | 4:34 (7,2 %) |
 
-Tussen haakjes staat het aandeel in de totale racetijd.
+Tussen haakjes staat het aandeel in de totale racetijd. Van 2018/19 tot 2024/25 werd de Roxzone in de top 100 korter, maar zijn aandeel groter. De rest van de race werd namelijk nog sneller.
 
 ## Waar verlies je tijd in de Roxzone?
 
@@ -77,12 +84,13 @@ Een paar regels uit het rulebook kosten veel tijd als je ze mist.
 | Gebruik de lane of het apparaat dat een official je toewijst | 2 minuten straf per keer |
 | Kies zelf het juiste gewicht bij farmers carry en lunges | Station opnieuw, anders diskwalificatie |
 | Zet kettlebells en sandbag terug op de juiste plek | 30 seconden straf, tenzij je het herstelt voor je de Roxzone verlaat |
-| Tel je looprondes zelf | Een gemiste kilometer betekent diskwalificatie |
+| Tel je looprondes zelf | 3 tot 7 minuten straf per gemiste ronde, afhankelijk van de locatie |
+| Loop alle 8 kilometers en doe elk station volledig | Een gemiste kilometer of een onvolledig station betekent diskwalificatie |
 | Krijt alleen bij sled pull en farmers carry | 2 minuten straf |
 
 ## Hoe bereid je je voor op racedag?
 
-Bekijk de athlete map van je race. Daarop staat hoe het parcours loopt en hoeveel rondes je per kilometer loopt. Volgens het rulebook kan een kilometer uit 1 tot 5 rondes bestaan, afhankelijk van de hal. Loop of kijk de route van de Roxzone van tevoren na, als dat kan. Weet bij welk station je welk gewicht pakt.
+Bekijk de athlete map van je race. Daarop staat hoe het parcours loopt en hoeveel rondes je per kilometer loopt. Volgens het rulebook kan een kilometer uit meerdere rondes bestaan, afhankelijk van de hal, en kan de eerste of laatste ronde korter of langer zijn. Loop of kijk de route van de Roxzone van tevoren na, als dat kan. Weet bij welk station je welk gewicht pakt.
 
 Loop je 4:00 per kilometer of sneller, dan moet je volgens het rulebook de Fast Lane gebruiken, de smalle binnenbaan. Welk tempo je loopt, lees je in [runs pacen](/nl/gids/runs-pacen).
 
@@ -101,7 +109,7 @@ Hoe je de sim zelf opbouwt, staat in [HYROX-sim opbouwen](/nl/gids/hyrox-sim-opb
 
 ## Hoe telt de Roxzone mee in je voorspelling?
 
-Benchmrk schat je Roxzone-tijd apart, op basis van je drempeltempo. In het engine-voorbeeld op [HYROX-tijd voorspellen](/nl/hyrox-tijd-voorspellen) is dat 5:25 voor een man in Open met drempeltempo 4:45/km. In Doubles rekent de app met 10 % meer Roxzone-tijd.
+Benchmrk schat je Roxzone-tijd apart, op basis van je drempeltempo. In het engine-voorbeeld op [HYROX-tijd voorspellen](/nl/hyrox-tijd-voorspellen) is dat 5:25 voor een man in Open met drempeltempo 4:45/km. In de snelle check is dat 4:46 bij een drempeltempo van 4:25/km en een doel van 1:15 (Open Men, 16 weken, peildatum 23 november 2026). In Doubles rekent de app met 10 % meer Roxzone-tijd. Hoeveel de Roxzone bijdraagt aan de stap van 1:20 naar 1:15, lees je in [van 1:20 naar 1:15](/nl/gids/van-1-20-naar-1-15).
 
 ## Zo doet Benchmrk het
 

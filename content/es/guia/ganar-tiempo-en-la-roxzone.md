@@ -5,7 +5,7 @@ seoTitle: "Roxzone HYROX: cómo ganar tiempo en las transiciones"
 description: "La Roxzone cuesta más de 4 minutos incluso a los mejores. No pierdas tiempo: conoce la ruta, evita penalizaciones, no camines y practica las transiciones."
 breadcrumb: Roxzone
 order: 7
-updated: 2026-10-22
+updated: 2026-11-23
 answer: >-
   Ganas tiempo en la Roxzone conociendo la ruta, siguiendo a ritmo de carrera y evitando penalizaciones.
   La Roxzone es la parte del recorrido entre las vueltas de carrera y las estaciones. Incluso el top 100 de
@@ -23,22 +23,28 @@ faq:
     a: Es la parte del recorrido entre el circuito de carrera y las estaciones. Entras en la Roxzone por el arco IN y sales por el arco OUT.
   - q: ¿Cuánto tiempo cuesta la Roxzone?
     a: En el top 100 de Pro fueron de media 4:10 en hombres y 4:34 en mujeres en la temporada 2024/25, alrededor de un 7 % del tiempo total. En Benchmrk, el tiempo estimado de Roxzone aumenta cuando tu ritmo umbral es más lento.
+  - q: ¿Cuánto tiempo de Roxzone corresponde a un objetivo de 1:15?
+    a: En el test rápido de Benchmrk son 4:46 para un hombre en Open con un ritmo umbral de 4:25/km (ejemplo, consultado el 23 de noviembre de 2026). El top 100 de hombres PRO tardó de media 4:10 en 2024/25.
   - q: ¿Qué penalizaciones puedes recibir en la Roxzone?
     a: Si entras por el arco OUT o sales por el arco IN, recibes 2 minutos de penalización. Lo mismo ocurre si sales de una estación por el arco IN.
   - q: ¿Quién cuenta las vueltas de carrera?
-    a: Tú. Según el rulebook, eres responsable de contar tus vueltas; una pantalla de vueltas es solo una ayuda.
+    a: Tú. Según el rulebook, eres responsable de contar tus vueltas; una pantalla de vueltas es solo una ayuda. Una vuelta omitida cuesta de 3 a 7 minutos de penalización.
   - q: ¿Se puede entrenar la Roxzone?
     a: Sí. En cada simulacro practica la transición de correr a la estación y de vuelta, sin caminar. Benchmrk propone como objetivo mantener cada transición por debajo de 20 segundos si entrenas solo.
 sources:
   - title: HYROX Singles Rulebook, temporada 26/27
     url: https://maintain.hyrox.com/rulebooks/HYROX_RulebookSingles_EN.pdf
-    accessed: 2026-10-22
+    accessed: 2026-11-23
   - title: Rappelt et al. (2026), Longitudinal performance development in PRO and ELITE HYROX competitions, Frontiers in Physiology
     url: https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2026.1847569/full
-    accessed: 2026-10-22
+    accessed: 2026-11-23
   - title: Brandt et al. (2025), Frontiers in Physiology
     url: https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2025.1519240/full
-    accessed: 2026-10-22
+    accessed: 2026-11-23
+  - title: Benchmrk, test rápido (Open Men, 16 semanas, ritmo umbral 4:25/km, objetivo 1:15:00)
+    url: https://benchmrk.ai/#check
+    accessed: 2026-11-23
+    note: Ejemplo de cálculo con las reglas de la app, no una medición.
 ---
 ## ¿Qué es la Roxzone?
 
@@ -52,11 +58,12 @@ Más de lo que crees. Rappelt y colaboradores (2026) analizaron resultados de la
 
 | Temporada | Top 100 Pro hombres | Top 100 Pro mujeres |
 |---|---|---|
+| 2018/19 | 4:27 (6,3 %) | 5:05 (6,3 %) |
 | 2022/23 | 3:37 (6,1 %) | 3:56 (5,8 %) |
 | 2023/24 | 4:09 (7,1 %) | 4:09 (6,3 %) |
 | 2024/25 | 4:10 (7,3 %) | 4:34 (7,2 %) |
 
-Entre paréntesis figura la proporción del tiempo total de carrera.
+Entre paréntesis figura la proporción del tiempo total de carrera. De 2018/19 a 2024/25 la Roxzone se acortó en el top 100, pero su proporción creció. El resto de la carrera se volvió aún más rápido.
 
 ## ¿Dónde pierdes tiempo en la Roxzone?
 
@@ -78,12 +85,13 @@ Algunas reglas del rulebook cuestan mucho tiempo si las pasas por alto.
 | Usa el carril o el equipo que te asigne un juez | 2 minutos de penalización cada vez |
 | Elige tú mismo el peso correcto en farmers carry y lunges | Repetir la estación, si no, descalificación |
 | Devuelve las kettlebells y el sandbag a su sitio | 30 segundos de penalización, salvo que lo corrijas antes de salir de la Roxzone |
-| Cuenta tú mismo tus vueltas de carrera | Un kilómetro omitido supone descalificación |
+| Cuenta tú mismo tus vueltas de carrera | De 3 a 7 minutos de penalización por vuelta omitida, según el recinto |
+| Corre los 8 kilómetros y completa cada estación entera | Un kilómetro omitido o una estación incompleta supone descalificación |
 | Usa magnesio solo en sled pull y farmers carry | 2 minutos de penalización |
 
 ## ¿Cómo te preparas para el día de la carrera?
 
-Mira el athlete map de tu carrera. Muestra cómo es el recorrido y cuántas vueltas das por kilómetro. Según el rulebook, un kilómetro puede constar de 1 a 5 vueltas, según el recinto. Si puedes, recorre o revisa de antemano la ruta de la Roxzone. Sabe qué peso cogerás en cada estación.
+Mira el athlete map de tu carrera. Muestra cómo es el recorrido y cuántas vueltas das por kilómetro. Según el rulebook, un kilómetro puede constar de varias vueltas, según el recinto, y la primera o la última vuelta puede ser más corta o más larga. Si puedes, recorre o revisa de antemano la ruta de la Roxzone. Sabe qué peso cogerás en cada estación.
 
 Si corres a 4:00 por kilómetro o más rápido, según el rulebook debes usar el Fast Lane, el carril estrecho interior. Qué ritmo llevar lo explica [ritmo en las carreras de HYROX](/es/guia/ritmo-en-las-carreras-hyrox).
 
@@ -102,7 +110,7 @@ Cómo montar el simulacro en sí lo explica [crear un simulacro HYROX](/es/guia/
 
 ## ¿Cómo cuenta la Roxzone en tu predicción?
 
-Benchmrk estima tu tiempo de Roxzone por separado, a partir de tu ritmo umbral. En el ejemplo del motor en [predecir tu tiempo en HYROX](/es/predecir-tiempo-hyrox), son 5:25 para un hombre en Open con ritmo umbral de 4:45/km. En Doubles, la app calcula un 10 % más de tiempo de Roxzone.
+Benchmrk estima tu tiempo de Roxzone por separado, a partir de tu ritmo umbral. En el ejemplo del motor en [predecir tu tiempo en HYROX](/es/predecir-tiempo-hyrox), son 5:25 para un hombre en Open con ritmo umbral de 4:45/km. En el test rápido son 4:46 con un ritmo umbral de 4:25/km y un objetivo de 1:15 (Open Men, 16 semanas, consultado el 23 de noviembre de 2026). En Doubles, la app calcula un 10 % más de tiempo de Roxzone.
 
 ## Así lo hace Benchmrk
 

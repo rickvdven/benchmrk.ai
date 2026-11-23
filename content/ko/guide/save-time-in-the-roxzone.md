@@ -5,7 +5,7 @@ description: "Roxzone은 상위 선수에게도 4분 넘게 걸립니다. 코스
 breadcrumb: Roxzone
 order: 7
 translationOf: gids/roxzone-tijd-winnen
-updated: 2026-10-22
+updated: 2026-11-23
 answer: >-
   Roxzone에서는 코스를 알고, 계속 달리고, 페널티를 피하면 시간을 줄일 수 있습니다. Roxzone은 러닝 코스와
   스테이션 사이 구간입니다. 2024/25 시즌 프로 남자 상위 100명도 평균 4:10, 레이스 기록의 약 7 %를 이
@@ -22,22 +22,28 @@ faq:
     a: 러닝 코스와 스테이션 사이 구간입니다. IN 아치로 들어가고 OUT 아치로 나갑니다.
   - q: Roxzone에는 시간이 얼마나 걸리나요?
     a: 2024/25 시즌 프로 상위 100명은 남자 평균 4:10, 여자 평균 4:34였고, 전체 기록의 약 7 %입니다. Benchmrk에서는 역치 페이스가 느려질수록 예상 Roxzone 시간도 늘어납니다.
+  - q: 목표 기록 1:15에는 Roxzone 시간이 얼마나 맞나요?
+    a: Benchmrk 빠른 체크에서는 역치 페이스 4:25/km인 오픈 남자 기준 4:46입니다(예시, 2026년 11월 23일 기준). 2024/25 시즌 프로 남자 상위 100명은 평균 4:10이었습니다.
   - q: Roxzone에서 받을 수 있는 페널티는 무엇인가요?
     a: OUT 아치로 들어오거나 IN 아치로 나가면 2분 페널티입니다. 스테이션을 IN 아치로 나가도 마찬가지입니다.
   - q: 러닝 바퀴 수는 누가 세나요?
-    a: 본인입니다. 룰북에 따르면 바퀴 수를 세는 책임은 선수에게 있고, 랩 화면은 보조 수단일 뿐입니다.
+    a: 본인입니다. 룰북에 따르면 바퀴 수를 세는 책임은 선수에게 있고, 랩 화면은 보조 수단일 뿐입니다. 바퀴를 놓치면 3~7분 페널티를 받습니다.
   - q: Roxzone도 훈련할 수 있나요?
     a: 네. 매 시뮬레이션(심)에서 걷지 않고 러닝에서 스테이션으로, 다시 러닝으로 넘어가는 전환을 연습하세요. 혼자 훈련할 때 Benchmrk는 전환 한 번을 20초 미만으로 하는 목표를 줍니다.
 sources:
   - title: HYROX Singles Rulebook, 26/27 시즌
     url: https://maintain.hyrox.com/rulebooks/HYROX_RulebookSingles_EN.pdf
-    accessed: 2026-10-22
+    accessed: 2026-11-23
   - title: Rappelt et al. (2026), Longitudinal performance development in PRO and ELITE HYROX competitions, Frontiers in Physiology
     url: https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2026.1847569/full
-    accessed: 2026-10-22
+    accessed: 2026-11-23
   - title: Brandt et al. (2025), Frontiers in Physiology
     url: https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2025.1519240/full
-    accessed: 2026-10-22
+    accessed: 2026-11-23
+  - title: Benchmrk 빠른 체크 (오픈 남자, 16주, 역치 페이스 4:25/km, 목표 1:15:00)
+    url: https://benchmrk.ai/#check
+    accessed: 2026-11-23
+    note: 앱 규칙으로 계산한 예시이며 측정값이 아닙니다.
 ---
 ## Roxzone이란 무엇인가요?
 
@@ -51,11 +57,12 @@ Roxzone 시간은 최종 기록에 포함되지만, 러닝이나 스테이션 �
 
 | 시즌 | 프로 남자 상위 100명 | 프로 여자 상위 100명 |
 |---|---|---|
+| 2018/19 | 4:27 (6.3 %) | 5:05 (6.3 %) |
 | 2022/23 | 3:37 (6.1 %) | 3:56 (5.8 %) |
 | 2023/24 | 4:09 (7.1 %) | 4:09 (6.3 %) |
 | 2024/25 | 4:10 (7.3 %) | 4:34 (7.2 %) |
 
-괄호 안은 전체 레이스 기록에서 차지하는 비율입니다.
+괄호 안은 전체 레이스 기록에서 차지하는 비율입니다. 2018/19부터 2024/25까지 상위 100명의 Roxzone 시간은 줄었지만 비율은 커졌습니다. 레이스의 나머지 부분이 더 빨라졌기 때문입니다.
 
 ## Roxzone에서 시간을 잃는 곳은 어디인가요?
 
@@ -77,12 +84,13 @@ Brandt 연구진(2025)은 스테이션에서의 심박수가 러닝 중보다 �
 | 심판이 지정한 레인이나 장비를 사용한다 | 위반 1회당 2분 페널티 |
 | farmers carry와 lunges의 무게를 직접 맞게 고른다 | 스테이션 재수행, 아니면 실격 |
 | 케틀벨과 샌드백을 제자리에 돌려놓는다 | 30초 페널티, 단 Roxzone을 떠나기 전에 바로잡으면 없음 |
-| 러닝 바퀴 수를 직접 센다 | 1km를 놓치면 실격 |
+| 러닝 바퀴 수를 직접 센다 | 놓친 바퀴마다 경기장에 따라 3~7분 페널티 |
+| 8km를 모두 달리고 모든 스테이션을 끝까지 수행한다 | 1km를 놓치거나 스테이션을 다 마치지 않으면 실격 |
 | 초크는 sled pull과 farmers carry에서만 쓴다 | 2분 페널티 |
 
 ## 레이스 당일을 어떻게 준비하나요?
 
-내 레이스의 athlete map을 확인하세요. 코스 흐름과 1km당 바퀴 수가 나와 있습니다. 룰북에 따르면 경기장에 따라 1km는 1~5바퀴일 수 있습니다. 가능하다면 Roxzone 동선을 미리 걸어 보거나 살펴보세요. 어느 스테이션에서 어떤 무게를 드는지도 알아 두세요.
+내 레이스의 athlete map을 확인하세요. 코스 흐름과 1km당 바퀴 수가 나와 있습니다. 룰북에 따르면 경기장에 따라 1km가 여러 바퀴로 구성될 수 있고, 첫 바퀴나 마지막 바퀴의 길이는 다를 수 있습니다. 가능하다면 Roxzone 동선을 미리 걸어 보거나 살펴보세요. 어느 스테이션에서 어떤 무게를 드는지도 알아 두세요.
 
 1km를 4:00 이하로 달리면 룰북에 따라 좁은 안쪽 레인인 Fast Lane을 써야 합니다. 어떤 페이스로 달릴지는 [러닝 페이스 전략](/ko/guide/hyrox-run-pacing)에서 확인하세요.
 
@@ -101,7 +109,7 @@ Brandt 연구진(2025)은 스테이션에서의 심박수가 러닝 중보다 �
 
 ## Roxzone은 예측에 어떻게 반영되나요?
 
-Benchmrk는 역치 페이스를 바탕으로 Roxzone 시간을 따로 추정합니다. [HYROX 기록 예측하기](/ko/predict-hyrox-finish-time)의 엔진 예시에서는 오픈 남자, 역치 페이스 4:45/km일 때 5:25입니다. 더블스에서는 앱이 Roxzone 시간을 10 % 더 길게 계산합니다.
+Benchmrk는 역치 페이스를 바탕으로 Roxzone 시간을 따로 추정합니다. [HYROX 기록 예측하기](/ko/predict-hyrox-finish-time)의 엔진 예시에서는 오픈 남자, 역치 페이스 4:45/km일 때 5:25입니다. 빠른 체크에서는 역치 페이스 4:25/km, 목표 1:15일 때 4:46입니다(오픈 남자, 16주, 2026년 11월 23일 기준). 더블스에서는 앱이 Roxzone 시간을 10 % 더 길게 계산합니다.
 
 ## Benchmrk는 이렇게 합니다
 
