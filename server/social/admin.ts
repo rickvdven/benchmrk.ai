@@ -21,10 +21,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (action === 'test') {
       // a user or system user token lists its pages; a page token is the page itself
       const fields = 'id,name,instagram_business_account{id,username}';
-      const acc = (await graph('GET', 'me/accounts', { fields })) as { data?: { id: string; name: string; instagram_business_account?: { id: string; username?: string } }[] };
-      let pages = acc.data ?? [];
+      type Page = { id: string; name: string; instagram_business_account?: { id: string; username?: string } };
+      let pages: Page[] = [];
+      try {
+        pages = ((await graph('GET', 'me/accounts', { fields })) as { data?: Page[] }).data ?? [];
+      } catch {
+        // a page token has no accounts edge: Meta answers with an error, so fall back to the page itself below
+      }
       if (!pages.length) {
-        const me = (await graph('GET', 'me', { fields })) as { id: string; name: string; instagram_business_account?: { id: string; username?: string } };
+        const me = (await graph('GET', 'me', { fields })) as Page;
         pages = [me];
       }
       return res.json({
