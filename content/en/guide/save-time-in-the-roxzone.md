@@ -4,7 +4,7 @@ seoTitle: "Roxzone: how to save time at HYROX transitions | Benchmrk"
 description: "The Roxzone costs even top athletes over 4 minutes. Know the route, avoid penalties, never walk and practise your transitions in every sim."
 breadcrumb: Roxzone
 order: 7
-updated: 2026-10-22
+updated: 2026-11-23
 translationOf: gids/roxzone-tijd-winnen
 answer: >-
   You save time in the Roxzone by knowing the route, by keeping running and by avoiding penalties.
@@ -22,22 +22,28 @@ faq:
     a: It is the part of the course between the running course and the stations. You enter the Roxzone through the IN arch and leave it through the OUT arch.
   - q: How much time does the Roxzone cost?
     a: In the Pro top 100 it averaged 4:10 for men and 4:34 for women in season 2024/25, about 7% of total time. In Benchmrk the estimated Roxzone time grows with a slower threshold pace.
+  - q: How much Roxzone time goes with a 1:15 goal?
+    a: In the Benchmrk quick check it is 4:46 for a man in Open with a threshold pace of 4:25/km (example, checked on 23 November 2026). The top 100 PRO men averaged 4:10 in 2024/25.
   - q: What penalties can you get in the Roxzone?
     a: Entering through the OUT arch or leaving through the IN arch costs a 2-minute penalty. The same applies if you leave a station through the IN arch.
   - q: Who counts the running laps?
-    a: You do. According to the rulebook you are responsible for counting your own laps; a lap screen is only an aid.
+    a: You do. According to the rulebook you are responsible for counting your own laps; a lap screen is only an aid. A missed lap costs a 3 to 7 minute penalty.
   - q: Can you train the Roxzone?
     a: Yes. In every sim, practise the transition from running to station and back, without walking. When you train alone, Benchmrk sets a goal of keeping every transition under 20 seconds.
 sources:
   - title: HYROX Singles Rulebook, season 26/27
     url: https://maintain.hyrox.com/rulebooks/HYROX_RulebookSingles_EN.pdf
-    accessed: 2026-10-22
+    accessed: 2026-11-23
   - title: Rappelt et al. (2026), Longitudinal performance development in PRO and ELITE HYROX competitions, Frontiers in Physiology
     url: https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2026.1847569/full
-    accessed: 2026-10-22
+    accessed: 2026-11-23
   - title: Brandt et al. (2025), Frontiers in Physiology
     url: https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2025.1519240/full
-    accessed: 2026-10-22
+    accessed: 2026-11-23
+  - title: Benchmrk, quick check (Open Men, 16 weeks, threshold pace 4:25/km, goal 1:15:00)
+    url: https://benchmrk.ai/#check
+    accessed: 2026-11-23
+    note: Worked example using the app's rules, not a measurement.
 ---
 ## What is the Roxzone?
 
@@ -51,11 +57,12 @@ More than you think. Rappelt and colleagues (2026) analysed results from the Pro
 
 | Season | Top 100 Pro men | Top 100 Pro women |
 |---|---|---|
+| 2018/19 | 4:27 (6.3%) | 5:05 (6.3%) |
 | 2022/23 | 3:37 (6.1%) | 3:56 (5.8%) |
 | 2023/24 | 4:09 (7.1%) | 4:09 (6.3%) |
 | 2024/25 | 4:10 (7.3%) | 4:34 (7.2%) |
 
-The figure in brackets is the share of total race time.
+The figure in brackets is the share of total race time. From 2018/19 to 2024/25 the Roxzone got shorter in the top 100, but its share grew. The rest of the race got even faster.
 
 ## Where do you lose time in the Roxzone?
 
@@ -77,12 +84,13 @@ A few rulebook rules cost a lot of time if you miss them.
 | Use the lane or machine an official assigns you | 2-minute penalty each time |
 | Pick the right weight yourself for farmers carry and lunges | Redo the station, otherwise disqualification |
 | Put kettlebells and sandbag back in the right place | 30-second penalty, unless you fix it before leaving the Roxzone |
-| Count your running laps yourself | A missed kilometre means disqualification |
+| Count your running laps yourself | 3 to 7 minutes penalty per missed lap, depending on the venue |
+| Run all 8 kilometres and complete every station in full | A missed kilometre or an incomplete station means disqualification |
 | Chalk only at sled pull and farmers carry | 2-minute penalty |
 
 ## How do you prepare for race day?
 
-Study the athlete map for your race. It shows how the course runs and how many laps you run per kilometre. According to the rulebook, a kilometre can consist of 1 to 5 laps, depending on the venue. If you can, walk or look through the route of the Roxzone beforehand. Know which weight you pick up at which station.
+Study the athlete map for your race. It shows how the course runs and how many laps you run per kilometre. According to the rulebook, a kilometre can consist of several laps, depending on the venue, and the first or last lap can be shorter or longer. If you can, walk or look through the route of the Roxzone beforehand. Know which weight you pick up at which station.
 
 If you run 4:00 per kilometre or faster, the rulebook says you must use the Fast Lane, the narrow inside lane. For the pace to run, read [run pacing](/en/guide/hyrox-run-pacing).
 
@@ -101,7 +109,7 @@ How to build the sim itself is in [building a HYROX simulation](/en/guide/build-
 
 ## How does the Roxzone count in your prediction?
 
-Benchmrk estimates your Roxzone time separately, based on your threshold pace. In the engine example on [predicting your HYROX finish time](/en/predict-hyrox-finish-time) that is 5:25 for a man in Open with a threshold pace of 4:45/km. In Doubles the app uses 10% more Roxzone time.
+Benchmrk estimates your Roxzone time separately, based on your threshold pace. In the engine example on [predicting your HYROX finish time](/en/predict-hyrox-finish-time) that is 5:25 for a man in Open with a threshold pace of 4:45/km. In the quick check it is 4:46 with a threshold pace of 4:25/km and a 1:15 goal (Open Men, 16 weeks, checked on 23 November 2026). In Doubles the app uses 10% more Roxzone time.
 
 ## How Benchmrk does it
 
