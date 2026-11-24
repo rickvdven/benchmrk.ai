@@ -14456,6 +14456,11 @@ function graphClient(cfg, fetchImpl = fetch) {
     return body;
   };
 }
+async function pageConfig(cfg, graph) {
+  if (!cfg.pageId) throw new MetaError("config", "META_PAGE_ID is not set");
+  const r = await graph("GET", cfg.pageId, { fields: "access_token" });
+  return r.access_token ? { ...cfg, token: r.access_token } : cfg;
+}
 async function ruploadFromUrl(cfg, videoId, fileUrl, fetchImpl = fetch) {
   const r = await fetchImpl(`${RUPLOAD_BASE}/${videoId}`, { method: "POST", headers: { Authorization: `OAuth ${cfg.token}`, file_url: fileUrl } });
   const body = await r.json().catch(() => ({}));
@@ -14523,23 +14528,24 @@ async function instagram(post, d, patch, state) {
 }
 async function facebook(post, d, patch, state) {
   if (!d.pageId) throw new MetaError("config", "META_PAGE_ID is not set");
+  const graph = d.pageGraph ? await d.pageGraph() : d.graph;
   if (post.format === "image") {
-    const r = await d.graph("POST", `${d.pageId}/photos`, { url: await d.signedUrl(post.media[0].path), caption: post.caption });
+    const r = await graph("POST", `${d.pageId}/photos`, { url: await d.signedUrl(post.media[0].path), caption: post.caption });
     patch.fb_post_id = str(r.post_id || r.id);
   } else if (post.format === "carousel") {
     const images = post.media.filter((m) => m.kind === "image");
     if (!images.length) throw new MetaError("media", "a Facebook album needs at least one image");
     const ids = [];
-    for (const m of images) ids.push(str((await d.graph("POST", `${d.pageId}/photos`, { url: await d.signedUrl(m.path), published: false })).id));
-    const r = await d.graph("POST", `${d.pageId}/feed`, { message: post.caption, attached_media: JSON.stringify(ids.map((id) => ({ media_fbid: id }))) });
+    for (const m of images) ids.push(str((await graph("POST", `${d.pageId}/photos`, { url: await d.signedUrl(m.path), published: false })).id));
+    const r = await graph("POST", `${d.pageId}/feed`, { message: post.caption, attached_media: JSON.stringify(ids.map((id) => ({ media_fbid: id }))) });
     patch.fb_post_id = str(r.id);
   } else if (post.format === "reel") {
-    if (!state.fb_reel_video_id) state.fb_reel_video_id = str((await d.graph("POST", `${d.pageId}/video_reels`, { upload_phase: "start" })).video_id);
+    if (!state.fb_reel_video_id) state.fb_reel_video_id = str((await graph("POST", `${d.pageId}/video_reels`, { upload_phase: "start" })).video_id);
     if (!state.fb_reel_uploaded) {
       await d.fbUpload(state.fb_reel_video_id, await d.signedUrl(post.media[0].path));
       state.fb_reel_uploaded = true;
     }
-    await d.graph("POST", `${d.pageId}/video_reels`, { upload_phase: "finish", video_id: state.fb_reel_video_id, video_state: "PUBLISHED", description: post.caption });
+    await graph("POST", `${d.pageId}/video_reels`, { upload_phase: "finish", video_id: state.fb_reel_video_id, video_state: "PUBLISHED", description: post.caption });
     patch.fb_post_id = state.fb_reel_video_id;
     delete state.fb_reel_video_id;
     delete state.fb_reel_uploaded;
@@ -14671,6 +14677,8 @@ function roundDeps() {
   const s = db();
   const cfg = metaConfig();
   const secrets = secretsOf(cfg);
+  let pageCfg;
+  const page = () => pageCfg ??= pageConfig(cfg, graphClient(cfg));
   return {
     claim: async () => {
       const { data, error } = await s.rpc("social_claim", { _limit: 5, _lease_seconds: 240 });
@@ -14702,10 +14710,11 @@ function roundDeps() {
     },
     publish: {
       graph: graphClient(cfg),
+      pageGraph: async () => graphClient(await page()),
       pageId: cfg.pageId,
       igUserId: cfg.igUserId,
       signedUrl,
-      fbUpload: (videoId, fileUrl) => ruploadFromUrl(cfg, videoId, fileUrl)
+      fbUpload: async (videoId, fileUrl) => ruploadFromUrl(await page(), videoId, fileUrl)
     },
     now: () => /* @__PURE__ */ new Date(),
     secrets,

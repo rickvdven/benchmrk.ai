@@ -31,6 +31,8 @@ export interface PublishState {
 
 export interface PublishDeps {
   graph: Graph;
+  /** Graph client with the page access token, for the Facebook calls (see pageConfig in meta.ts); falls back to graph */
+  pageGraph?: () => Promise<Graph>;
   pageId: string;
   igUserId: string;
   /** signed URL (≤ 1 hour) Meta can fetch the file from */
@@ -116,25 +118,26 @@ async function instagram(post: SocialPost, d: PublishDeps, patch: Partial<Social
 
 async function facebook(post: SocialPost, d: PublishDeps, patch: Partial<SocialPost>, state: PublishState): Promise<void> {
   if (!d.pageId) throw new MetaError('config', 'META_PAGE_ID is not set');
+  const graph = d.pageGraph ? await d.pageGraph() : d.graph;
   if (post.format === 'image') {
-    const r = await d.graph('POST', `${d.pageId}/photos`, { url: await d.signedUrl(post.media[0].path), caption: post.caption });
+    const r = await graph('POST', `${d.pageId}/photos`, { url: await d.signedUrl(post.media[0].path), caption: post.caption });
     patch.fb_post_id = str(r.post_id || r.id);
   } else if (post.format === 'carousel') {
     // a Facebook post with several photos: upload them unpublished, then one feed post with all of them
     const images = post.media.filter((m) => m.kind === 'image');
     if (!images.length) throw new MetaError('media', 'a Facebook album needs at least one image');
     const ids: string[] = [];
-    for (const m of images) ids.push(str((await d.graph('POST', `${d.pageId}/photos`, { url: await d.signedUrl(m.path), published: false })).id));
-    const r = await d.graph('POST', `${d.pageId}/feed`, { message: post.caption, attached_media: JSON.stringify(ids.map((id) => ({ media_fbid: id }))) });
+    for (const m of images) ids.push(str((await graph('POST', `${d.pageId}/photos`, { url: await d.signedUrl(m.path), published: false })).id));
+    const r = await graph('POST', `${d.pageId}/feed`, { message: post.caption, attached_media: JSON.stringify(ids.map((id) => ({ media_fbid: id }))) });
     patch.fb_post_id = str(r.id);
   } else if (post.format === 'reel') {
     // Reels API for pages: start → upload (hosted file) → finish
-    if (!state.fb_reel_video_id) state.fb_reel_video_id = str((await d.graph('POST', `${d.pageId}/video_reels`, { upload_phase: 'start' })).video_id);
+    if (!state.fb_reel_video_id) state.fb_reel_video_id = str((await graph('POST', `${d.pageId}/video_reels`, { upload_phase: 'start' })).video_id);
     if (!state.fb_reel_uploaded) {
       await d.fbUpload(state.fb_reel_video_id, await d.signedUrl(post.media[0].path));
       state.fb_reel_uploaded = true;
     }
-    await d.graph('POST', `${d.pageId}/video_reels`, { upload_phase: 'finish', video_id: state.fb_reel_video_id, video_state: 'PUBLISHED', description: post.caption });
+    await graph('POST', `${d.pageId}/video_reels`, { upload_phase: 'finish', video_id: state.fb_reel_video_id, video_state: 'PUBLISHED', description: post.caption });
     patch.fb_post_id = state.fb_reel_video_id;
     delete state.fb_reel_video_id;
     delete state.fb_reel_uploaded;
