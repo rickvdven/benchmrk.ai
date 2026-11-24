@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { handleAgent, type AgentDeps } from './socialAgent';
 import { runPublishRound, type RoundDeps, type SocialPost } from './socialPublish';
-import { appsecretProof, graphClient, redact, type MetaConfig } from './meta';
+import { appsecretProof, graphClient, pageConfig, redact, type MetaConfig } from './meta';
 
 // ---------------------------------------------------------------- agent API
 const TOKEN = 'agent-token-1234567890';
@@ -132,6 +132,8 @@ describe('social agent API', () => {
 // ---------------------------------------------------------------- publisher with a mocked Graph API
 const META_TOKEN = 'EAAtestPageToken0123456789abcdefXYZ';
 const CFG: MetaConfig = { token: META_TOKEN, appSecret: 'app-secret-xyz', pageId: 'PAGE1', igUserId: 'IG1' };
+/** page access token the page hands out to the system user token */
+const PAGE_TOKEN = 'EAApageAccessToken9876543210zyxwvuTS';
 
 interface MetaMock {
   fetch: typeof fetch;
@@ -140,6 +142,8 @@ interface MetaMock {
   containerStatus: Record<string, string>;
   failFacebook: number;
   failInstagram: number;
+  /** like Meta: page calls refuse anything but the page access token, with (#200) */
+  pageTokenOnly: boolean;
 }
 
 function metaMock(): MetaMock {
@@ -149,6 +153,7 @@ function metaMock(): MetaMock {
     containerStatus: {},
     failFacebook: 0,
     failInstagram: 0,
+    pageTokenOnly: false,
     fetch: (async (input: string | URL, init?: RequestInit) => {
       const url = new URL(String(input));
       const method = init?.method ?? 'GET';
@@ -157,7 +162,10 @@ function metaMock(): MetaMock {
       m.calls.push({ method, path, params });
       const json = (b: unknown, status = 200) => new Response(JSON.stringify(b), { status, headers: { 'Content-Type': 'application/json' } });
       // every call carries the token and a valid appsecret_proof
-      if (params.access_token !== META_TOKEN || params.appsecret_proof !== appsecretProof(META_TOKEN, CFG.appSecret)) return json({ error: { message: 'bad auth', code: 190 } }, 400);
+      const tok = params.access_token;
+      if (![META_TOKEN, PAGE_TOKEN].includes(tok) || params.appsecret_proof !== appsecretProof(tok, CFG.appSecret)) return json({ error: { message: 'bad auth', code: 190 } }, 400);
+      if (path === 'PAGE1' && method === 'GET' && params.fields === 'access_token') return json({ id: 'PAGE1', access_token: PAGE_TOKEN });
+      if (path.startsWith('PAGE1/') && m.pageTokenOnly && tok !== PAGE_TOKEN) return json({ error: { message: 'Unpublished posts must be posted to a page as the page itself.', code: 200 } }, 400);
       if (path.startsWith('PAGE1/') && m.failFacebook > 0) {
         m.failFacebook--;
         return json({ error: { message: `Invalid parameter for token ${META_TOKEN} (access_token=${META_TOKEN})`, code: 100 } }, 400);
@@ -266,6 +274,30 @@ describe('social publisher (mocked Graph API)', () => {
     const feed = meta.calls.find((c) => c.path === 'PAGE1/feed')!;
     expect(JSON.parse(feed.params.attached_media)).toHaveLength(3);
     expect(r.table.get('p1')!.fb_post_id).toMatch(/^PAGE1_feed/);
+  });
+
+  it('Facebook posts as the page: the page token is fetched with the system user token and used for the page calls', async () => {
+    const meta = metaMock();
+    meta.pageTokenOnly = true;
+    const media = [1, 2].map((i) => ({ path: `posts/k/${i}.jpg`, kind: 'image' as const }));
+    const r = round(meta, [post({ format: 'carousel', media, platforms: ['instagram', 'facebook'] })]);
+    // without the page token: the (#200) error Meta gives a system user token (stored as "(code 200)")
+    expect((await runPublishRound(r.deps))[0].outcome).toBe('retry');
+    expect(r.table.get('p1')!.last_error).toContain('as the page itself. (code 200)');
+    // with it: Facebook goes through on the retry, Instagram is not posted again
+    r.deps.publish.pageGraph = async () => graphClient(await pageConfig(CFG, graphClient(CFG, meta.fetch)), meta.fetch);
+    later(r, 10);
+    expect((await runPublishRound(r.deps))[0].outcome).toBe('published');
+    const pageCalls = meta.calls.filter((c) => c.path.startsWith('PAGE1/') && c.params.access_token === PAGE_TOKEN);
+    expect(pageCalls.map((c) => c.path)).toEqual(['PAGE1/photos', 'PAGE1/photos', 'PAGE1/feed']);
+    expect(meta.calls.filter((c) => c.path.startsWith('IG1/')).every((c) => c.params.access_token === META_TOKEN)).toBe(true);
+    expect(meta.calls.filter((c) => c.path === 'IG1/media_publish')).toHaveLength(1);
+    expect(JSON.stringify([...r.table.values(), r.logs])).not.toContain(PAGE_TOKEN);
+  });
+
+  it('pageConfig keeps a token that is already a page token', async () => {
+    const graph = (async () => ({ id: 'PAGE1' })) as unknown as Parameters<typeof pageConfig>[1];
+    expect((await pageConfig(CFG, graph)).token).toBe(META_TOKEN);
   });
 
   it('a reel waits while the container is IN_PROGRESS and is published in the next round', async () => {

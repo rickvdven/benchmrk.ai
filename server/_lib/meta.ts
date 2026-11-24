@@ -92,6 +92,17 @@ export function graphClient(cfg: MetaConfig, fetchImpl: typeof fetch = fetch): G
   };
 }
 
+/**
+ * Facebook page calls (photos, feed, reels) must be made as the page itself, with a page access token. A system user
+ * token gets that token from the page (it does not expire when the system user's token does not); a token that already
+ * is a page token is used as it is. Without this, unpublished carousel photos fail with (#200).
+ */
+export async function pageConfig(cfg: MetaConfig, graph: Graph): Promise<MetaConfig> {
+  if (!cfg.pageId) throw new MetaError('config', 'META_PAGE_ID is not set');
+  const r = (await graph('GET', cfg.pageId, { fields: 'access_token' })) as { access_token?: string };
+  return r.access_token ? { ...cfg, token: r.access_token } : cfg;
+}
+
 /** Facebook reel upload from a hosted file (Video API, "file_url" upload). */
 export async function ruploadFromUrl(cfg: MetaConfig, videoId: string, fileUrl: string, fetchImpl: typeof fetch = fetch) {
   const r = await fetchImpl(`${RUPLOAD_BASE}/${videoId}`, { method: 'POST', headers: { Authorization: `OAuth ${cfg.token}`, file_url: fileUrl } });

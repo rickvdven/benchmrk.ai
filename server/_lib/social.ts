@@ -1,6 +1,6 @@
 import { db, env, APP_URL } from './server';
 import { layout, rows, send } from './mail';
-import { graphClient, metaConfig, redact, ruploadFromUrl, type MetaConfig } from './meta';
+import { graphClient, metaConfig, pageConfig, redact, ruploadFromUrl, type MetaConfig } from './meta';
 import type { RoundDeps, SocialPost } from './socialPublish';
 import type { AgentDeps } from './socialAgent';
 import type { SocialStatus } from '../../src/lib/socialRules';
@@ -70,6 +70,9 @@ export function roundDeps(): RoundDeps {
   const s = db();
   const cfg = metaConfig();
   const secrets = secretsOf(cfg);
+  // page access token for the Facebook calls, fetched once per round and only when a post goes to Facebook
+  let pageCfg: Promise<MetaConfig> | undefined;
+  const page = () => (pageCfg ??= pageConfig(cfg, graphClient(cfg)));
   return {
     claim: async () => {
       const { data, error } = await s.rpc('social_claim', { _limit: 5, _lease_seconds: 240 });
@@ -101,10 +104,11 @@ export function roundDeps(): RoundDeps {
     },
     publish: {
       graph: graphClient(cfg),
+      pageGraph: async () => graphClient(await page()),
       pageId: cfg.pageId,
       igUserId: cfg.igUserId,
       signedUrl,
-      fbUpload: (videoId, fileUrl) => ruploadFromUrl(cfg, videoId, fileUrl),
+      fbUpload: async (videoId, fileUrl) => ruploadFromUrl(await page(), videoId, fileUrl),
     },
     now: () => new Date(),
     secrets,
